@@ -135,17 +135,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('.'));
 
 // ✅ SESSION CORRIGIDA PARA PRODUÇÃO
-const isProduction = process.env.NODE_ENV === 'production';
+const SQLiteStore = require('connect-sqlite3')(session);
 
 app.use(session({
+  store: new SQLiteStore({
+    db: 'sessions.db', // ✅ ARQUIVO DIFERENTE do contatos.db
+    dir: './',
+    concurrentDB: true
+  }),
   secret: process.env.SESSION_SECRET || 'segredo-muito-secreto-2025',
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    secure: isProduction,
+    secure: true,
     maxAge: 24 * 60 * 60 * 1000,
     httpOnly: true,
-    sameSite: isProduction ? 'none' : 'lax'
+    sameSite: 'none'
   }
 }));
 
@@ -1012,12 +1017,13 @@ app.get('/health', (req, res) => {
 });
 
 // ========== MIDDLEWARE DE ERRO ==========
-app.use(cors({
-  origin: true, // ✅ Aceita QUALQUER origem
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With']
-}));
+app.use((err, req, res, next) => {
+  console.error('❌ Erro não tratado:', err);
+  res.status(500).json({ 
+    error: 'Erro interno do servidor',
+    details: process.env.DEBUG_MODE ? err.message : 'Contate o administrador'
+  });
+});
 
 // ========== ROTA 404 ==========
 app.use('*', (req, res) => {
