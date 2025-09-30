@@ -1012,13 +1012,12 @@ app.get('/health', (req, res) => {
 });
 
 // ========== MIDDLEWARE DE ERRO ==========
-app.use((err, req, res, next) => {
-  console.error('❌ Erro não tratado:', err);
-  res.status(500).json({ 
-    error: 'Erro interno do servidor',
-    details: process.env.DEBUG_MODE ? err.message : 'Contate o administrador'
-  });
-});
+app.use(cors({
+  origin: true, // ✅ Aceita QUALQUER origem
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With']
+}));
 
 // ========== ROTA 404 ==========
 app.use('*', (req, res) => {
