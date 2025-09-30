@@ -37,11 +37,11 @@ function getEvolutionConfigByUser(usuario) {
       webhookUrl: process.env.JBO_WEBHOOK_URL
     },
     'CABO': {
-      apiKey: process.env.CABO_API_KEY || process.env.ADMIN_API_KEY, // Fallback para admin
+      apiKey: process.env.CABO_API_KEY || process.env.ADMIN_API_KEY,
       instanceName: process.env.CABO_INSTANCE_NAME || process.env.ADMIN_INSTANCE_NAME,
       webhookUrl: process.env.CABO_WEBHOOK_URL
     },
-     'BA': {
+    'BA': {
       apiKey: process.env.BA_API_KEY,
       instanceName: process.env.BA_INSTANCE_NAME,
       webhookUrl: process.env.BA_WEBHOOK_URL
@@ -85,7 +85,6 @@ function getEvolutionConfigByUser(usuario) {
     };
   }
   
-  // Verifica se API Key existe
   if (!config.apiKey) {
     console.error(`❌ API Key não configurada para: ${usuario}`);
     return {
@@ -94,7 +93,6 @@ function getEvolutionConfigByUser(usuario) {
     };
   }
   
-  // Verifica se Instance Name existe
   if (!config.instanceName) {
     console.error(`❌ Instance Name não configurado para: ${usuario}`);
     return {
@@ -108,25 +106,46 @@ function getEvolutionConfigByUser(usuario) {
 }
 
 // ========== MIDDLEWARES ==========
+// ✅ CORS CORRIGIDO PARA PRODUÇÃO
+const allowedOrigins = [
+  'https://diparador-evolution.onrender.com',
+  'http://localhost:5680',
+  'http://127.0.0.1:5680',
+  'http://localhost:3000',
+  'http://192.168.88.59:8080'
+];
+
 app.use(cors({
-  origin: ['http://localhost:5680', 'http://127.0.0.1:5680', 'http://localhost:3000'],
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('🚫 CORS bloqueado para origem:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With']
 }));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('.'));
 
+// ✅ SESSION CORRIGIDA PARA PRODUÇÃO
+const isProduction = process.env.NODE_ENV === 'production';
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'segredo-muito-secreto-2025',
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    secure: false, 
+    secure: isProduction,
     maxAge: 24 * 60 * 60 * 1000,
-    httpOnly: true
+    httpOnly: true,
+    sameSite: isProduction ? 'none' : 'lax'
   }
 }));
 
@@ -167,20 +186,14 @@ app.post('/api/login', express.json(), (req, res) => {
   
   if (usuarios[usuario] && usuarios[usuario] === senha) {
     req.session.usuario = usuario;
-    req.session.save((err) => {
-      if (err) {
-        console.error('❌ Erro ao salvar sessão:', err);
-        return res.status(500).json({ success: false, error: 'Erro interno' });
-      }
-      
-      const userConfig = getEvolutionConfigByUser(usuario);
-      console.log('✅ Login bem-sucedido para:', usuario);
-      
-      res.json({ 
-        success: true, 
-        usuario: usuario,
-        config: userConfig
-      });
+    
+    const userConfig = getEvolutionConfigByUser(usuario);
+    console.log('✅ Login bem-sucedido para:', usuario);
+    
+    res.json({ 
+      success: true, 
+      usuario: usuario,
+      config: userConfig
     });
   } else {
     console.log('❌ Credenciais inválidas para:', usuario);
@@ -220,7 +233,6 @@ const db = new sqlite3.Database('./contatos.db', (err) => {
   }
 });
 
-// Criar tabela com melhor tratamento de erro
 db.run(`CREATE TABLE IF NOT EXISTS contatos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
@@ -340,7 +352,6 @@ app.get('/webhook/importar-csv', requireAuth, async (req, res) => {
     
     console.log(`📄 ${req.session.usuario} importando ${contatos.length} contatos`);
     
-    // Usar transação para melhor performance
     db.serialize(() => {
       db.run('BEGIN TRANSACTION');
       
@@ -373,12 +384,11 @@ app.get('/webhook/importar-csv', requireAuth, async (req, res) => {
               }
             }
             
-            // Último contato
             if (index === contatos.length - 1) {
               stmt.finalize((err) => {
                 if (err) {
-                  console.error('❌ Erro ao finalizar statement:', err);
                   db.run('ROLLBACK');
+                  console.error('❌ Erro ao finalizar statement:', err);
                   return res.status(500).json({ 
                     success: false, 
                     error: 'Erro na importação' 
@@ -439,7 +449,6 @@ app.get('/webhook/status-evolution', requireAuth, async (req, res) => {
   }
   
   try {
-    // Testar conexão básica com Evolution
     const response = await fetch(EVOLUTION_CONFIG.baseUrl, {
       timeout: 10000
     });
@@ -454,7 +463,6 @@ app.get('/webhook/status-evolution', requireAuth, async (req, res) => {
       });
     }
 
-    // Testar autenticação com API Key
     const authResponse = await fetch(`${EVOLUTION_CONFIG.baseUrl}/instance/fetchInstances`, {
       headers: {
         'apikey': userConfig.apiKey,
@@ -511,7 +519,7 @@ app.get('/webhook/status-evolution', requireAuth, async (req, res) => {
   }
 });
 
-// 📤 Envio de mensagens (CORRIGIDO)
+// 📤 Envio de mensagens
 app.post('/webhook/send', requireAuth, async (req, res) => {
   const { number, message } = req.body;
   const usuario = req.session.usuario;
@@ -523,7 +531,6 @@ app.post('/webhook/send', requireAuth, async (req, res) => {
   console.log('🏷️ Instância:', userConfig.instanceName);
   console.log('🔑 API Key:', userConfig.apiKey ? '***' + userConfig.apiKey.slice(-4) : 'NÃO CONFIGURADA');
   
-  // Validação da configuração
   if (!isValidApiConfig(userConfig)) {
     return res.status(500).json({ 
       success: false, 
@@ -532,7 +539,6 @@ app.post('/webhook/send', requireAuth, async (req, res) => {
     });
   }
   
-  // Validações básicas
   if (!number || !message) {
     return res.status(400).json({ 
       success: false, 
@@ -750,12 +756,10 @@ app.post('/webhook/upload-csv', requireAuth, async (req, res) => {
     const csvData = req.body.csvData;
     console.log('📄 Dados do CSV recebidos:', csvData.length, 'caracteres');
 
-    // Salvar o CSV temporariamente
     const csvPath = path.join(__dirname, 'contatos.csv');
     fs.writeFileSync(csvPath, csvData, 'utf8');
     console.log('💾 CSV salvo em:', csvPath);
 
-    // Processar o CSV
     const lines = csvData.split('\n').filter(line => line.trim());
     const contatos = [];
     
@@ -767,7 +771,6 @@ app.post('/webhook/upload-csv', requireAuth, async (req, res) => {
       const line = lines[i].trim();
       if (!line) continue;
       
-      // Suporte a CSV com vírgula ou ponto e vírgula
       const parts = line.split(',').length >= 2 ? 
         line.split(',') : line.split(';');
       
@@ -791,12 +794,10 @@ app.post('/webhook/upload-csv', requireAuth, async (req, res) => {
 
     console.log(`📊 ${contatos.length} contatos válidos encontrados`);
 
-    // Importar para o banco
     return new Promise((resolve, reject) => {
       db.serialize(() => {
         db.run('BEGIN TRANSACTION');
         
-        // Limpar contatos antigos
         db.run('DELETE FROM contatos', function(err) {
           if (err) {
             db.run('ROLLBACK');
@@ -824,7 +825,6 @@ app.post('/webhook/upload-csv', requireAuth, async (req, res) => {
                 }
               }
               
-              // Último contato
               if (index === contatos.length - 1) {
                 stmt.finalize((err) => {
                   if (err) {
@@ -921,7 +921,6 @@ app.get('/webhook/importar-csv', requireAuth, async (req, res) => {
     
     console.log(`📄 ${req.session.usuario} importando ${contatos.length} contatos`);
     
-    // Usar transação para melhor performance
     db.serialize(() => {
       db.run('BEGIN TRANSACTION');
       
@@ -1039,7 +1038,6 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`🔐 Login ativo: ${Object.keys(usuarios).join(', ')}`);
   console.log('================================');
   
-  // Verificar configurações dos usuários
   Object.keys(usuarios).forEach(usuario => {
     const config = getEvolutionConfigByUser(usuario);
     if (config.error) {
@@ -1050,7 +1048,7 @@ app.listen(PORT, '0.0.0.0', () => {
   });
 });
 
-// 🐛 DEBUG - Adicione antes do app.listen
+// 🐛 DEBUG - Verificar instâncias
 app.get('/api/debug/evolution-instances', requireAuth, async (req, res) => {
   const userConfig = getEvolutionConfigByUser(req.session.usuario);
   
