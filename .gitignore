@@ -1,0 +1,50 @@
+# =============================================
+# ARQUIVOS SENSÍVEIS - NUNCA SUBIR!
+# =============================================
+
+# Variáveis de ambiente
+.env
+*.env
+.env.local
+.env.production
+
+# Secrets e configurações privadas
+secrets/
+config/private/
+
+# Banco de dados
+*.db
+*.sqlite
+*.sqlite3
+contatos.db
+
+# ✅ ADICIONE ESTA LINHA:
+contatos.csv
+
+# =============================================
+# NODE.JS - DEPENDÊNCIAS E BUILD
+# =============================================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =============================================
+# SISTEMA E EDITOR
+# =============================================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# =============================================
+# LOGS E TEMPORÁRIOS
+# =============================================
+*.log
+logs/
