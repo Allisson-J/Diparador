@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = 5690; // Porta diferente para não conflitar
+const PORT = 5680; // Porta diferente para não conflitar
 
 const EVOLUTION_CONFIG = {
   baseUrl: process.env.EVOLUTION_BASE_URL,
