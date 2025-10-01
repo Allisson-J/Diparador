@@ -314,38 +314,97 @@ document.addEventListener('DOMContentLoaded', function() {
 // ========== FUNÇÕES DE USUÁRIO E LOGOUT ==========
 async function carregarInformacoesUsuario() {
   try {
+    console.log('🔐 Verificando autenticação...');
+    
     const response = await fetch(`${SERVER_URL}/api/auth/status`, {
       credentials: 'include'
     });
     
+    console.log('📡 Status HTTP:', response.status);
+    
     if (response.ok) {
       const data = await response.json();
+      console.log('📊 Dados do usuário:', data);
       
       if (data.autenticado && data.usuario) {
+        console.log('✅ USUÁRIO AUTENTICADO:', data.usuario);
         document.getElementById('currentUser').textContent = data.usuario;
         
-        // Mapeamento de instâncias por usuário
+        // ✅ MAPEAMENTO COMPLETO DE INSTÂNCIAS
         const userInstances = {
           'admin': 'TESTE',
-          'JBO': 'JBO_WHATSAPP',
-          'CABO': 'CABO_WHATSAPP'
+          'JBO': 'JBO',
+          'CABO': 'CABO',
+          'BA': 'BA',
+          'PB': 'PB',
+          'SP': 'SP', 
+          'AL': 'AL',
+          'AMBEV': 'AMBEV',
+          'USINA': 'USINA'
         };
         
-        const userInstance = userInstances[data.usuario] || 'Não configurada';
+        // Usar a instância da configuração ou fallback para o mapeamento
+        const userInstance = data.config?.instanceName || userInstances[data.usuario] || 'Não configurada';
         document.getElementById('userInstance').textContent = userInstance;
         
+        console.log('🏷️ Instância do usuário:', userInstance);
+        
       } else {
-        // Não está autenticado, redireciona para login
+        console.log('❌ USUÁRIO NÃO AUTENTICADO - Redirecionando...');
         window.location.href = '/';
       }
     } else {
+      console.log('❌ ERRO HTTP - Redirecionando...');
       window.location.href = '/';
     }
   } catch (error) {
-    console.error('❌ Erro ao carregar informações do usuário:', error);
+    console.error('❌ ERRO DE CONEXÃO:', error);
     window.location.href = '/';
   }
 }
+
+// Teste completo de autenticação
+async function debugAuth() {
+  console.log('=== 🔍 DEBUG DE AUTENTICAÇÃO ===');
+  
+  // 1. Testar login
+  console.log('1. 🚀 Fazendo login...');
+  const loginRes = await fetch('/api/login', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    credentials: 'include',
+    body: JSON.stringify({
+      usuario: 'admin',
+      senha: 'a96743857'
+    })
+  });
+  
+  const loginData = await loginRes.json();
+  console.log('📊 Resposta do login:', loginData);
+  
+  // 2. Verificar cookies
+  console.log('2. 🍪 Cookies:', document.cookie);
+  
+  // 3. Testar status
+  console.log('3. 🔐 Verificando status...');
+  const statusRes = await fetch('/api/auth/status', {
+    credentials: 'include'
+  });
+  
+  const statusData = await statusRes.json();
+  console.log('📊 Status após login:', statusData);
+  
+  // 4. Tentar acessar painel
+  console.log('4. 📄 Acessando painel...');
+  const panelRes = await fetch('/painel.html', {
+    credentials: 'include'
+  });
+  
+  console.log('📊 Status do painel:', panelRes.status);
+}
+
+// Execute no console
+debugAuth();
 
 // ✅ FUNÇÃO DE LOGOUT
 async function fazerLogout() {
