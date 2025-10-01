@@ -11,11 +11,23 @@ const PORT = process.env.PORT || 5680;
 
 // ========== CONFIGURAÇÃO EVOLUTION API ==========
 const EVOLUTION_CONFIG = {
-  baseUrl: process.env.EVOLUTION_BASE_URL || 'http://192.168.88.59:8080',
+  baseUrl: process.env.EVOLUTION_BASE_URL, // REMOVER o IP fixo
 };
+
+// Adicionar validação para garantir que a variável existe
+if (!EVOLUTION_CONFIG.baseUrl) {
+  console.error('❌ ERRO CRÍTICO: EVOLUTION_BASE_URL não configurada no .env');
+  process.exit(1);
+}
 
 // ========== DEBUG DAS VARIÁVEIS DE AMBIENTE ==========
 console.log('🔧 DEBUG - Variáveis de ambiente carregadas:');
+
+console.log('🔧 DEBUG - Variáveis de ambiente carregadas:');
+console.log('EVOLUTION_BASE_URL:', process.env.EVOLUTION_BASE_URL ? 'CONFIGURADA' : 'NÃO ENCONTRADA');
+console.log('ADMIN_API_KEY:', process.env.ADMIN_API_KEY ? '***' + process.env.ADMIN_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
+
+
 console.log('ADMIN_API_KEY:', process.env.ADMIN_API_KEY ? '***' + process.env.ADMIN_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('ADMIN_INSTANCE_NAME:', process.env.ADMIN_INSTANCE_NAME || 'NÃO ENCONTRADA');
 
@@ -128,13 +140,12 @@ function getEvolutionConfigByUser(usuario) {
 }
 
 // ========== MIDDLEWARES ==========
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? 
+  process.env.ALLOWED_ORIGINS.split(',') : 
+  []; // ✅ FALLBACK VAZIO - SE NÃO CONFIGUROU, BLOQUEIA TUDO
+
 app.use(cors({
-  origin: [
-    'http://localhost:5680', 
-    'http://127.0.0.1:5680', 
-    'http://localhost:3000',
-    'http://127.0.0.1:3000'
-  ],
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With']
