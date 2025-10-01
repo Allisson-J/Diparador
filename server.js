@@ -7,7 +7,14 @@ const fs = require('fs');
 const session = require('express-session');
 
 const app = express();
-const PORT = process.env.PORT || 5680;
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('================================');
+  console.log('🎯 Servidor rodando no Render!');
+  console.log(`📍 Porta: ${PORT}`);
+  console.log('================================');
+});
 
 // ========== CONFIGURAÇÃO EVOLUTION API ==========
 const EVOLUTION_CONFIG = {
