@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Planilhas - Portal de Ferramentas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --border: #bdc3c7;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --bg-gradient-start: #f5f7fa;
+            --bg-gradient-end: #c3cfe2;
+            --bg-white: white;
+            --header-bg-start: var(--primary);
+            --header-bg-end: var(--dark);
+            --spreadsheet-bg: white;
+            --spreadsheet-border: var(--border);
+            --table-header-bg-start: var(--primary);
+            --table-header-bg-end: var(--dark);
+            --table-row-even-bg: #f8f9fa;
+            --table-row-hover-bg: #e8f4fc;
+        }
+
+        .dark-mode {
+            --primary: #ecf0f1;
+            --secondary: #8e44ad;
+            --success: #27ae60;
+            --warning: #f1c40f;
+            --danger: #c0392b;
+            --info: #3498db;
+            --light: #34495e;
+            --dark: #2c3e50;
+            --text: #ecf0f1;
+            --text-light: #bdc3c7;
+            --border: #5a6d7f;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --bg-gradient-start: #2c3e50;
+            --bg-gradient-end: #1a2530;
+            --bg-white: #34495e;
+            --header-bg-start: #1a2530;
+            --header-bg-end: #2c3e50;
+            --spreadsheet-bg: #34495e;
+            --spreadsheet-border: #5a6d7f;
+            --table-header-bg-start: #1a2530;
+            --table-header-bg-end: #2c3e50;
+            --table-row-even-bg: #2d3f50;
+            --table-row-hover-bg: #3c546b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0;
+            transition: background-color var(--transition), color var(--transition);
+        }
+
+        /* Header */
+        .main-header {
+            background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,197.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Botões de ação */
+        .btn-action {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .dark-mode-toggle {
+            background: none;
+            border: 2px solid white;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dark-mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(15deg);
+        }
+
+        /* Container principal */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Cards de planilhas */
+        .spreadsheets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .spreadsheet-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border-left: 5px solid var(--secondary);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spreadsheet-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+            z-index: -1;
+            transition: var(--transition);
+        }
+
+        .spreadsheet-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .spreadsheet-card:hover::before {
+            opacity: 0.95;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+
+        .spreadsheet-card:hover .card-icon {
+            transform: scale(1.2);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .card-description {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Cores específicas para cada card */
+        .card-geral { border-left-color: var(--success); }
+        .card-geral .card-icon { color: var(--success); }
+
+        .card-navio { border-left-color: var(--secondary); }
+        .card-navio .card-icon { color: var(--secondary); }
+
+        .card-areia { border-left-color: var(--warning); }
+        .card-areia .card-icon { color: var(--warning); }
+
+        .card-usinas { border-left-color: var(--info); }
+        .card-usinas .card-icon { color: var(--info); }
+
+        .card-container { border-left-color: var(--danger); }
+        .card-container .card-icon { color: var(--danger); }
+
+        .card-spot { border-left-color: #1abc9c; }
+        .card-spot .card-icon { color: #1abc9c; }
+
+        .card-programadas { border-left-color: #8e44ad; }
+        .card-programadas .card-icon { color: #8e44ad; }
+
+        .card-filial { border-left-color: #34495e; }
+        .card-filial .card-icon { color: #34495e; }
+
+        .card-demandas { border-left-color: #5a6d7f; }
+        .card-demandas .card-icon { color: #5a6d7f; }
+
+        .card-cs-demandas { border-left-color: #16a085; }
+        .card-cs-demandas .card-icon { color: #16a085; }
+
+        .card-divulgacao { border-left-color: #8e44ad; }
+        .card-divulgacao .card-icon { color: #8e44ad; }
+
+        /* Container da planilha */
+        .spreadsheet-container {
+            background-color: var(--spreadsheet-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            overflow: auto;
+            border: 1px solid var(--spreadsheet-border);
+            width: 100%;
+            max-height: calc(100vh - 200px);
+            position: relative;
+        }
+
+        .spreadsheet-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cabeçalho da planilha */
+        .spreadsheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light);
+            position: sticky;
+            top: 0;
+            background: var(--spreadsheet-bg);
+            z-index: 10;
+            padding: 1rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .spreadsheet-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .spreadsheet-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .pdf-btn {
+            background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pdf-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .close-btn {
+            background: var(--light);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: var(--danger);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        /* Tabela */
+        .spreadsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            min-width: 2500px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .spreadsheet-table th {
+            background: linear-gradient(135deg, var(--table-header-bg-start) 0%, var(--table-header-bg-end) 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            border: 1px solid var(--spreadsheet-border);
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: sticky;
+            top: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .spreadsheet-table td {
+            padding: 0.7rem;
+            border: 1px solid var(--spreadsheet-border);
+            font-size: 0.85rem;
+            transition: var(--transition);
+            color: var(--text);
+        }
+
+        .spreadsheet-table tr:nth-child(even) {
+            background-color: var(--table-row-even-bg);
+        }
+
+        .spreadsheet-table tr:hover td {
+            background-color: var(--table-row-hover-bg);
+        }
+
+        .spreadsheet-table input, .spreadsheet-table select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            background-color: var(--bg-white);
+            color: var(--text);
+        }
+
+        .spreadsheet-table input:focus, .spreadsheet-table select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .spreadsheet-table input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.2);
+            margin: 0 auto;
+            display: block;
+        }
+
+        /* Botões de ação */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, var(--success) 0%, #27ae60 100%);
+            color: white;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .cancel-btn {
+            background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .add-row-btn {
+            background: linear-gradient(135deg, var(--secondary) 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 1.2rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .add-row-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .row-actions button {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .row-actions .save-btn {
+            background: var(--success);
+        }
+
+        .row-actions .cancel-btn {
+            background: var(--danger);
+        }
+
+        .row-actions button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .main-footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
+            color: white;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Notificações */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: var(--transition);
+            max-width: 400px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success { background: var(--success); }
+        .notification.error { background: var(--danger); }
+        .notification.info { background: var(--info); }
+
+        /* Modo somente leitura */
+        .read-only .add-row-btn,
+        .read-only .row-actions,
+        .read-only .save-btn,
+        .read-only .cancel-btn {
+            display: none !important;
+        }
+
+        .read-only .spreadsheet-table input,
+        .read-only .spreadsheet-table select {
+            pointer-events: none;
+            background-color: var(--table-row-even-bg);
+            border: none;
+        }
+
+        .required-field {
+            border-color: var(--danger) !important;
+        }
+
+        /* Filtros */
+        .filters-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 0.7rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background-color: var(--bg-white);
+            color: var(--text);
+            transition: var(--transition);
+            min-width: 150px;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        /* Responsividade */
+        @media (max-width: 1200px) {
+            .spreadsheets-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-title {
+                font-size: 1.7rem;
+            }
+
+            .spreadsheets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .spreadsheet-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .spreadsheet-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .spreadsheet-actions {
+                justify-content: center;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .spreadsheet-container {
+                padding: 1rem;
+                margin-top: 1rem;
+            }
+
+            .filters-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group select,
+            .filter-group input {
+                min-width: auto;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- Botão Dark Mode -->
+    <button id="darkModeToggle" class="dark-mode-toggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <div>
+                <h1 class="header-title">
+                    <i class="fas fa-table"></i> Sistema de Planilhas
+                </h1>
+                <p class="header-subtitle">Controle completo de operações logísticas</p>
+            </div>
+            <div class="header-actions">
+                <a href="index.html" class="btn-action">
+                    <i class="fas fa-home"></i> Voltar ao Portal
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <div class="main-container">
+        <!-- Grid de Planilhas -->
+        <div class="spreadsheets-grid">
+            <!-- Planilha Geral -->
+            <div class="spreadsheet-card card-geral" onclick="openSpreadsheet('geral')">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="card-title">PLANILHA GERAL</h3>
+                <p class="card-description">Controle completo de operações</p>
+                <span class="card-badge">Principal</span>
+            </div>
+
+            <!-- Planilha Navio -->
+            <div class="spreadsheet-card card-navio" onclick="openSpreadsheet('navio')">
+                <div class="card-icon">
+                    <i class="fas fa-ship"></i>
+                </div>
+                <h3 class="card-title">PLANILHA NAVIO</h3>
+                <p class="card-description">Operações marítimas</p>
+            </div>
+
+            <!-- Planilha Areia -->
+            <div class="spreadsheet-card card-areia" onclick="openSpreadsheet('areia')">
+                <div class="card-icon">
+                    <i class="fas fa-mountain"></i>
+                </div>
+                <h3 class="card-title">PLANILHA AREIA</h3>
+                <p class="card-description">Controle de materiais</p>
+            </div>
+
+            <!-- Planilha Usinas -->
+            <div class="spreadsheet-card card-usinas" onclick="openSpreadsheet('usinas')">
+                <div class="card-icon">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <h3 class="card-title">PLANILHA USINAS</h3>
+                <p class="card-description">Operações industriais</p>
+            </div>
+
+            <!-- Planilha Container -->
+            <div class="spreadsheet-card card-container" onclick="openSpreadsheet('container')">
+                <div class="card-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h3 class="card-title">PLANILHA CONTAINER</h3>
+                <p class="card-description">Gestão de contêineres</p>
+            </div>
+
+            <!-- Planilha Spot -->
+            <div class="spreadsheet-card card-spot" onclick="openSpreadsheet('spot')">
+                <div class="card-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3 class="card-title">PLANILHA SPOT</h3>
+                <p class="card-description">Operações spot</p>
+            </div>
+
+            <!-- Planilha Programadas -->
+            <div class="spreadsheet-card card-programadas" onclick="openSpreadsheet('programadas')">
+                <div class="card-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3 class="card-title">PLANILHA PROGRAMADAS</h3>
+                <p class="card-description">Operações programadas</p>
+            </div>
+
+            <!-- Planilha Filial -->
+            <div class="spreadsheet-card card-filial" onclick="openSpreadsheet('filial')">
+                <div class="card-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3 class="card-title">PLANILHA FILIAL</h3>
+                <p class="card-description">Filtrar por filial</p>
+            </div>
+
+            <!-- Demandas de Contratação -->
+            <div class="spreadsheet-card card-demandas" onclick="openSpreadsheet('demandas')">
+                <div class="card-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3 class="card-title">DEMANDAS DE CONTRATAÇÃO</h3>
+                <p class="card-description">Controle de demandas</p>
+            </div>
+
+            <!-- CS Demandas -->
+            <div class="spreadsheet-card card-cs-demandas" onclick="openCSDemandas()">
+                <div class="card-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3 class="card-title">CS DEMANDAS</h3>
+                <p class="card-description">Gestão de demandas CS</p>
+                <span class="card-badge">Restrito</span>
+            </div>
+
+            <!-- Divulgação de Fretes -->
+            <div class="spreadsheet-card card-divulgacao" onclick="openDivulgacaoFretes()">
+                <div class="card-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <h3 class="card-title">DIVULGAÇÃO DE FRETES</h3>
+                <p class="card-description">Divulgação de oportunidades</p>
+            </div>
+        </div>
+
+        <!-- Container das Planilhas -->
+        <div id="geral-spreadsheet" class="spreadsheet-container">
+            <div class="spreadsheet-header">
+                <h2 class="spreadsheet-title"><i class="fas fa-chart-line"></i> Planilha GERAL</h2>
+                <div class="spreadsheet-actions">
+                    <button class="pdf-btn" onclick="generatePDF('geral')">
+                        <i class="fas fa-file-pdf"></i> Gerar PDF
+                    </button>
+                    <button class="close-btn" onclick="closeSpreadsheet('geral')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="filialFilter"><i class="fas fa-filter"></i> Filial</label>
+                    <select id="filialFilter" onchange="filterTable('geral')">
+                        <option value="">Todas</option>
+                        <option value="SP">SP</option>
+                        <option value="RJ">RJ</option>
+                        <option value="MG">MG</option>
+                        <option value="ES">ES</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="statusFilter"><i class="fas fa-filter"></i> Status</label>
+                    <select id="statusFilter" onchange="filterTable('geral')">
+                        <option value="">Todos</option>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Concluído">Concluído</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="searchFilter"><i class="fas fa-search"></i> Buscar</label>
+                    <input type="text" id="searchFilter" placeholder="Digite para buscar..." onkeyup="filterTable('geral')">
+                </div>
+            </div>
+
+            <table class="spreadsheet-table" id="geral-table">
+                <thead>
+                    <tr>
+                        <!-- Novas colunas -->
+                        <th>Cliente</th>
+                        <th>Data Recebimento</th>
+                        <th>Origem</th>
+                        <th>UF Origem</th>
+                        <th>Destino</th>
+                        <th>UF Destino</th>
+                        <th>Km</th>
+                        <th>Veículo</th>
+                        <th>Necessidades</th>
+                        <th>Qtd Paletes</th>
+                        <th>Carregamento</th>
+                        <th>Entrega</th>
+                        <th>Tipo Operação</th>
+                        <th>R$ Km Motorista</th>
+                        <th>Custo Descarga</th>
+                        <th>Pedágio</th>
+                        <th>Frete Motorista Máx</th>
+                        <th>Veículo Design Data</th>
+                        <th>Veículo Design Hora</th>
+                        <th>Placas</th>
+                        <th>Analista Enviou</th>
+                        <th>GR Aprovada</th>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Analista Aprovou</th>
+                        <th>OC Criada Data</th>
+                        <th>OC Criada Hora</th>
+                        <th>Analista Criou</th>
+                        <th>Primeiro Contato</th>
+                        <!-- Colunas existentes -->
+                        <th>ID</th>
+                        <th>Filial</th>
+                        <th>Placa</th>
+                        <th>Motorista</th>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Operação</th>
+                        <th>Status</th>
+                        <th>Destino</th>
+                        <th>Origem</th>
+                        <th>Produto</th>
+                        <th>CT-e</th>
+                        <th>NF</th>
+                        <th>Valor</th>
+                        <th>Observações</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados serão carregados via JavaScript -->
+                </tbody>
+            </table>
+
+            <button class="add-row-btn" onclick="addNewRow('geral')">
+                <i class="fas fa-plus"></i> Adicionar Nova Linha
+            </button>
+
+            <div class="action-buttons">
+                <button class="cancel-btn" onclick="closeSpreadsheet('geral')">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="save-btn" onclick="saveChanges('geral')">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </div>
+
+        <!-- Outras planilhas (estrutura similar) -->
+        <div id="demandas-spreadsheet" class="spreadsheet-container">
+            <div class="spreadsheet-header">
+                <h2 class="spreadsheet-title"><i class="fas fa-file-alt"></i> DEMANDAS DE CONTRATAÇÃO</h2>
+                <div class="spreadsheet-actions">
+                    <button class="pdf-btn" onclick="generatePDF('demandas')">
+                        <i class="fas fa-file-pdf"></i> Gerar PDF
+                    </button>
+                    <button class="close-btn" onclick="closeSpreadsheet('demandas')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <table class="spreadsheet-table" id="demandas-table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Data Recebimento</th>
+                        <th>Origem</th>
+                        <th>UF Origem</th>
+                        <th>Destino</th>
+                        <th>UF Destino</th>
+                        <th>Km</th>
+                        <th>Veículo</th>
+                        <th>Necessidades</th>
+                        <th>Qtd Paletes</th>
+                        <th>Carregamento</th>
+                        <th>Entrega</th>
+                        <th>Tipo Operação</th>
+                        <th>R$ Km Motorista</th>
+                        <th>Custo Descarga</th>
+                        <th>Pedágio</th>
+                        <th>Frete Motorista Máx</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados serão carregados via JavaScript -->
+                </tbody>
+            </table>
+            <button class="add-row-btn" onclick="addNewRow('demandas')">
+                <i class="fas fa-plus"></i> Adicionar Nova Linha
+            </button>
+            <div class="action-buttons">
+                <button class="cancel-btn" onclick="closeSpreadsheet('demandas')">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="save-btn" onclick="saveChanges('demandas')">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-truck-moving"></i> LOGÍSTICA MODAL
+            </div>
+            <p>Sistema de Gestão de Operações Logísticas</p>
+            <p>© 2024 - Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <!-- Notificação -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Configurações e dados
+        const SPREADSHEET_CONFIG = {
+            geral: {
+                columns: 45,
+                name: 'Planilha Geral',
+                icon: 'chart-line'
+            },
+            demandas: {
+                columns: 17,
+                name: 'Demandas de Contratação',
+                icon: 'file-alt'
+            },
+            navio: {
+                columns: 15,
+                name: 'Planilha Navio',
+                icon: 'ship'
+            },
+            areia: {
+                columns: 15,
+                name: 'Planilha Areia',
+                icon: 'mountain'
+            },
+            usinas: {
+                columns: 15,
+                name: 'Planilha Usinas',
+                icon: 'industry'
+            },
+            container: {
+                columns: 15,
+                name: 'Planilha Container',
+                icon: 'box'
+            },
+            spot: {
+                columns: 15,
+                name: 'Planilha Spot',
+                icon: 'bolt'
+            },
+            programadas: {
+                columns: 15,
+                name: 'Planilha Programadas',
+                icon: 'calendar-alt'
+            },
+            filial: {
+                columns: 15,
+                name: 'Planilha Filial',
+                icon: 'building'
+            }
+        };
+
+        let currentSpreadsheet = '';
+        let spreadsheetData = {
+            geral: [],
+            navio: [],
+            areia: [],
+            usinas: [],
+            container: [],
+            spot: [],
+            programadas: [],
+            filial: [],
+            demandas: []
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📊 Sistema de Planilhas inicializado');
+            initializeDarkMode();
+            checkUserPermissions();
+        });
+
+        // Dark Mode
+        function initializeDarkMode() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+
+            darkModeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                document.body.classList.toggle('light-mode');
+                
+                const icon = this.querySelector('i');
+                if (document.body.classList.contains('dark-mode')) {
+                    icon.className = 'fas fa-sun';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    icon.className = 'fas fa-moon';
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        }
+
+        // Verificar permissões do usuário
+        function checkUserPermissions() {
+            // Simulação - você integraria com seu sistema de autenticação
+            const userRole = localStorage.getItem('userRole') || 'viewer';
+            const isReadOnly = userRole === 'viewer';
+            
+            if (isReadOnly) {
+                document.body.classList.add('read-only');
+                showNotification('Modo de visualização - Apenas leitura', 'info');
+            }
+        }
+
+        // Abrir planilha
+        function openSpreadsheet(spreadsheetName) {
+            // Fechar todas as planilhas
+            document.querySelectorAll('.spreadsheet-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            // Abrir a solicitada
+            const spreadsheet = document.getElementById(`${spreadsheetName}-spreadsheet`);
+            if (spreadsheet) {
+                spreadsheet.classList.add('active');
+                currentSpreadsheet = spreadsheetName;
+                
+                // Carregar dados
+                loadSpreadsheetData(spreadsheetName);
+                
+                // Rolar para a planilha
+                spreadsheet.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                showNotification(`${SPREADSHEET_CONFIG[spreadsheetName]?.name || spreadsheetName} aberta`, 'success');
+            }
+        }
+
+        // Fechar planilha
+        function closeSpreadsheet(spreadsheetName) {
+            const spreadsheet = document.getElementById(`${spreadsheetName}-spreadsheet`);
+            if (spreadsheet) {
+                spreadsheet.classList.remove('active');
+                showNotification('Planilha fechada', 'info');
+            }
+        }
+
+        // Carregar dados
+        function loadSpreadsheetData(spreadsheetName) {
+            const tableBody = document.querySelector(`#${spreadsheetName}-table tbody`);
+            if (!tableBody) return;
+
+            tableBody.innerHTML = '';
+
+            // Simular dados (substituir por API real)
+            if (spreadsheetData[spreadsheetName].length === 0) {
+                // Criar dados de exemplo
+                for (let i = 0; i < 3; i++) {
+                    addNewRow(spreadsheetName, true);
+                }
+            } else {
+                // Carregar dados existentes
+                spreadsheetData[spreadsheetName].forEach((row, index) => {
+                    addRowToTable(spreadsheetName, row, index);
+                });
+            }
+        }
+
+        // Adicionar nova linha
+        function addNewRow(spreadsheetName, initialLoad = false) {
+            const tableBody = document.querySelector(`#${spreadsheetName}-table tbody`);
+            if (!tableBody) return;
+
+            const newRow = document.createElement('tr');
+            const rowData = generateRowData(spreadsheetName);
+            const rowIndex = spreadsheetData[spreadsheetName].length;
+
+            newRow.innerHTML = generateRowHTML(spreadsheetName, rowData, rowIndex);
+            tableBody.appendChild(newRow);
+
+            if (!initialLoad) {
+                spreadsheetData[spreadsheetName].push(rowData);
+                showNotification('Nova linha adicionada', 'success');
+            }
+        }
+
+        // Gerar dados da linha
+        function generateRowData(spreadsheetName) {
+            const baseData = {
+                id: Math.floor(Math.random() * 1000) + 1,
+                filial: 'SP',
+                placa: `ABC${Math.floor(Math.random() * 9000) + 1000}`,
+                motorista: 'Motorista Exemplo',
+                data: new Date().toISOString().split('T')[0],
+                hora: '08:00',
+                operacao: 'Carregamento',
+                status: 'Pendente',
+                destino: 'Destino Exemplo',
+                origem: 'Origem Exemplo',
+                produto: 'Produto Exemplo',
+                cte: `CTE${Math.floor(Math.random() * 10000)}`,
+                nf: `NF${Math.floor(Math.random() * 10000)}`,
+                valor: (Math.random() * 1000).toFixed(2),
+                observacoes: 'Observações exemplo'
+            };
+
+            if (spreadsheetName === 'geral') {
+                return {
+                    ...baseData,
+                    cliente: 'Cliente Exemplo',
+                    dataRecebimentoDemanda: new Date().toISOString().split('T')[0],
+                    origem: 'Origem Exemplo',
+                    ufOrigem: 'SP',
+                    destino: 'Destino Exemplo',
+                    ufDestino: 'RJ',
+                    km: Math.floor(Math.random() * 1000),
+                    veiculo: 'Veículo Exemplo',
+                    necessidades: 'Necessidades exemplo',
+                    qtdPaletes: Math.floor(Math.random() * 10),
+                    carregamento: new Date().toISOString().split('T')[0],
+                    entrega: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+                    tipoOperacao: 'Operação Exemplo',
+                    kmMotorista: (Math.random() * 5).toFixed(2),
+                    custoDescarga: (Math.random() * 100).toFixed(2),
+                    pedagio: (Math.random() * 50).toFixed(2),
+                    freteMotoristaMax: (Math.random() * 2000).toFixed(2),
+                    veiculoDesignData: new Date().toISOString().split('T')[0],
+                    veiculoDesignHora: '09:00',
+                    placas: 'ABC1234',
+                    analistaEnviou: 'Analista Exemplo',
+                    grAprovada: 'Sim',
+                    analistaAprovou: 'Analista Exemplo',
+                    ocCriadaData: new Date().toISOString().split('T')[0],
+                    ocCriadaHorario: '10:00',
+                    analistaCriou: 'Analista Exemplo',
+                    primeiroContato: 'Contato exemplo'
+                };
+            }
+
+            return baseData;
+        }
+
+        // Gerar HTML da linha
+        function generateRowHTML(spreadsheetName, rowData, rowIndex) {
+            let html = '';
+
+            if (spreadsheetName === 'geral') {
+                // Novas colunas
+                html += `
+                    <td><input type="text" value="${rowData.cliente || ''}" data-field="cliente"></td>
+                    <td><input type="date" value="${rowData.dataRecebimentoDemanda || ''}" data-field="dataRecebimentoDemanda"></td>
+                    <td><input type="text" value="${rowData.origem || ''}" data-field="origem"></td>
+                    <td><input type="text" value="${rowData.ufOrigem || ''}" data-field="ufOrigem"></td>
+                    <td><input type="text" value="${rowData.destino || ''}" data-field="destino"></td>
+                    <td><input type="text" value="${rowData.ufDestino || ''}" data-field="ufDestino"></td>
+                    <td><input type="number" value="${rowData.km || ''}" data-field="km"></td>
+                    <td><input type="text" value="${rowData.veiculo || ''}" data-field="veiculo"></td>
+                    <td><input type="text" value="${rowData.necessidades || ''}" data-field="necessidades"></td>
+                    <td><input type="number" value="${rowData.qtdPaletes || ''}" data-field="qtdPaletes"></td>
+                    <td><input type="date" value="${rowData.carregamento || ''}" data-field="carregamento"></td>
+                    <td><input type="date" value="${rowData.entrega || ''}" data-field="entrega"></td>
+                    <td><input type="text" value="${rowData.tipoOperacao || ''}" data-field="tipoOperacao"></td>
+                    <td><input type="number" step="0.01" value="${rowData.kmMotorista || ''}" data-field="kmMotorista"></td>
+                    <td><input type="number" step="0.01" value="${rowData.custoDescarga || ''}" data-field="custoDescarga"></td>
+                    <td><input type="number" step="0.01" value="${rowData.pedagio || ''}" data-field="pedagio"></td>
+                    <td><input type="number" step="0.01" value="${rowData.freteMotoristaMax || ''}" data-field="freteMotoristaMax"></td>
+                    <td><input type="date" value="${rowData.veiculoDesignData || ''}" data-field="veiculoDesignData"></td>
+                    <td><input type="time" value="${rowData.veiculoDesignHora || ''}" data-field="veiculoDesignHora"></td>
+                    <td><input type="text" value="${rowData.placas || ''}" data-field="placas"></td>
+                    <td><input type="text" value="${rowData.analistaEnviou || ''}" data-field="analistaEnviou"></td>
+                    <td><input type="text" value="${rowData.grAprovada || ''}" data-field="grAprovada"></td>
+                    <td><input type="date" value="${rowData.data || ''}" data-field="data"></td>
+                    <td><input type="time" value="${rowData.hora || ''}" data-field="hora"></td>
+                    <td><input type="text" value="${rowData.analistaAprovou || ''}" data-field="analistaAprovou"></td>
+                    <td><input type="date" value="${rowData.ocCriadaData || ''}" data-field="ocCriadaData"></td>
+                    <td><input type="time" value="${rowData.ocCriadaHorario || ''}" data-field="ocCriadaHorario"></td>
+                    <td><input type="text" value="${rowData.analistaCriou || ''}" data-field="analistaCriou"></td>
+                    <td><input type="text" value="${rowData.primeiroContato || ''}" data-field="primeiroContato"></td>
+                `;
+            }
+
+            // Colunas comuns
+            html += `
+                <td><input type="number" value="${rowData.id || ''}" data-field="id" readonly></td>
+                <td>
+                    <select data-field="filial">
+                        <option value="SP" ${rowData.filial === 'SP' ? 'selected' : ''}>SP</option>
+                        <option value="RJ" ${rowData.filial === 'RJ' ? 'selected' : ''}>RJ</option>
+                        <option value="MG" ${rowData.filial === 'MG' ? 'selected' : ''}>MG</option>
+                        <option value="ES" ${rowData.filial === 'ES' ? 'selected' : ''}>ES</option>
+                    </select>
+                </td>
+                <td><input type="text" value="${rowData.placa || ''}" data-field="placa"></td>
+                <td><input type="text" value="${rowData.motorista || ''}" data-field="motorista"></td>
+                <td><input type="date" value="${rowData.data || ''}" data-field="data"></td>
+                <td><input type="time" value="${rowData.hora || ''}" data-field="hora"></td>
+                <td>
+                    <select data-field="operacao">
+                        <option value="Carregamento" ${rowData.operacao === 'Carregamento' ? 'selected' : ''}>Carregamento</option>
+                        <option value="Descarga" ${rowData.operacao === 'Descarga' ? 'selected' : ''}>Descarga</option>
+                        <option value="Entrega" ${rowData.operacao === 'Entrega' ? 'selected' : ''}>Entrega</option>
+                        <option value="Outro" ${rowData.operacao === 'Outro' ? 'selected' : ''}>Outro</option>
+                    </select>
+                </td>
+                <td>
+                    <select data-field="status">
+                        <option value="Pendente" ${rowData.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                        <option value="Em Andamento" ${rowData.status === 'Em Andamento' ? 'selected' : ''}>Em Andamento</option>
+                        <option value="Concluído" ${rowData.status === 'Concluído' ? 'selected' : ''}>Concluído</option>
+                        <option value="Cancelado" ${rowData.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                    </select>
+                </td>
+                <td><input type="text" value="${rowData.destino || ''}" data-field="destino"></td>
+                <td><input type="text" value="${rowData.origem || ''}" data-field="origem"></td>
+                <td><input type="text" value="${rowData.produto || ''}" data-field="produto"></td>
+                <td><input type="text" value="${rowData.cte || ''}" data-field="cte"></td>
+                <td><input type="text" value="${rowData.nf || ''}" data-field="nf"></td>
+                <td><input type="number" step="0.01" value="${rowData.valor || ''}" data-field="valor"></td>
+                <td><input type="text" value="${rowData.observacoes || ''}" data-field="observacoes"></td>
+            `;
+
+            // Ações (se não for modo leitura)
+            if (!document.body.classList.contains('read-only')) {
+                html += `
+                    <td class="row-actions">
+                        <button class="save-btn" onclick="saveRow(this, ${rowIndex})">
+                            <i class="fas fa-save"></i>
+                        </button>
+                        <button class="cancel-btn" onclick="deleteRow(this, ${rowIndex})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+            } else {
+                html += `<td></td>`;
+            }
+
+            return html;
+        }
+
+        // Adicionar linha à tabela
+        function addRowToTable(spreadsheetName, rowData, rowIndex) {
+            const tableBody = document.querySelector(`#${spreadsheetName}-table tbody`);
+            if (!tableBody) return;
+
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = generateRowHTML(spreadsheetName, rowData, rowIndex);
+            tableBody.appendChild(newRow);
+        }
+
+        // Salvar linha
+        function saveRow(button, rowIndex) {
+            const row = button.closest('tr');
+            const inputs = row.querySelectorAll('input, select');
+            const rowData = {};
+
+            inputs.forEach(input => {
+                const field = input.getAttribute('data-field');
+                if (field) {
+                    rowData[field] = input.value;
+                }
+            });
+
+            spreadsheetData[currentSpreadsheet][rowIndex] = rowData;
+            showNotification('Linha salva com sucesso!', 'success');
+        }
+
+        // Deletar linha
+        function deleteRow(button, rowIndex) {
+            if (confirm('Tem certeza que deseja excluir esta linha?')) {
+                spreadsheetData[currentSpreadsheet].splice(rowIndex, 1);
+                button.closest('tr').remove();
+                showNotification('Linha excluída com sucesso!', 'success');
+            }
+        }
+
+        // Salvar alterações
+        function saveChanges(spreadsheetName) {
+            // Simular salvamento (substituir por API real)
+            setTimeout(() => {
+                showNotification('Alterações salvas com sucesso!', 'success');
+                console.log('Dados salvos:', spreadsheetData[spreadsheetName]);
+            }, 1000);
+        }
+
+        // Gerar PDF
+        function generatePDF(spreadsheetName) {
+            showNotification('Gerando PDF...', 'info');
+            // Simular geração de PDF
+            setTimeout(() => {
+                showNotification('PDF gerado com sucesso!', 'success');
+            }, 2000);
+        }
+
+        // Filtrar tabela
+        function filterTable(spreadsheetName) {
+            const filialFilter = document.getElementById('filialFilter')?.value || '';
+            const statusFilter = document.getElementById('statusFilter')?.value || '';
+            const searchFilter = document.getElementById('searchFilter')?.value.toLowerCase() || '';
+
+            const rows = document.querySelectorAll(`#${spreadsheetName}-table tbody tr`);
+            
+            rows.forEach(row => {
+                let showRow = true;
+                const cells = row.querySelectorAll('td');
+                
+                // Filtrar por filial
+                if (filialFilter) {
+                    const filialCell = Array.from(cells).find(cell => {
+                        const select = cell.querySelector('select[data-field="filial"]');
+                        return select && select.value === filialFilter;
+                    });
+                    if (!filialCell) showRow = false;
+                }
+                
+                // Filtrar por status
+                if (statusFilter) {
+                    const statusCell = Array.from(cells).find(cell => {
+                        const select = cell.querySelector('select[data-field="status"]');
+                        return select && select.value === statusFilter;
+                    });
+                    if (!statusCell) showRow = false;
+                }
+                
+                // Buscar texto
+                if (searchFilter) {
+                    const rowText = row.textContent.toLowerCase();
+                    if (!rowText.includes(searchFilter)) showRow = false;
+                }
+                
+                row.style.display = showRow ? '' : 'none';
+            });
+        }
+
+        // Funções específicas
+        function openCSDemandas() {
+            showNotification('CS Demandas - Acesso restrito para usuários autorizados', 'info');
+            // Implementar lógica específica para CS Demandas
+        }
+
+        function openDivulgacaoFretes() {
+            showNotification('Divulgação de Fretes - Em desenvolvimento', 'info');
+            // Implementar lógica específica para Divulgação de Fretes
+        }
+
+        // Notificações
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Exportar dados
+        function exportToCSV(spreadsheetName) {
+            const data = spreadsheetData[spreadsheetName];
+            if (!data.length) {
+                showNotification('Nenhum dado para exportar', 'warning');
+                return;
+            }
+
+            const headers = Object.keys(data[0]);
+            const csvContent = [
+                headers.join(','),
+                ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${spreadsheetName}-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Dados exportados para CSV', 'success');
+        }
+    </script>
+</body>
+</html>
