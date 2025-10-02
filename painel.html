@@ -363,48 +363,34 @@ async function carregarInformacoesUsuario() {
   }
 }
 
-// Teste completo de autenticação
-async function debugAuth() {
-  console.log('=== 🔍 DEBUG DE AUTENTICAÇÃO ===');
+// ✅ DEBUG SEGURO (OPCIONAL - pode remover completamente se quiser)
+async function debugAuthSafe() {
+  console.log('=== 🔍 DEBUG SEGURO ===');
   
-  // 1. Testar login
-  console.log('1. 🚀 Fazendo login...');
-  const loginRes = await fetch('/api/login', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    credentials: 'include',
-    body: JSON.stringify({
-      usuario: 'admin',
-      senha: 'a96743857'
-    })
-  });
-  
-  const loginData = await loginRes.json();
-  console.log('📊 Resposta do login:', loginData);
-  
-  // 2. Verificar cookies
-  console.log('2. 🍪 Cookies:', document.cookie);
-  
-  // 3. Testar status
-  console.log('3. 🔐 Verificando status...');
-  const statusRes = await fetch('/api/auth/status', {
-    credentials: 'include'
-  });
-  
-  const statusData = await statusRes.json();
-  console.log('📊 Status após login:', statusData);
-  
-  // 4. Tentar acessar painel
-  console.log('4. 📄 Acessando painel...');
-  const panelRes = await fetch('/painel.html', {
-    credentials: 'include'
-  });
-  
-  console.log('📊 Status do painel:', panelRes.status);
+  try {
+    // Apenas verifica status atual SEM fazer login
+    const statusRes = await fetch('/api/auth/status', {
+      credentials: 'include'
+    });
+    
+    const statusData = await statusRes.json();
+    console.log('🔐 Status de autenticação:', statusData);
+    
+    // Testa conexão com Evolution
+    const evolutionRes = await fetch('/webhook/status-evolution', {
+      credentials: 'include'
+    });
+    
+    const evolutionData = await evolutionRes.json();
+    console.log('📡 Status Evolution:', evolutionData);
+    
+  } catch (error) {
+    console.error('❌ Erro no debug:', error);
+  }
 }
 
-// Execute no console
-debugAuth();
+// NÃO execute automaticamente - apenas para uso manual no console
+// debugAuthSafe() // ← DEIXE COMENTADO!
 
 // ✅ FUNÇÃO DE LOGOUT
 async function fazerLogout() {
