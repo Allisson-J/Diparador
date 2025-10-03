@@ -40,6 +40,9 @@ console.log('AMBEV_API_KEY:', process.env.AMBEV_API_KEY ? '***' + process.env.AM
 console.log('AMBEV_INSTANCE_NAME:', process.env.AMBEV_INSTANCE_NAME || 'NÃO ENCONTRADA');
 console.log('USINA_API_KEY:', process.env.USINA_API_KEY ? '***' + process.env.USINA_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('USINA_INSTANCE_NAME:', process.env.USINA_INSTANCE_NAME || 'NÃO ENCONTRADA');
+console.log('DISP3_API_KEY:', process.env.DISP3_API_KEY ? '***' + process.env.DISP3_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
+console.log('DISP3_INSTANCE_NAME:', process.env.DISP3_INSTANCE_NAME || 'NÃO ENCONTRADA');
+
 
 // ========== CONFIGURAÇÕES POR USUÁRIO ==========
 function getEvolutionConfigByUser(usuario) {
