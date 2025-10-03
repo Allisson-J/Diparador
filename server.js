@@ -11,10 +11,9 @@ const PORT = process.env.PORT || 5680;
 
 // ========== CONFIGURAÇÃO EVOLUTION API ==========
 const EVOLUTION_CONFIG = {
-  baseUrl: process.env.EVOLUTION_BASE_URL, // REMOVER o IP fixo
+  baseUrl: process.env.EVOLUTION_BASE_URL,
 };
 
-// Adicionar validação para garantir que a variável existe
 if (!EVOLUTION_CONFIG.baseUrl) {
   console.error('❌ ERRO CRÍTICO: EVOLUTION_BASE_URL não configurada no .env');
   process.exit(1);
@@ -22,36 +21,23 @@ if (!EVOLUTION_CONFIG.baseUrl) {
 
 // ========== DEBUG DAS VARIÁVEIS DE AMBIENTE ==========
 console.log('🔧 DEBUG - Variáveis de ambiente carregadas:');
-
-console.log('🔧 DEBUG - Variáveis de ambiente carregadas:');
 console.log('EVOLUTION_BASE_URL:', process.env.EVOLUTION_BASE_URL ? 'CONFIGURADA' : 'NÃO ENCONTRADA');
 console.log('ADMIN_API_KEY:', process.env.ADMIN_API_KEY ? '***' + process.env.ADMIN_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
-
-
-console.log('ADMIN_API_KEY:', process.env.ADMIN_API_KEY ? '***' + process.env.ADMIN_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('ADMIN_INSTANCE_NAME:', process.env.ADMIN_INSTANCE_NAME || 'NÃO ENCONTRADA');
-
 console.log('JBO_API_KEY:', process.env.JBO_API_KEY ? '***' + process.env.JBO_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('JBO_INSTANCE_NAME:', process.env.JBO_INSTANCE_NAME || 'NÃO ENCONTRADA');
-
 console.log('CABO_API_KEY:', process.env.CABO_API_KEY ? '***' + process.env.CABO_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('CABO_INSTANCE_NAME:', process.env.CABO_INSTANCE_NAME || 'NÃO ENCONTRADA');
-
 console.log('BA_API_KEY:', process.env.BA_API_KEY ? '***' + process.env.BA_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('BA_INSTANCE_NAME:', process.env.BA_INSTANCE_NAME || 'NÃO ENCONTRADA');
-
 console.log('PB_API_KEY:', process.env.PB_API_KEY ? '***' + process.env.PB_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('PB_INSTANCE_NAME:', process.env.PB_INSTANCE_NAME || 'NÃO ENCONTRADA');
-
 console.log('SP_API_KEY:', process.env.SP_API_KEY ? '***' + process.env.SP_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('SP_INSTANCE_NAME:', process.env.SP_INSTANCE_NAME || 'NÃO ENCONTRADA');
-
 console.log('AL_API_KEY:', process.env.AL_API_KEY ? '***' + process.env.AL_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('AL_INSTANCE_NAME:', process.env.AL_INSTANCE_NAME || 'NÃO ENCONTRADA');
-
 console.log('AMBEV_API_KEY:', process.env.AMBEV_API_KEY ? '***' + process.env.AMBEV_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('AMBEV_INSTANCE_NAME:', process.env.AMBEV_INSTANCE_NAME || 'NÃO ENCONTRADA');
-
 console.log('USINA_API_KEY:', process.env.USINA_API_KEY ? '***' + process.env.USINA_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('USINA_INSTANCE_NAME:', process.env.USINA_INSTANCE_NAME || 'NÃO ENCONTRADA');
 
@@ -73,7 +59,7 @@ function getEvolutionConfigByUser(usuario) {
       instanceName: process.env.CABO_INSTANCE_NAME,
       webhookUrl: process.env.CABO_WEBHOOK_URL
     },
-     'BA': {
+    'BA': {
       apiKey: process.env.BA_API_KEY,
       instanceName: process.env.BA_INSTANCE_NAME,
       webhookUrl: process.env.BA_WEBHOOK_URL
@@ -117,7 +103,6 @@ function getEvolutionConfigByUser(usuario) {
     };
   }
   
-  // Verifica se API Key existe
   if (!config.apiKey) {
     console.error(`❌ API Key não configurada para: ${usuario}`);
     return {
@@ -126,7 +111,6 @@ function getEvolutionConfigByUser(usuario) {
     };
   }
   
-  // Verifica se Instance Name existe
   if (!config.instanceName) {
     console.error(`❌ Instance Name não configurado para: ${usuario}`);
     return {
@@ -142,7 +126,7 @@ function getEvolutionConfigByUser(usuario) {
 // ========== MIDDLEWARES ==========
 const allowedOrigins = process.env.ALLOWED_ORIGINS ? 
   process.env.ALLOWED_ORIGINS.split(',') : 
-  []; // ✅ FALLBACK VAZIO - SE NÃO CONFIGUROU, BLOQUEIA TUDO
+  [];
 
 app.use(cors({
   origin: allowedOrigins,
@@ -151,9 +135,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With']
 }));
 
-// IMPORTANTE: Adicionar esta linha também
 app.set('trust proxy', 1);
-
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('.'));
@@ -196,6 +178,149 @@ function requireAuth(req, res, next) {
     console.log('❌ Acesso não autorizado');
     res.status(401).json({ error: 'Não autenticado' });
   }
+}
+
+// ========== BANCO DE DADOS ==========
+const db = new sqlite3.Database('./contatos.db', (err) => {
+  if (err) {
+    console.error('❌ Erro no banco:', err);
+  } else {
+    console.log('✅ SQLite conectado');
+  }
+});
+
+// Criar tabela
+db.run(`CREATE TABLE IF NOT EXISTS contatos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  number TEXT NOT NULL,
+  category TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(name, number)
+)`, (err) => {
+  if (err) {
+    console.error('❌ Erro ao criar tabela:', err);
+  } else {
+    console.log('✅ Tabela contatos verificada/criada');
+  }
+});
+
+// ========== SISTEMA DE BACKUP AUTOMÁTICO ==========
+const BACKUP_FILE = './contatos_backup.json';
+
+// Salvar backup dos contatos
+function salvarBackupContatos() {
+  return new Promise((resolve, reject) => {
+    db.all('SELECT * FROM contatos', (err, rows) => {
+      if (err) {
+        console.error('❌ Erro ao ler contatos para backup:', err);
+        reject(err);
+        return;
+      }
+      
+      const backupData = {
+        timestamp: new Date().toISOString(),
+        contatos: rows
+      };
+      
+      fs.writeFileSync(BACKUP_FILE, JSON.stringify(backupData, null, 2));
+      console.log(`✅ Backup salvo: ${rows.length} contatos`);
+      resolve(rows.length);
+    });
+  });
+}
+
+// Restaurar contatos do backup
+function restaurarBackupContatos() {
+  return new Promise((resolve, reject) => {
+    if (!fs.existsSync(BACKUP_FILE)) {
+      console.log('📭 Nenhum backup encontrado');
+      resolve(0);
+      return;
+    }
+    
+    try {
+      const backupData = JSON.parse(fs.readFileSync(BACKUP_FILE, 'utf8'));
+      const contatos = backupData.contatos || [];
+      
+      if (contatos.length === 0) {
+        console.log('📭 Backup vazio');
+        resolve(0);
+        return;
+      }
+      
+      db.serialize(() => {
+        db.run('DELETE FROM contatos', (err) => {
+          if (err) {
+            console.error('❌ Erro ao limpar contatos:', err);
+            reject(err);
+            return;
+          }
+          
+          const stmt = db.prepare('INSERT OR IGNORE INTO contatos (name, number, category) VALUES (?, ?, ?)');
+          let inseridos = 0;
+          
+          contatos.forEach((contato, index) => {
+            stmt.run([contato.name, contato.number, contato.category], function(err) {
+              if (err) {
+                console.error('❌ Erro ao restaurar contato:', err);
+              } else if (this.changes > 0) {
+                inseridos++;
+              }
+              
+              if (index === contatos.length - 1) {
+                stmt.finalize(() => {
+                  console.log(`✅ Backup restaurado: ${inseridos} contatos`);
+                  resolve(inseridos);
+                });
+              }
+            });
+          });
+        });
+      });
+      
+    } catch (error) {
+      console.error('❌ Erro ao restaurar backup:', error);
+      reject(error);
+    }
+  });
+}
+
+// Middleware para salvar backup após operações importantes
+app.use((req, res, next) => {
+  const originalSend = res.send;
+  res.send = function(data) {
+    const backupRoutes = [
+      '/webhook/contatos/lote',
+      '/webhook/importar-csv', 
+      '/webhook/contatos',
+      '/webhook/limpar-contatos'
+    ];
+    
+    if (backupRoutes.some(route => req.originalUrl.includes(route)) && req.method !== 'GET') {
+      setTimeout(() => {
+        salvarBackupContatos().catch(err => {
+          console.error('❌ Erro ao salvar backup automático:', err);
+        });
+      }, 1000);
+    }
+    
+    originalSend.call(this, data);
+  };
+  next();
+});
+
+// ========== FUNÇÕES AUXILIARES ==========
+function formatNumberForEvolution(number) {
+  let cleanNumber = number.replace(/\D/g, '');
+  if (!cleanNumber.startsWith('55')) {
+    cleanNumber = '55' + cleanNumber;
+  }
+  return cleanNumber + '@c.us';
+}
+
+function isValidApiConfig(config) {
+  return config && config.apiKey && config.instanceName && !config.error;
 }
 
 // ========== ROTAS DE AUTENTICAÇÃO ==========
@@ -250,44 +375,6 @@ app.get('/api/auth/status', (req, res) => {
   });
 });
 
-// ========== BANCO DE DADOS ==========
-const db = new sqlite3.Database('./contatos.db', (err) => {
-  if (err) {
-    console.error('❌ Erro no banco:', err);
-  } else {
-    console.log('✅ SQLite conectado');
-  }
-});
-
-// Criar tabela com melhor tratamento de erro
-db.run(`CREATE TABLE IF NOT EXISTS contatos (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  number TEXT NOT NULL,
-  category TEXT NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(name, number)
-)`, (err) => {
-  if (err) {
-    console.error('❌ Erro ao criar tabela:', err);
-  } else {
-    console.log('✅ Tabela contatos verificada/criada');
-  }
-});
-
-// ========== FUNÇÕES AUXILIARES ==========
-function formatNumberForEvolution(number) {
-  let cleanNumber = number.replace(/\D/g, '');
-  if (!cleanNumber.startsWith('55')) {
-    cleanNumber = '55' + cleanNumber;
-  }
-  return cleanNumber + '@c.us';
-}
-
-function isValidApiConfig(config) {
-  return config && config.apiKey && config.instanceName && !config.error;
-}
-
 // ========== ROTAS PÚBLICAS ==========
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -302,102 +389,16 @@ app.get('/painel.html', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'painel.html'));
 });
 
+app.get('/portal.html', requireAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, 'portal.html'));
+});
+
 app.get('/contatos.csv', requireAuth, (req, res) => {
   const csvPath = path.join(__dirname, 'contatos.csv');
   if (!fs.existsSync(csvPath)) {
     return res.status(404).json({ error: 'Arquivo contatos.csv não encontrado' });
   }
   res.sendFile(csvPath);
-});
-
-// 📥 Upload de CSV em lote (ROTA FALTANTE)
-app.post('/webhook/contatos/lote', requireAuth, async (req, res) => {
-  const { contatos } = req.body;
-  const usuario = req.session.usuario;
-  
-  console.log(`📥 ${usuario} importando ${contatos?.length || 0} contatos em lote`);
-  
-  if (!contatos || !Array.isArray(contatos) || contatos.length === 0) {
-    return res.status(400).json({
-      success: false,
-      error: 'Lista de contatos vazia ou inválida'
-    });
-  }
-
-  try {
-    let inseridos = 0;
-    let duplicados = 0;
-    let erros = 0;
-
-    // Usar transação para melhor performance
-    await new Promise((resolve, reject) => {
-      db.serialize(() => {
-        db.run('BEGIN TRANSACTION');
-        
-        const stmt = db.prepare('INSERT OR IGNORE INTO contatos (name, number, category) VALUES (?, ?, ?)');
-
-        contatos.forEach((contato, index) => {
-          if (!contato.name || !contato.number) {
-            erros++;
-            return;
-          }
-
-          stmt.run([contato.name, contato.number, contato.category || 'sider'], function(err) {
-            if (err) {
-              console.error('❌ Erro ao inserir contato:', err);
-              erros++;
-            } else {
-              if (this.changes > 0) {
-                inseridos++;
-              } else {
-                duplicados++;
-              }
-            }
-
-            // Último contato
-            if (index === contatos.length - 1) {
-              stmt.finalize((err) => {
-                if (err) {
-                  db.run('ROLLBACK');
-                  console.error('❌ Erro ao finalizar statement:', err);
-                  reject(err);
-                  return;
-                }
-                
-                db.run('COMMIT', (err) => {
-                  if (err) {
-                    console.error('❌ Erro no commit:', err);
-                    reject(err);
-                    return;
-                  }
-                  
-                  console.log(`✅ Importação em lote concluída: ${inseridos} inseridos, ${duplicados} duplicados, ${erros} erros`);
-                  
-                  res.json({
-                    success: true,
-                    message: 'Contatos importados com sucesso!',
-                    total: contatos.length,
-                    inseridos: inseridos,
-                    duplicados: duplicados,
-                    erros: erros
-                  });
-                  
-                  resolve();
-                });
-              });
-            }
-          });
-        });
-      });
-    });
-    
-  } catch (error) {
-    console.error('❌ Erro na importação em lote:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Erro interno ao importar contatos: ' + error.message
-    });
-  }
 });
 
 // ========== ROTAS DA API ==========
@@ -640,7 +641,7 @@ app.get('/webhook/status-evolution', requireAuth, async (req, res) => {
   }
 });
 
-// 📤 Envio de mensagens (CORRIGIDO)
+// 📤 Envio de mensagens
 app.post('/webhook/send', requireAuth, async (req, res) => {
   const { number, message } = req.body;
   const usuario = req.session.usuario;
@@ -791,6 +792,96 @@ app.post('/webhook/contatos', requireAuth, (req, res) => {
   });
 });
 
+// 📥 Upload de CSV em lote
+app.post('/webhook/contatos/lote', requireAuth, async (req, res) => {
+  const { contatos } = req.body;
+  const usuario = req.session.usuario;
+  
+  console.log(`📥 ${usuario} importando ${contatos?.length || 0} contatos em lote`);
+  
+  if (!contatos || !Array.isArray(contatos) || contatos.length === 0) {
+    return res.status(400).json({
+      success: false,
+      error: 'Lista de contatos vazia ou inválida'
+    });
+  }
+
+  try {
+    let inseridos = 0;
+    let duplicados = 0;
+    let erros = 0;
+
+    // Usar transação para melhor performance
+    await new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.run('BEGIN TRANSACTION');
+        
+        const stmt = db.prepare('INSERT OR IGNORE INTO contatos (name, number, category) VALUES (?, ?, ?)');
+
+        contatos.forEach((contato, index) => {
+          if (!contato.name || !contato.number) {
+            erros++;
+            return;
+          }
+
+          stmt.run([contato.name, contato.number, contato.category || 'sider'], function(err) {
+            if (err) {
+              console.error('❌ Erro ao inserir contato:', err);
+              erros++;
+            } else {
+              if (this.changes > 0) {
+                inseridos++;
+              } else {
+                duplicados++;
+              }
+            }
+
+            // Último contato
+            if (index === contatos.length - 1) {
+              stmt.finalize((err) => {
+                if (err) {
+                  db.run('ROLLBACK');
+                  console.error('❌ Erro ao finalizar statement:', err);
+                  reject(err);
+                  return;
+                }
+                
+                db.run('COMMIT', (err) => {
+                  if (err) {
+                    console.error('❌ Erro no commit:', err);
+                    reject(err);
+                    return;
+                  }
+                  
+                  console.log(`✅ Importação em lote concluída: ${inseridos} inseridos, ${duplicados} duplicados, ${erros} erros`);
+                  
+                  res.json({
+                    success: true,
+                    message: 'Contatos importados com sucesso!',
+                    total: contatos.length,
+                    inseridos: inseridos,
+                    duplicados: duplicados,
+                    erros: erros
+                  });
+                  
+                  resolve();
+                });
+              });
+            }
+          });
+        });
+      });
+    });
+    
+  } catch (error) {
+    console.error('❌ Erro na importação em lote:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Erro interno ao importar contatos: ' + error.message
+    });
+  }
+});
+
 // 🗑️ Deletar contato
 app.delete('/webhook/contatos/:id', requireAuth, (req, res) => {
   const contactId = req.params.id;
@@ -830,6 +921,42 @@ app.delete('/webhook/limpar-contatos', requireAuth, (req, res) => {
   });
 });
 
+// ========== ROTAS DE BACKUP ==========
+
+// 🔄 Fazer backup manual
+app.post('/webhook/backup/exportar', requireAuth, async (req, res) => {
+  try {
+    const total = await salvarBackupContatos();
+    res.json({
+      success: true,
+      message: `Backup criado com ${total} contatos`,
+      total: total
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Erro ao criar backup: ' + error.message
+    });
+  }
+});
+
+// 📥 Restaurar backup manual
+app.post('/webhook/backup/restaurar', requireAuth, async (req, res) => {
+  try {
+    const total = await restaurarBackupContatos();
+    res.json({
+      success: true,
+      message: `Backup restaurado com ${total} contatos`,
+      total: total
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Erro ao restaurar backup: ' + error.message
+    });
+  }
+});
+
 // ========== ROTAS DE DEBUG E TESTE ==========
 app.get('/test', (req, res) => {
   res.json({ 
@@ -864,272 +991,6 @@ app.get('/api/debug/config', requireAuth, (req, res) => {
   });
 });
 
-// 📤 Upload de arquivo CSV
-app.post('/webhook/upload-csv', requireAuth, async (req, res) => {
-  console.log('📤 Recebendo upload de CSV por:', req.session.usuario);
-  
-  try {
-    if (!req.body || !req.body.csvData) {
-      return res.status(400).json({
-        success: false,
-        error: 'Dados do CSV não fornecidos'
-      });
-    }
-
-    const csvData = req.body.csvData;
-    console.log('📄 Dados do CSV recebidos:', csvData.length, 'caracteres');
-
-    // Salvar o CSV temporariamente
-    const csvPath = path.join(__dirname, 'contatos.csv');
-    fs.writeFileSync(csvPath, csvData, 'utf8');
-    console.log('💾 CSV salvo em:', csvPath);
-
-    // Processar o CSV
-    const lines = csvData.split('\n').filter(line => line.trim());
-    const contatos = [];
-    
-    const header = lines[0].toLowerCase();
-    const hasHeader = header.includes('nome') || header.includes('name');
-    const startLine = hasHeader ? 1 : 0;
-
-    for (let i = startLine; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
-      
-      // Suporte a CSV com vírgula ou ponto e vírgula
-      const parts = line.split(',').length >= 2 ? 
-        line.split(',') : line.split(';');
-      
-      if (parts.length >= 2) {
-        const name = parts[0].trim();
-        const number = parts[1].trim().replace(/\D/g, '');
-        const category = parts[2] ? parts[2].trim() : 'sider';
-        
-        if (name && number && number.length >= 10) {
-          contatos.push({ name, number, category });
-        }
-      }
-    }
-    
-    if (contatos.length === 0) {
-      return res.json({
-        success: false,
-        error: 'Nenhum contato válido encontrado no CSV'
-      });
-    }
-
-    console.log(`📊 ${contatos.length} contatos válidos encontrados`);
-
-    // Importar para o banco
-    return new Promise((resolve, reject) => {
-      db.serialize(() => {
-        db.run('BEGIN TRANSACTION');
-        
-        // Limpar contatos antigos
-        db.run('DELETE FROM contatos', function(err) {
-          if (err) {
-            db.run('ROLLBACK');
-            console.error('❌ Erro ao limpar contatos:', err);
-            reject(err);
-            return;
-          }
-          
-          console.log(`🗑️ Contatos antigos removidos: ${this.changes}`);
-          
-          const stmt = db.prepare('INSERT OR IGNORE INTO contatos (name, number, category) VALUES (?, ?, ?)');
-          let inseridos = 0;
-          let duplicados = 0;
-
-          contatos.forEach((contato, index) => {
-            stmt.run([contato.name, contato.number, contato.category], function(err) {
-              if (err) {
-                console.error('❌ Erro ao inserir contato:', err);
-                duplicados++;
-              } else {
-                if (this.changes > 0) {
-                  inseridos++;
-                } else {
-                  duplicados++;
-                }
-              }
-              
-              // Último contato
-              if (index === contatos.length - 1) {
-                stmt.finalize((err) => {
-                  if (err) {
-                    db.run('ROLLBACK');
-                    console.error('❌ Erro ao finalizar statement:', err);
-                    reject(err);
-                    return;
-                  }
-                  
-                  db.run('COMMIT', (err) => {
-                    if (err) {
-                      console.error('❌ Erro no commit:', err);
-                      reject(err);
-                      return;
-                    }
-                    
-                    console.log(`✅ Importação concluída: ${inseridos} inseridos, ${duplicados} duplicados/erros`);
-                    
-                    const result = {
-                      success: true,
-                      message: 'CSV importado com sucesso!',
-                      total: contatos.length,
-                      inseridos: inseridos,
-                      duplicados: duplicados,
-                      usuario: req.session.usuario
-                    };
-                    
-                    res.json(result);
-                    resolve(result);
-                  });
-                });
-              }
-            });
-          });
-        });
-      });
-    });
-    
-  } catch (error) {
-    console.error('❌ Erro no upload do CSV:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Erro interno ao processar CSV: ' + error.message
-    });
-  }
-});
-
-// 🔄 Importar CSV do arquivo (se já existir)
-app.get('/webhook/importar-csv', requireAuth, async (req, res) => {
-  console.log('🔄 Importando CSV existente por:', req.session.usuario);
-  
-  try {
-    const csvPath = path.join(__dirname, 'contatos.csv');
-    
-    if (!fs.existsSync(csvPath)) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Arquivo contatos.csv não encontrado. Faça upload primeiro.' 
-      });
-    }
-    
-    const csvText = fs.readFileSync(csvPath, 'utf8');
-    const lines = csvText.split('\n').filter(line => line.trim());
-    
-    const contatos = [];
-    const header = lines[0].toLowerCase();
-    const hasHeader = header.includes('nome') || header.includes('name');
-    const startLine = hasHeader ? 1 : 0;
-
-    for (let i = startLine; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
-      
-      const parts = line.split(',').length >= 2 ? 
-        line.split(',') : line.split(';');
-      
-      if (parts.length >= 2) {
-        const name = parts[0].trim();
-        const number = parts[1].trim().replace(/\D/g, '');
-        const category = parts[2] ? parts[2].trim() : 'sider';
-        
-        if (name && number && number.length >= 10) {
-          contatos.push({ name, number, category });
-        }
-      }
-    }
-    
-    if (contatos.length === 0) {
-      return res.json({ 
-        success: false, 
-        error: 'Nenhum contato válido encontrado no CSV' 
-      });
-    }
-    
-    console.log(`📄 ${req.session.usuario} importando ${contatos.length} contatos`);
-    
-    // Usar transação para melhor performance
-    db.serialize(() => {
-      db.run('BEGIN TRANSACTION');
-      
-      db.run('DELETE FROM contatos', function(err) {
-        if (err) {
-          db.run('ROLLBACK');
-          console.error('❌ Erro ao limpar contatos:', err);
-          return res.status(500).json({ 
-            success: false, 
-            error: 'Erro ao limpar contatos antigos' 
-          });
-        }
-        
-        console.log(`🗑️ Contatos antigos removidos: ${this.changes}`);
-        
-        const stmt = db.prepare('INSERT OR IGNORE INTO contatos (name, number, category) VALUES (?, ?, ?)');
-        let inseridos = 0;
-        let duplicados = 0;
-
-        contatos.forEach((contato, index) => {
-          stmt.run([contato.name, contato.number, contato.category], function(err) {
-            if (err) {
-              console.error('❌ Erro ao inserir:', err);
-              duplicados++;
-            } else {
-              if (this.changes > 0) {
-                inseridos++;
-              } else {
-                duplicados++;
-              }
-            }
-            
-            if (index === contatos.length - 1) {
-              stmt.finalize((err) => {
-                if (err) {
-                  db.run('ROLLBACK');
-                  console.error('❌ Erro ao finalizar statement:', err);
-                  return res.status(500).json({ 
-                    success: false, 
-                    error: 'Erro na importação' 
-                  });
-                }
-                
-                db.run('COMMIT', (err) => {
-                  if (err) {
-                    console.error('❌ Erro no commit:', err);
-                    return res.status(500).json({ 
-                      success: false, 
-                      error: 'Erro ao salvar dados' 
-                    });
-                  }
-                  
-                  console.log(`📊 Importação concluída: ${inseridos} inseridos, ${duplicados} duplicados/erros`);
-                  
-                  res.json({
-                    success: true,
-                    message: 'CSV importado com sucesso',
-                    total: contatos.length,
-                    inseridos: inseridos,
-                    duplicados: duplicados,
-                    usuario: req.session.usuario
-                  });
-                });
-              });
-            }
-          });
-        });
-      });
-    });
-    
-  } catch (error) {
-    console.error('❌ Erro ao importar CSV:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Erro interno ao importar CSV: ' + error.message
-    });
-  }
-});
-
 // ========== HEALTH CHECK ==========
 app.get('/health', (req, res) => {
   res.json({
@@ -1159,7 +1020,7 @@ app.use('*', (req, res) => {
 });
 
 // ========== INICIALIZAÇÃO DO SERVIDOR ==========
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', async () => {
   console.log('================================');
   console.log('🎯 Servidor rodando!');
   console.log(`📍 Local: http://localhost:${PORT}`);
@@ -1167,6 +1028,16 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`🐳 Evolution: ${EVOLUTION_CONFIG.baseUrl}`);
   console.log(`🔐 Login ativo: ${Object.keys(usuarios).join(', ')}`);
   console.log('================================');
+  
+  // Restaurar backup se existir
+  try {
+    const contatosRestaurados = await restaurarBackupContatos();
+    if (contatosRestaurados > 0) {
+      console.log(`🔄 ${contatosRestaurados} contatos restaurados do backup`);
+    }
+  } catch (error) {
+    console.log('⚠️ Não foi possível restaurar backup');
+  }
   
   // Verificar configurações dos usuários
   Object.keys(usuarios).forEach(usuario => {
@@ -1177,54 +1048,6 @@ app.listen(PORT, '0.0.0.0', () => {
       console.log(`✅ ${usuario}: ${config.instanceName} (API: ***${config.apiKey.slice(-4)})`);
     }
   });
-});
-
-// 🐛 DEBUG - Adicione antes do app.listen
-app.get('/api/debug/evolution-instances', requireAuth, async (req, res) => {
-  const userConfig = getEvolutionConfigByUser(req.session.usuario);
-  
-  try {
-    console.log('🔍 Buscando instâncias do Evolution...');
-    console.log('🔑 API Key:', userConfig.apiKey ? '***' + userConfig.apiKey.slice(-4) : 'NÃO CONFIGURADA');
-    
-    const response = await fetch(`${EVOLUTION_CONFIG.baseUrl}/instance/fetchInstances`, {
-      method: 'GET',
-      headers: {
-        'apikey': userConfig.apiKey,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    console.log('📡 Status da resposta:', response.status);
-    
-    if (response.ok) {
-      const instances = await response.json();
-      console.log('📋 Instâncias encontradas:', instances);
-      
-      res.json({
-        success: true,
-        instances: instances,
-        total: Array.isArray(instances) ? instances.length : 0,
-        userInstance: userConfig.instanceName,
-        instanceExists: Array.isArray(instances) ? 
-          instances.some(inst => inst.instanceName === userConfig.instanceName) : false
-      });
-    } else {
-      const errorText = await response.text();
-      console.log('❌ Erro na resposta:', errorText);
-      res.status(500).json({
-        success: false,
-        error: `HTTP ${response.status}`,
-        details: errorText
-      });
-    }
-  } catch (error) {
-    console.log('❌ Erro de conexão:', error.message);
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
 });
 
 // Graceful shutdown
