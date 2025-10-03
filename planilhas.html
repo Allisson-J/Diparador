@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Planilhas - Portal de Ferramentas</title>
+    <title>Sistema de Coletas - Portal de Ferramentas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #4361ee;
@@ -200,530 +199,32 @@
         .main-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-
-        /* Grid de Planilhas Moderno */
-        .spreadsheets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .spreadsheet-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2.5rem 2rem;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .spreadsheet-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--gradient-primary);
-        }
-
-        .spreadsheet-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 80px;
-            height: 80px;
-            background: var(--gradient-primary);
-            border-radius: 0 0 0 80px;
-            opacity: 0.1;
-            transition: var(--transition);
-        }
-
-        .spreadsheet-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: var(--hover-shadow);
-        }
-
-        .spreadsheet-card:hover::after {
-            transform: scale(1.2);
-        }
-
-        .card-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            transition: var(--transition);
-            position: relative;
-            z-index: 2;
-        }
-
-        .spreadsheet-card:hover .card-icon {
-            transform: scale(1.2) rotate(5deg);
-        }
-
-        .card-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--text);
-            position: relative;
-            z-index: 2;
-        }
-
-        .card-description {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-            position: relative;
-            z-index: 2;
-        }
-
-        .card-badge {
-            display: inline-block;
-            background: var(--gradient-primary);
-            color: white;
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            position: relative;
-            z-index: 2;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-        }
-
-        /* Cores específicas para cada card */
-        .card-geral { border-left-color: #4361ee; }
-        .card-geral .card-icon { color: #4361ee; }
-
-        .card-navio { border-left-color: #3a0ca3; }
-        .card-navio .card-icon { color: #3a0ca3; }
-
-        .card-areia { border-left-color: #4cc9f0; }
-        .card-areia .card-icon { color: #4cc9f0; }
-
-        .card-usinas { border-left-color: #7209b7; }
-        .card-usinas .card-icon { color: #7209b7; }
-
-        .card-container { border-left-color: #f72585; }
-        .card-container .card-icon { color: #f72585; }
-
-        .card-spot { border-left-color: #4895ef; }
-        .card-spot .card-icon { color: #4895ef; }
-
-        .card-programadas { border-left-color: #b5179e; }
-        .card-programadas .card-icon { color: #b5179e; }
-
-        .card-filial { border-left-color: #560bad; }
-        .card-filial .card-icon { color: #560bad; }
-
-        .card-demandas { border-left-color: #480ca8; }
-        .card-demandas .card-icon { color: #480ca8; }
-
-        .card-cs-demandas { border-left-color: #3f37c9; }
-        .card-cs-demandas .card-icon { color: #3f37c9; }
-
-        .card-divulgacao { border-left-color: #4361ee; }
-        .card-divulgacao .card-icon { color: #4361ee; }
-
-        /* Container da Planilha Moderno */
-        .spreadsheet-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: var(--card-shadow);
             padding: 2rem;
-            margin-top: 2rem;
-            display: none;
-            overflow: auto;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            width: 100%;
-            max-height: calc(100vh - 200px);
-            position: relative;
         }
 
-        .spreadsheet-container.active {
-            display: block;
-            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideUp {
-            from { 
-                opacity: 0; 
-                transform: translateY(30px) scale(0.95); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0) scale(1); 
-            }
-        }
-
-        /* Cabeçalho da Planilha Moderno */
-        .spreadsheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 2px solid var(--border);
-            position: sticky;
-            top: 0;
+        /* Filtros e Controles */
+        .controls-container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            z-index: 10;
-            padding: 1.5rem 0;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-
-        .spreadsheet-title {
-            font-size: 2rem;
-            color: var(--primary);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .spreadsheet-title i {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 0.8rem;
-            border-radius: 12px;
-        }
-
-        .spreadsheet-actions {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .pdf-btn {
-            background: var(--gradient-warning);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            box-shadow: 0 4px 15px rgba(247, 37, 133, 0.3);
-        }
-
-        .pdf-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(247, 37, 133, 0.4);
-        }
-
-        .close-btn {
-            background: var(--gradient-dark);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 1.3rem;
-            cursor: pointer;
-            color: white;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(33, 37, 41, 0.3);
-        }
-
-        .close-btn:hover {
-            transform: rotate(90deg) scale(1.1);
-            box-shadow: 0 8px 25px rgba(33, 37, 41, 0.4);
-        }
-
-        /* Tabela Moderna */
-        .spreadsheet-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
-            min-width: 2500px;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .spreadsheet-table th {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 1.2rem;
-            text-align: left;
-            border: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            position: sticky;
-            top: 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .spreadsheet-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.85rem;
-            transition: var(--transition);
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.8);
-        }
-
-        .spreadsheet-table tr:nth-child(even) td {
-            background: rgba(248, 249, 250, 0.8);
-        }
-
-        .spreadsheet-table tr:hover td {
-            background: rgba(67, 97, 238, 0.05);
-            transform: scale(1.01);
-        }
-
-        .spreadsheet-table input, .spreadsheet-table select {
-            width: 100%;
-            padding: 0.7rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.85rem;
-            transition: var(--transition);
-            background: rgba(255, 255, 255, 0.9);
-            color: var(--text);
-        }
-
-        .spreadsheet-table input:focus, .spreadsheet-table select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-            transform: scale(1.02);
-        }
-
-        /* Botões de Ação Modernos */
-        .action-buttons {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 2rem;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .save-btn {
-            background: var(--gradient-success);
-            color: white;
-        }
-
-        .save-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(76, 201, 240, 0.4);
-        }
-
-        .cancel-btn {
-            background: var(--gradient-warning);
-            color: white;
-        }
-
-        .cancel-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(247, 37, 133, 0.4);
-        }
-
-        .add-row-btn {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            cursor: pointer;
-            margin-top: 1.5rem;
-            font-weight: 600;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-        }
-
-        .add-row-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
-        }
-
-        /* Botões de Ação nas Linhas */
-        .row-actions {
-            display: flex;
-            gap: 0.7rem;
-            justify-content: center;
-            flex-wrap: nowrap;
-        }
-
-        .row-actions button {
-            padding: 0.6rem 1rem;
-            font-size: 0.8rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            min-width: 45px;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .row-actions .save-btn {
-            background: var(--success);
-            color: white;
-        }
-
-        .row-actions .edit-btn {
-            background: var(--info);
-            color: white;
-        }
-
-        .row-actions .cancel-btn {
-            background: var(--danger);
-            color: white;
-        }
-
-        .row-actions .view-btn {
-            background: var(--primary);
-            color: white;
-        }
-
-        .row-actions button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Botões Flutuantes Modernos */
-        .floating-action-buttons {
-            position: fixed;
-            bottom: 2.5rem;
-            right: 2.5rem;
-            z-index: 1000;
-        }
-
-        .fab-main {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            border: none;
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .fab-main:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 12px 35px rgba(67, 97, 238, 0.6);
-        }
-
-        .fab-menu {
-            position: absolute;
-            bottom: 85px;
-            right: 0;
-            display: none;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .fab-menu.show {
-            display: flex;
-            animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .fab-item {
-            background: var(--gradient-success);
-            color: white;
-            border: none;
-            padding: 1rem 1.5rem;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            box-shadow: 0 6px 20px rgba(76, 201, 240, 0.4);
-            transition: var(--transition);
-            white-space: nowrap;
-            transform: translateX(20px);
-            opacity: 0;
-            animation: fabItemSlide 0.3s forwards;
-        }
-
-        .fab-menu.show .fab-item:nth-child(1) { animation-delay: 0.1s; }
-        .fab-menu.show .fab-item:nth-child(2) { animation-delay: 0.2s; }
-
-        @keyframes fabItemSlide {
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .fab-item:hover {
-            transform: translateX(-5px) scale(1.05);
-            background: var(--gradient-primary);
-        }
-
-        /* Filtros Modernos */
-        .filters-container {
-            display: flex;
-            gap: 1.5rem;
+            border-radius: 20px;
+            padding: 2rem;
             margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 1.5rem;
             flex-wrap: wrap;
-            align-items: end;
+            margin-bottom: 1.5rem;
         }
 
         .filter-group {
             display: flex;
             flex-direction: column;
             gap: 0.7rem;
+            min-width: 200px;
         }
 
         .filter-group label {
@@ -744,7 +245,6 @@
             background: rgba(255, 255, 255, 0.9);
             color: var(--text);
             transition: var(--transition);
-            min-width: 180px;
         }
 
         .filter-group select:focus,
@@ -755,7 +255,461 @@
             transform: translateY(-2px);
         }
 
-        /* Footer Moderno */
+        /* Filtros de Data Específicos */
+        .date-filters {
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+            flex-wrap: wrap;
+            padding: 1.5rem;
+            background: rgba(67, 97, 238, 0.05);
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(67, 97, 238, 0.1);
+        }
+
+        .date-filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            min-width: 180px;
+        }
+
+        .date-filter-group label {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-date-buttons {
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .quick-date-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .quick-date-btn:hover,
+        .quick-date-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 120px;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        /* Grid de Cards de Coletas */
+        .coletas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .coleta-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .coleta-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+
+        .coleta-card.pendente::before { background: var(--warning); }
+        .coleta-card.andamento::before { background: var(--info); }
+        .coleta-card.concluida::before { background: var(--success); }
+        .coleta-card.cancelada::before { background: var(--danger); }
+
+        .coleta-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.3rem;
+        }
+
+        .card-id {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            background: var(--light);
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pendente { background: rgba(247, 37, 133, 0.1); color: var(--warning); border: 1px solid var(--warning); }
+        .status-andamento { background: rgba(114, 9, 183, 0.1); color: var(--info); border: 1px solid var(--info); }
+        .status-concluida { background: rgba(76, 201, 240, 0.1); color: var(--success); border: 1px solid var(--success); }
+        .status-cancelada { background: rgba(230, 57, 70, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+
+        .card-content {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.7rem;
+            font-size: 0.9rem;
+        }
+
+        .info-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: var(--text);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Barra de Progresso das Etapas */
+        .etapas-container {
+            margin: 1.5rem 0;
+        }
+
+        .etapas-title {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .etapas-progress {
+            display: flex;
+            height: 6px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .etapa-progress {
+            height: 100%;
+            transition: var(--transition);
+        }
+
+        .etapa-cs { background: var(--info); }
+        .etapa-contratacao { background: var(--primary); }
+        .etapa-gr { background: var(--success); }
+        .etapa-documentacao { background: var(--warning); }
+        .etapa-controladoria { background: #560bad; }
+        .etapa-contas-pagar { background: #480ca8; }
+        .etapa-contas-receber { background: #3f37c9; }
+        .etapa-price { background: #4361ee; }
+        .etapa-comercial { background: #4895ef; }
+
+        .etapas-labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .etapa-badge {
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: var(--light);
+            color: var(--text-light);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .etapa-badge.ativa {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .etapa-badge.concluida {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.7rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 600;
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .action-btn.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-date {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Modal de Detalhes */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--hover-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .close-modal {
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        /* Botões Flutuantes */
+        .floating-action-buttons {
+            position: fixed;
+            bottom: 2.5rem;
+            right: 2.5rem;
+            z-index: 100;
+        }
+
+        .fab-main {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab-main:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 12px 35px rgba(67, 97, 238, 0.6);
+        }
+
+        /* Footer */
         .main-footer {
             text-align: center;
             padding: 3rem 2rem;
@@ -796,7 +750,7 @@
             gap: 0.8rem;
         }
 
-        /* Notificações Modernas */
+        /* Notificações */
         .notification {
             position: fixed;
             top: 2rem;
@@ -821,39 +775,15 @@
 
         .notification.success { 
             background: linear-gradient(135deg, rgba(76, 201, 240, 0.9) 0%, rgba(72, 149, 239, 0.9) 100%);
-            border-left: 4px solid #4cc9f0;
         }
         .notification.error { 
             background: linear-gradient(135deg, rgba(230, 57, 70, 0.9) 0%, rgba(229, 9, 20, 0.9) 100%);
-            border-left: 4px solid #e63946;
         }
         .notification.info { 
             background: linear-gradient(135deg, rgba(67, 97, 238, 0.9) 0%, rgba(58, 12, 163, 0.9) 100%);
-            border-left: 4px solid #4361ee;
         }
 
-        /* Loading Moderno */
-        .loading {
-            display: inline-block;
-            width: 25px;
-            height: 25px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsividade Melhorada */
-        @media (max-width: 1200px) {
-            .spreadsheets-grid {
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            }
-        }
-
+        /* Responsividade */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -861,52 +791,37 @@
                 gap: 1rem;
             }
 
-            .header-title {
-                font-size: 1.8rem;
-            }
-
-            .spreadsheets-grid {
+            .coletas-grid {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
             }
 
-            .spreadsheet-card {
-                padding: 2rem 1.5rem;
-            }
-
-            .spreadsheet-header {
+            .filters-row {
                 flex-direction: column;
-                gap: 1.5rem;
-                text-align: center;
             }
 
-            .spreadsheet-actions {
-                justify-content: center;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .action-btn {
-                justify-content: center;
-            }
-
-            .spreadsheet-container {
-                padding: 1.5rem;
-                margin-top: 1.5rem;
-            }
-
-            .filters-container {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 1rem;
-            }
-
-            .filter-group select,
-            .filter-group input {
+            .filter-group {
                 min-width: auto;
+            }
+
+            .date-filters {
+                flex-direction: column;
+            }
+
+            .date-filter-group {
+                min-width: auto;
+            }
+
+            .stats-container {
+                justify-content: center;
+            }
+
+            .modal-content {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
             }
 
             .floating-action-buttons {
@@ -922,24 +837,9 @@
         }
 
         /* Modo somente leitura */
-        .read-only .add-row-btn,
-        .read-only .row-actions,
-        .read-only .save-btn,
-        .read-only .cancel-btn,
-        .read-only .floating-action-buttons {
+        .read-only .fab-main,
+        .read-only .action-btn {
             display: none !important;
-        }
-
-        .read-only .spreadsheet-table input,
-        .read-only .spreadsheet-table select {
-            pointer-events: none;
-            background-color: rgba(248, 249, 250, 0.9);
-            border: none;
-        }
-
-        .required-field {
-            border-color: var(--danger) !important;
-            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1) !important;
         }
     </style>
 </head>
@@ -954,9 +854,9 @@
         <div class="header-content">
             <div>
                 <h1 class="header-title">
-                    <i class="fas fa-table"></i> Sistema de Planilhas
+                    <i class="fas fa-truck-loading"></i> Sistema de Coletas
                 </h1>
-                <p class="header-subtitle">Controle completo de operações logísticas</p>
+                <p class="header-subtitle">Gestão completa de operações logísticas</p>
             </div>
             <div class="header-actions">
                 <a href="portal.html" class="btn-modern">
@@ -968,129 +868,59 @@
 
     <!-- Conteúdo Principal -->
     <div class="main-container">
-        <!-- Grid de Planilhas -->
-        <div class="spreadsheets-grid">
-            <!-- Planilha Geral -->
-            <div class="spreadsheet-card card-geral" onclick="openSpreadsheet('geral')">
-                <div class="card-icon">
-                    <i class="fas fa-chart-line"></i>
+        <!-- Controles e Filtros -->
+        <div class="controls-container">
+            <!-- Filtros de Data -->
+            <div class="date-filters">
+                <div class="date-filter-group">
+                    <label for="dataInicio"><i class="fas fa-calendar-alt"></i> Data Início</label>
+                    <input type="date" id="dataInicio" onchange="filterColetas()">
                 </div>
-                <h3 class="card-title">PLANILHA GERAL</h3>
-                <p class="card-description">Controle completo de operações logísticas</p>
-                <span class="card-badge">Principal</span>
-            </div>
-
-            <!-- Planilha Navio -->
-            <div class="spreadsheet-card card-navio" onclick="openSpreadsheet('navio')">
-                <div class="card-icon">
-                    <i class="fas fa-ship"></i>
+                <div class="date-filter-group">
+                    <label for="dataFim"><i class="fas fa-calendar-alt"></i> Data Fim</label>
+                    <input type="date" id="dataFim" onchange="filterColetas()">
                 </div>
-                <h3 class="card-title">PLANILHA NAVIO</h3>
-                <p class="card-description">Operações marítimas e portuárias</p>
-            </div>
-
-            <!-- Planilha Areia -->
-            <div class="spreadsheet-card card-areia" onclick="openSpreadsheet('areia')">
-                <div class="card-icon">
-                    <i class="fas fa-mountain"></i>
-                </div>
-                <h3 class="card-title">PLANILHA AREIA</h3>
-                <p class="card-description">Controle de materiais e mineração</p>
-            </div>
-
-            <!-- Planilha Usinas -->
-            <div class="spreadsheet-card card-usinas" onclick="openSpreadsheet('usinas')">
-                <div class="card-icon">
-                    <i class="fas fa-industry"></i>
-                </div>
-                <h3 class="card-title">PLANILHA USINAS</h3>
-                <p class="card-description">Operações industriais e produção</p>
-            </div>
-
-            <!-- Planilha Container -->
-            <div class="spreadsheet-card card-container" onclick="openSpreadsheet('container')">
-                <div class="card-icon">
-                    <i class="fas fa-box"></i>
-                </div>
-                <h3 class="card-title">PLANILHA CONTAINER</h3>
-                <p class="card-description">Gestão de contêineres e carga</p>
-            </div>
-
-            <!-- Planilha Spot -->
-            <div class="spreadsheet-card card-spot" onclick="openSpreadsheet('spot')">
-                <div class="card-icon">
-                    <i class="fas fa-bolt"></i>
-                </div>
-                <h3 class="card-title">PLANILHA SPOT</h3>
-                <p class="card-description">Operações spot e emergenciais</p>
-            </div>
-
-            <!-- Planilha Programadas -->
-            <div class="spreadsheet-card card-programadas" onclick="openSpreadsheet('programadas')">
-                <div class="card-icon">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <h3 class="card-title">PLANILHA PROGRAMADAS</h3>
-                <p class="card-description">Operações programadas e agendadas</p>
-            </div>
-
-            <!-- Planilha Filial -->
-            <div class="spreadsheet-card card-filial" onclick="openSpreadsheet('filial')">
-                <div class="card-icon">
-                    <i class="fas fa-building"></i>
-                </div>
-                <h3 class="card-title">PLANILHA FILIAL</h3>
-                <p class="card-description">Filtrar operações por filial</p>
-            </div>
-
-            <!-- Demandas de Contratação -->
-            <div class="spreadsheet-card card-demandas" onclick="openSpreadsheet('demandas')">
-                <div class="card-icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
-                <h3 class="card-title">DEMANDAS DE CONTRATAÇÃO</h3>
-                <p class="card-description">Controle de demandas e solicitações</p>
-            </div>
-
-            <!-- CS Demandas -->
-            <div class="spreadsheet-card card-cs-demandas" onclick="openCSDemandas()">
-                <div class="card-icon">
-                    <i class="fas fa-tasks"></i>
-                </div>
-                <h3 class="card-title">CS DEMANDAS</h3>
-                <p class="card-description">Gestão de demandas do Customer Success</p>
-                <span class="card-badge">Restrito</span>
-            </div>
-
-            <!-- Divulgação de Fretes -->
-            <div class="spreadsheet-card card-divulgacao" onclick="openDivulgacaoFretes()">
-                <div class="card-icon">
-                    <i class="fas fa-bullhorn"></i>
-                </div>
-                <h3 class="card-title">DIVULGAÇÃO DE FRETES</h3>
-                <p class="card-description">Divulgação de oportunidades de fretes</p>
-            </div>
-        </div>
-
-        <!-- Container das Planilhas -->
-        <div id="geral-spreadsheet" class="spreadsheet-container">
-            <div class="spreadsheet-header">
-                <h2 class="spreadsheet-title"><i class="fas fa-chart-line"></i> Planilha GERAL</h2>
-                <div class="spreadsheet-actions">
-                    <button class="pdf-btn" onclick="generatePDF('geral')">
-                        <i class="fas fa-file-pdf"></i> Gerar PDF
-                    </button>
-                    <button class="close-btn" onclick="closeSpreadsheet('geral')">
-                        <i class="fas fa-times"></i>
-                    </button>
+                <div class="date-filter-group">
+                    <label><i class="fas fa-bolt"></i> Período Rápido</label>
+                    <div class="quick-date-buttons">
+                        <button class="quick-date-btn" onclick="setQuickDate('hoje')">Hoje</button>
+                        <button class="quick-date-btn" onclick="setQuickDate('semana')">Esta Semana</button>
+                        <button class="quick-date-btn" onclick="setQuickDate('mes')">Este Mês</button>
+                        <button class="quick-date-btn" onclick="setQuickDate('trimestre')">Este Trimestre</button>
+                        <button class="quick-date-btn" onclick="clearDateFilters()">Limpar</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Filtros -->
-            <div class="filters-container">
+            <div class="filters-row">
                 <div class="filter-group">
-                    <label for="filialFilter"><i class="fas fa-filter"></i> Filial</label>
-                    <select id="filialFilter" onchange="filterTable('geral')">
+                    <label for="statusFilter"><i class="fas fa-filter"></i> Status</label>
+                    <select id="statusFilter" onchange="filterColetas()">
+                        <option value="">Todos os Status</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="andamento">Em Andamento</option>
+                        <option value="concluida">Concluída</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="etapaFilter"><i class="fas fa-layer-group"></i> Etapa</label>
+                    <select id="etapaFilter" onchange="filterColetas()">
+                        <option value="">Todas as Etapas</option>
+                        <option value="cs">CS</option>
+                        <option value="contratacao">Contratação</option>
+                        <option value="gr">GR</option>
+                        <option value="documentacao">Documentação</option>
+                        <option value="controladoria">Controladoria</option>
+                        <option value="contas-pagar">Contas a Pagar</option>
+                        <option value="contas-receber">Contas a Receber</option>
+                        <option value="price">Price</option>
+                        <option value="comercial">Comercial</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filialFilter"><i class="fas fa-building"></i> Filial</label>
+                    <select id="filialFilter" onchange="filterColetas()">
                         <option value="">Todas as Filiais</option>
                         <option value="SP">São Paulo</option>
                         <option value="RJ">Rio de Janeiro</option>
@@ -1099,160 +929,130 @@
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label for="statusFilter"><i class="fas fa-filter"></i> Status</label>
-                    <select id="statusFilter" onchange="filterTable('geral')">
-                        <option value="">Todos os Status</option>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Em Andamento">Em Andamento</option>
-                        <option value="Concluído">Concluído</option>
-                        <option value="Cancelado">Cancelado</option>
-                    </select>
-                </div>
-                <div class="filter-group">
                     <label for="searchFilter"><i class="fas fa-search"></i> Buscar</label>
-                    <input type="text" id="searchFilter" placeholder="Digite para buscar..." onkeyup="filterTable('geral')">
+                    <input type="text" id="searchFilter" placeholder="Cliente, origem, destino..." onkeyup="filterColetas()">
                 </div>
             </div>
-
-            <table class="spreadsheet-table" id="geral-table">
-                <thead>
-                    <tr>
-                        <!-- Novas colunas -->
-                        <th>Cliente</th>
-                        <th>Data Recebimento</th>
-                        <th>Origem</th>
-                        <th>UF Origem</th>
-                        <th>Destino</th>
-                        <th>UF Destino</th>
-                        <th>Km</th>
-                        <th>Veículo</th>
-                        <th>Necessidades</th>
-                        <th>Qtd Paletes</th>
-                        <th>Carregamento</th>
-                        <th>Entrega</th>
-                        <th>Tipo Operação</th>
-                        <th>R$ Km Motorista</th>
-                        <th>Custo Descarga</th>
-                        <th>Pedágio</th>
-                        <th>Frete Motorista Máx</th>
-                        <th>Veículo Design Data</th>
-                        <th>Veículo Design Hora</th>
-                        <th>Placas</th>
-                        <th>Analista Enviou</th>
-                        <th>GR Aprovada</th>
-                        <th>Data</th>
-                        <th>Hora</th>
-                        <th>Analista Aprovou</th>
-                        <th>OC Criada Data</th>
-                        <th>OC Criada Hora</th>
-                        <th>Analista Criou</th>
-                        <th>Primeiro Contato</th>
-                        <!-- Colunas existentes -->
-                        <th>ID</th>
-                        <th>Filial</th>
-                        <th>Placa</th>
-                        <th>Motorista</th>
-                        <th>Data</th>
-                        <th>Hora</th>
-                        <th>Operação</th>
-                        <th>Status</th>
-                        <th>Destino</th>
-                        <th>Origem</th>
-                        <th>Produto</th>
-                        <th>CT-e</th>
-                        <th>NF</th>
-                        <th>Valor</th>
-                        <th>Observações</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dados serão carregados via JavaScript -->
-                </tbody>
-            </table>
-
-            <button class="add-row-btn" onclick="addNewRow('geral')">
-                <i class="fas fa-plus"></i> Adicionar Nova Linha
-            </button>
-
-            <div class="action-buttons">
-                <button class="cancel-btn" onclick="closeSpreadsheet('geral')">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button class="save-btn" onclick="saveChanges('geral')">
-                    <i class="fas fa-save"></i> Salvar Alterações
-                </button>
-            </div> 
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalColetas">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-warning);">
+                    <div class="stat-number" id="pendentesCount">0</div>
+                    <div class="stat-label">Pendentes</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-success);">
+                    <div class="stat-number" id="andamentoCount">0</div>
+                    <div class="stat-label">Em Andamento</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-dark);">
+                    <div class="stat-number" id="concluidasCount">0</div>
+                    <div class="stat-label">Concluídas</div>
+                </div>
+            </div>
         </div>
 
-        <!-- Outras planilhas (estrutura similar) -->
-        <div id="demandas-spreadsheet" class="spreadsheet-container">
-            <div class="spreadsheet-header">
-                <h2 class="spreadsheet-title"><i class="fas fa-file-alt"></i> DEMANDAS DE CONTRATAÇÃO</h2>
-                <div class="spreadsheet-actions">
-                    <button class="pdf-btn" onclick="generatePDF('demandas')">
-                        <i class="fas fa-file-pdf"></i> Gerar PDF
-                    </button>
-                    <button class="close-btn" onclick="closeSpreadsheet('demandas')">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <table class="spreadsheet-table" id="demandas-table">
-                <thead>
-                    <tr>
-                        <th>Cliente</th>
-                        <th>Data Recebimento</th>
-                        <th>Origem</th>
-                        <th>UF Origem</th>
-                        <th>Destino</th>
-                        <th>UF Destino</th>
-                        <th>Km</th>
-                        <th>Veículo</th>
-                        <th>Necessidades</th>
-                        <th>Qtd Paletes</th>
-                        <th>Carregamento</th>
-                        <th>Entrega</th>
-                        <th>Tipo Operação</th>
-                        <th>R$ Km Motorista</th>
-                        <th>Custo Descarga</th>
-                        <th>Pedágio</th>
-                        <th>Frete Motorista Máx</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dados serão carregados via JavaScript -->
-                </tbody>
-            </table>
-            <button class="add-row-btn" onclick="addNewRow('demandas')">
-                <i class="fas fa-plus"></i> Adicionar Nova Linha
-            </button>
-            <div class="action-buttons">
-                <button class="cancel-btn" onclick="closeSpreadsheet('demandas')">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button class="save-btn" onclick="saveChanges('demandas')">
-                    <i class="fas fa-save"></i> Salvar Alterações
-                </button>
-            </div>
+        <!-- Grid de Coletas -->
+        <div class="coletas-grid" id="coletasGrid">
+            <!-- Cards serão gerados dinamicamente via JavaScript -->
         </div>
     </div>
 
-    <!-- Botões Flutuantes para Adicionar Coleta -->
+    <!-- Modal de Detalhes da Coleta -->
+    <div class="modal-overlay" id="coletaModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-truck-loading"></i>
+                    <span id="modalTitle">Nova Coleta</span>
+                </h2>
+                <button class="close-modal" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="coletaForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="cliente">Cliente *</label>
+                        <input type="text" id="cliente" name="cliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataRecebimento">Data Recebimento *</label>
+                        <input type="date" id="dataRecebimento" name="dataRecebimento" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="origem">Origem *</label>
+                        <input type="text" id="origem" name="origem" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ufOrigem">UF Origem</label>
+                        <input type="text" id="ufOrigem" name="ufOrigem" maxlength="2">
+                    </div>
+                    <div class="form-group">
+                        <label for="destino">Destino *</label>
+                        <input type="text" id="destino" name="destino" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ufDestino">UF Destino</label>
+                        <input type="text" id="ufDestino" name="ufDestino" maxlength="2">
+                    </div>
+                    <div class="form-group">
+                        <label for="km">KM</label>
+                        <input type="number" id="km" name="km" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="veiculo">Veículo</label>
+                        <input type="text" id="veiculo" name="veiculo">
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" name="status">
+                            <option value="pendente">Pendente</option>
+                            <option value="andamento">Em Andamento</option>
+                            <option value="concluida">Concluída</option>
+                            <option value="cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="etapaAtual">Etapa Atual</label>
+                        <select id="etapaAtual" name="etapaAtual">
+                            <option value="cs">CS</option>
+                            <option value="contratacao">Contratação</option>
+                            <option value="gr">GR</option>
+                            <option value="documentacao">Documentação</option>
+                            <option value="controladoria">Controladoria</option>
+                            <option value="contas-pagar">Contas a Pagar</option>
+                            <option value="contas-receber">Contas a Receber</option>
+                            <option value="price">Price</option>
+                            <option value="comercial">Comercial</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="observacoes">Observações</label>
+                        <textarea id="observacoes" name="observacoes" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="action-btn warning" onclick="closeModal()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="action-btn success">
+                        <i class="fas fa-save"></i> Salvar Coleta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Botão Flutuante -->
     <div class="floating-action-buttons">
-        <button class="fab-main" onclick="toggleFAB()">
+        <button class="fab-main" onclick="openNewColetaModal()">
             <i class="fas fa-plus"></i>
         </button>
-        <div class="fab-menu">
-            <button class="fab-item" onclick="addNewColeta('geral')" title="Adicionar Coleta Geral">
-                <i class="fas fa-truck-loading"></i>
-                <span>Coleta Geral</span>
-            </button>
-            <button class="fab-item" onclick="addNewColeta('demandas')" title="Adicionar Demanda">
-                <i class="fas fa-file-contract"></i>
-                <span>Nova Demanda</span>
-            </button>
-        </div>
     </div>
 
     <!-- Footer -->
@@ -1270,73 +1070,30 @@
     <div id="notification" class="notification"></div>
 
     <script>
-        // Configurações e dados
-        const SPREADSHEET_CONFIG = {
-            geral: {
-                columns: 45,
-                name: 'Planilha Geral',
-                icon: 'chart-line'
-            },
-            demandas: {
-                columns: 17,
-                name: 'Demandas de Contratação',
-                icon: 'file-alt'
-            },
-            navio: {
-                columns: 15,
-                name: 'Planilha Navio',
-                icon: 'ship'
-            },
-            areia: {
-                columns: 15,
-                name: 'Planilha Areia',
-                icon: 'mountain'
-            },
-            usinas: {
-                columns: 15,
-                name: 'Planilha Usinas',
-                icon: 'industry'
-            },
-            container: {
-                columns: 15,
-                name: 'Planilha Container',
-                icon: 'box'
-            },
-            spot: {
-                columns: 15,
-                name: 'Planilha Spot',
-                icon: 'bolt'
-            },
-            programadas: {
-                columns: 15,
-                name: 'Planilha Programadas',
-                icon: 'calendar-alt'
-            },
-            filial: {
-                columns: 15,
-                name: 'Planilha Filial',
-                icon: 'building'
-            }
-        };
+        // Dados das coletas
+        let coletasData = [];
+        let currentEditingId = null;
 
-        let currentSpreadsheet = '';
-        let spreadsheetData = {
-            geral: [],
-            navio: [],
-            areia: [],
-            usinas: [],
-            container: [],
-            spot: [],
-            programadas: [],
-            filial: [],
-            demandas: []
-        };
+        // Etapas do processo
+        const ETAPAS = [
+            { id: 'cs', nome: 'CS', ordem: 1 },
+            { id: 'contratacao', nome: 'Contratação', ordem: 2 },
+            { id: 'gr', nome: 'GR', ordem: 3 },
+            { id: 'documentacao', nome: 'Documentação', ordem: 4 },
+            { id: 'controladoria', nome: 'Controladoria', ordem: 5 },
+            { id: 'contas-pagar', nome: 'Contas a Pagar', ordem: 6 },
+            { id: 'contas-receber', nome: 'Contas a Receber', ordem: 7 },
+            { id: 'price', nome: 'Price', ordem: 8 },
+            { id: 'comercial', nome: 'Comercial', ordem: 9 }
+        ];
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('📊 Sistema de Planilhas inicializado');
+            console.log('🚚 Sistema de Coletas inicializado');
             initializeDarkMode();
-            checkUserPermissions();
+            initializeDateFilters();
+            loadColetas();
+            updateStats();
         });
 
         // Dark Mode
@@ -1365,551 +1122,421 @@
             });
         }
 
-        // Verificar permissões do usuário
-        function checkUserPermissions() {
-            try {
-                // Verificar se há uma sessão ativa
-                fetch('/api/auth/status', {
-                    credentials: 'include'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.autenticado) {
-                        // Usuário autenticado - permitir edição
-                        document.body.classList.remove('read-only');
-                        console.log('✅ Usuário autenticado - Modo edição habilitado');
-                        showNotification('Modo edição habilitado', 'success');
-                    } else {
-                        // Usuário não autenticado - modo leitura
-                        document.body.classList.add('read-only');
-                        showNotification('Apenas visualização - Faça login para editar', 'info');
-                    }
-                })
-                .catch(error => {
-                    console.log('❌ Erro ao verificar autenticação:', error);
-                    // Em caso de erro, permitir edição (modo desenvolvimento)
-                    document.body.classList.remove('read-only');
-                });
-            } catch (error) {
-                console.log('❌ Erro na verificação de permissões:', error);
-                document.body.classList.remove('read-only');
-            }
-        }
-
-        // Abrir planilha
-        function openSpreadsheet(spreadsheetName) {
-            // Fechar todas as planilhas
-            document.querySelectorAll('.spreadsheet-container').forEach(container => {
-                container.classList.remove('active');
-            });
+        // Inicializar filtros de data
+        function initializeDateFilters() {
+            const hoje = new Date();
+            const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
             
-            // Abrir a solicitada
-            const spreadsheet = document.getElementById(`${spreadsheetName}-spreadsheet`);
-            if (spreadsheet) {
-                spreadsheet.classList.add('active');
-                currentSpreadsheet = spreadsheetName;
-                
-                // Carregar dados
-                loadSpreadsheetData(spreadsheetName);
-                
-                // Rolar para a planilha
-                spreadsheet.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                
-                showNotification(`${SPREADSHEET_CONFIG[spreadsheetName]?.name || spreadsheetName} aberta`, 'success');
-            }
+            document.getElementById('dataInicio').value = formatarDataParaInput(inicioMes);
+            document.getElementById('dataFim').value = formatarDataParaInput(hoje);
         }
 
-        // Fechar planilha
-        function closeSpreadsheet(spreadsheetName) {
-            const spreadsheet = document.getElementById(`${spreadsheetName}-spreadsheet`);
-            if (spreadsheet) {
-                spreadsheet.classList.remove('active');
-                showNotification('Planilha fechada', 'info');
-            }
-        }
+        // Carregar coletas
+        function loadColetas() {
+            // Simular dados de exemplo com datas variadas
+            const hoje = new Date();
+            const datas = [
+                formatarDataParaInput(new Date(hoje.getTime() - 2 * 24 * 60 * 60 * 1000)), // 2 dias atrás
+                formatarDataParaInput(new Date(hoje.getTime() - 5 * 24 * 60 * 60 * 1000)), // 5 dias atrás
+                formatarDataParaInput(new Date(hoje.getTime() - 10 * 24 * 60 * 60 * 1000)), // 10 dias atrás
+                formatarDataParaInput(hoje) // hoje
+            ];
 
-        // Carregar dados
-        function loadSpreadsheetData(spreadsheetName) {
-            const tableBody = document.querySelector(`#${spreadsheetName}-table tbody`);
-            if (!tableBody) return;
-
-            tableBody.innerHTML = '';
-
-            // Simular dados (substituir por API real)
-            if (spreadsheetData[spreadsheetName].length === 0) {
-                // Criar dados de exemplo
-                for (let i = 0; i < 3; i++) {
-                    addNewRow(spreadsheetName, true);
+            coletasData = [
+                {
+                    id: 'COL-001',
+                    cliente: 'Cliente A Ltda',
+                    dataRecebimento: datas[0],
+                    origem: 'São Paulo - SP',
+                    destino: 'Rio de Janeiro - RJ',
+                    km: 450,
+                    veiculo: 'Bitruck',
+                    status: 'andamento',
+                    etapaAtual: 'gr',
+                    etapasConcluidas: ['cs', 'contratacao'],
+                    valor: 2500.00,
+                    observacoes: 'Coleta urgente - cliente preferencial'
+                },
+                {
+                    id: 'COL-002',
+                    cliente: 'Empresa B S/A',
+                    dataRecebimento: datas[1],
+                    origem: 'Belo Horizonte - MG',
+                    destino: 'Vitória - ES',
+                    km: 520,
+                    veiculo: 'Carreta',
+                    status: 'pendente',
+                    etapaAtual: 'contratacao',
+                    etapasConcluidas: ['cs'],
+                    valor: 3200.00,
+                    observacoes: 'Aguardando aprovação do cliente'
+                },
+                {
+                    id: 'COL-003',
+                    cliente: 'Comércio C ME',
+                    dataRecebimento: datas[2],
+                    origem: 'Curitiba - PR',
+                    destino: 'Porto Alegre - RS',
+                    km: 700,
+                    veiculo: 'Truck',
+                    status: 'concluida',
+                    etapaAtual: 'comercial',
+                    etapasConcluidas: ETAPAS.map(e => e.id),
+                    valor: 1800.00,
+                    observacoes: 'Entrega realizada com sucesso'
+                },
+                {
+                    id: 'COL-004',
+                    cliente: 'Indústria D EIRELI',
+                    dataRecebimento: datas[3],
+                    origem: 'Campinas - SP',
+                    destino: 'Santos - SP',
+                    km: 150,
+                    veiculo: 'VUC',
+                    status: 'andamento',
+                    etapaAtual: 'documentacao',
+                    etapasConcluidas: ['cs', 'contratacao', 'gr'],
+                    valor: 1200.00,
+                    observacoes: 'Coleta local - prioridade média'
                 }
-            } else {
-                // Carregar dados existentes
-                spreadsheetData[spreadsheetName].forEach((row, index) => {
-                    addRowToTable(spreadsheetName, row, index);
-                });
-            }
+            ];
+
+            renderColetas();
         }
 
-        // Adicionar nova linha
-        function addNewRow(spreadsheetName, initialLoad = false) {
-            const tableBody = document.querySelector(`#${spreadsheetName}-table tbody`);
-            if (!tableBody) return;
+        // Renderizar cards de coletas
+        function renderColetas(filteredData = null) {
+            const grid = document.getElementById('coletasGrid');
+            const dataToRender = filteredData || coletasData;
 
-            const newRow = document.createElement('tr');
-            const rowData = generateRowData(spreadsheetName);
-            const rowIndex = spreadsheetData[spreadsheetName].length;
+            grid.innerHTML = '';
 
-            newRow.innerHTML = generateRowHTML(spreadsheetName, rowData, rowIndex);
-            tableBody.appendChild(newRow);
-
-            if (!initialLoad) {
-                spreadsheetData[spreadsheetName].push(rowData);
-                showNotification('Nova linha adicionada', 'success');
-            }
-        }
-
-        // Adicionar Nova Coleta
-        function addNewColeta(spreadsheetName = 'geral') {
-            if (document.body.classList.contains('read-only')) {
-                showNotification('Você não tem permissão para adicionar coletas', 'error');
+            if (dataToRender.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-light);">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <h3>Nenhuma coleta encontrada</h3>
+                        <p>Tente ajustar os filtros para ver mais resultados</p>
+                    </div>
+                `;
                 return;
             }
 
-            // Abrir a planilha geral se não estiver aberta
-            if (currentSpreadsheet !== spreadsheetName) {
-                openSpreadsheet(spreadsheetName);
-            }
+            dataToRender.forEach(coleta => {
+                const card = createColetaCard(coleta);
+                grid.appendChild(card);
+            });
 
-            // Adicionar nova linha
-            addNewRow(spreadsheetName);
+            updateStats(dataToRender);
+        }
+
+        // Criar card de coleta
+        function createColetaCard(coleta) {
+            const card = document.createElement('div');
+            card.className = `coleta-card ${coleta.status}`;
+            card.onclick = () => openEditColetaModal(coleta.id);
+
+            const progresso = calcularProgressoEtapas(coleta);
             
-            showNotification('Nova coleta adicionada! Preencha os dados.', 'success');
-        }
+            card.innerHTML = `
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">${coleta.cliente}</h3>
+                        <div class="card-id">${coleta.id}</div>
+                    </div>
+                    <div class="status-badge status-${coleta.status}">
+                        ${getStatusText(coleta.status)}
+                    </div>
+                </div>
 
-        // Gerar dados da linha
-        function generateRowData(spreadsheetName) {
-            const baseData = {
-                id: Math.floor(Math.random() * 1000) + 1,
-                filial: 'SP',
-                placa: `ABC${Math.floor(Math.random() * 9000) + 1000}`,
-                motorista: 'Motorista Exemplo',
-                data: new Date().toISOString().split('T')[0],
-                hora: '08:00',
-                operacao: 'Carregamento',
-                status: 'Pendente',
-                destino: 'Destino Exemplo',
-                origem: 'Origem Exemplo',
-                produto: 'Produto Exemplo',
-                cte: `CTE${Math.floor(Math.random() * 10000)}`,
-                nf: `NF${Math.floor(Math.random() * 10000)}`,
-                valor: (Math.random() * 1000).toFixed(2),
-                observacoes: 'Observações exemplo'
-            };
+                <div class="card-content">
+                    <div class="info-row">
+                        <span class="info-label">Origem → Destino</span>
+                        <span class="info-value">${coleta.origem} → ${coleta.destino}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">KM / Veículo</span>
+                        <span class="info-value">${coleta.km}km • ${coleta.veiculo}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Data Recebimento</span>
+                        <span class="info-value">${formatarData(coleta.dataRecebimento)}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Valor</span>
+                        <span class="info-value">R$ ${coleta.valor?.toFixed(2) || '0,00'}</span>
+                    </div>
+                </div>
 
-            if (spreadsheetName === 'geral') {
-                return {
-                    ...baseData,
-                    cliente: 'Cliente Exemplo',
-                    dataRecebimentoDemanda: new Date().toISOString().split('T')[0],
-                    origem: 'Origem Exemplo',
-                    ufOrigem: 'SP',
-                    destino: 'Destino Exemplo',
-                    ufDestino: 'RJ',
-                    km: Math.floor(Math.random() * 1000),
-                    veiculo: 'Veículo Exemplo',
-                    necessidades: 'Necessidades exemplo',
-                    qtdPaletes: Math.floor(Math.random() * 10),
-                    carregamento: new Date().toISOString().split('T')[0],
-                    entrega: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-                    tipoOperacao: 'Operação Exemplo',
-                    kmMotorista: (Math.random() * 5).toFixed(2),
-                    custoDescarga: (Math.random() * 100).toFixed(2),
-                    pedagio: (Math.random() * 50).toFixed(2),
-                    freteMotoristaMax: (Math.random() * 2000).toFixed(2),
-                    veiculoDesignData: new Date().toISOString().split('T')[0],
-                    veiculoDesignHora: '09:00',
-                    placas: 'ABC1234',
-                    analistaEnviou: 'Analista Exemplo',
-                    grAprovada: 'Sim',
-                    analistaAprovou: 'Analista Exemplo',
-                    ocCriadaData: new Date().toISOString().split('T')[0],
-                    ocCriadaHorario: '10:00',
-                    analistaCriou: 'Analista Exemplo',
-                    primeiroContato: 'Contato exemplo'
-                };
-            }
+                <div class="etapas-container">
+                    <div class="etapas-title">
+                        <i class="fas fa-project-diagram"></i> Etapas do Processo
+                    </div>
+                    <div class="etapas-progress">
+                        ${ETAPAS.map(etapa => `
+                            <div class="etapa-progress etapa-${etapa.id}" 
+                                 style="width: ${100/ETAPAS.length}%"
+                                 title="${etapa.nome}">
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="etapas-labels">
+                        ${ETAPAS.map(etapa => {
+                            const isConcluida = coleta.etapasConcluidas.includes(etapa.id);
+                            const isAtiva = coleta.etapaAtual === etapa.id;
+                            const classe = isConcluida ? 'concluida' : (isAtiva ? 'ativa' : '');
+                            return `<span class="etapa-badge ${classe}">${etapa.nome}</span>`;
+                        }).join('')}
+                    </div>
+                </div>
 
-            return baseData;
-        }
-
-        // Gerar HTML da linha
-        function generateRowHTML(spreadsheetName, rowData, rowIndex) {
-            let html = '';
-
-            if (spreadsheetName === 'geral') {
-                // Novas colunas
-                html += `
-                    <td><input type="text" value="${rowData.cliente || ''}" data-field="cliente"></td>
-                    <td><input type="date" value="${rowData.dataRecebimentoDemanda || ''}" data-field="dataRecebimentoDemanda"></td>
-                    <td><input type="text" value="${rowData.origem || ''}" data-field="origem"></td>
-                    <td><input type="text" value="${rowData.ufOrigem || ''}" data-field="ufOrigem"></td>
-                    <td><input type="text" value="${rowData.destino || ''}" data-field="destino"></td>
-                    <td><input type="text" value="${rowData.ufDestino || ''}" data-field="ufDestino"></td>
-                    <td><input type="number" value="${rowData.km || ''}" data-field="km"></td>
-                    <td><input type="text" value="${rowData.veiculo || ''}" data-field="veiculo"></td>
-                    <td><input type="text" value="${rowData.necessidades || ''}" data-field="necessidades"></td>
-                    <td><input type="number" value="${rowData.qtdPaletes || ''}" data-field="qtdPaletes"></td>
-                    <td><input type="date" value="${rowData.carregamento || ''}" data-field="carregamento"></td>
-                    <td><input type="date" value="${rowData.entrega || ''}" data-field="entrega"></td>
-                    <td><input type="text" value="${rowData.tipoOperacao || ''}" data-field="tipoOperacao"></td>
-                    <td><input type="number" step="0.01" value="${rowData.kmMotorista || ''}" data-field="kmMotorista"></td>
-                    <td><input type="number" step="0.01" value="${rowData.custoDescarga || ''}" data-field="custoDescarga"></td>
-                    <td><input type="number" step="0.01" value="${rowData.pedagio || ''}" data-field="pedagio"></td>
-                    <td><input type="number" step="0.01" value="${rowData.freteMotoristaMax || ''}" data-field="freteMotoristaMax"></td>
-                    <td><input type="date" value="${rowData.veiculoDesignData || ''}" data-field="veiculoDesignData"></td>
-                    <td><input type="time" value="${rowData.veiculoDesignHora || ''}" data-field="veiculoDesignHora"></td>
-                    <td><input type="text" value="${rowData.placas || ''}" data-field="placas"></td>
-                    <td><input type="text" value="${rowData.analistaEnviou || ''}" data-field="analistaEnviou"></td>
-                    <td><input type="text" value="${rowData.grAprovada || ''}" data-field="grAprovada"></td>
-                    <td><input type="date" value="${rowData.data || ''}" data-field="data"></td>
-                    <td><input type="time" value="${rowData.hora || ''}" data-field="hora"></td>
-                    <td><input type="text" value="${rowData.analistaAprovou || ''}" data-field="analistaAprovou"></td>
-                    <td><input type="date" value="${rowData.ocCriadaData || ''}" data-field="ocCriadaData"></td>
-                    <td><input type="time" value="${rowData.ocCriadaHorario || ''}" data-field="ocCriadaHorario"></td>
-                    <td><input type="text" value="${rowData.analistaCriou || ''}" data-field="analistaCriou"></td>
-                    <td><input type="text" value="${rowData.primeiroContato || ''}" data-field="primeiroContato"></td>
-                `;
-            }
-
-            // Colunas comuns
-            html += `
-                <td><input type="number" value="${rowData.id || ''}" data-field="id" readonly></td>
-                <td>
-                    <select data-field="filial">
-                        <option value="SP" ${rowData.filial === 'SP' ? 'selected' : ''}>SP</option>
-                        <option value="RJ" ${rowData.filial === 'RJ' ? 'selected' : ''}>RJ</option>
-                        <option value="MG" ${rowData.filial === 'MG' ? 'selected' : ''}>MG</option>
-                        <option value="ES" ${rowData.filial === 'ES' ? 'selected' : ''}>ES</option>
-                    </select>
-                </td>
-                <td><input type="text" value="${rowData.placa || ''}" data-field="placa"></td>
-                <td><input type="text" value="${rowData.motorista || ''}" data-field="motorista"></td>
-                <td><input type="date" value="${rowData.data || ''}" data-field="data"></td>
-                <td><input type="time" value="${rowData.hora || ''}" data-field="hora"></td>
-                <td>
-                    <select data-field="operacao">
-                        <option value="Carregamento" ${rowData.operacao === 'Carregamento' ? 'selected' : ''}>Carregamento</option>
-                        <option value="Descarga" ${rowData.operacao === 'Descarga' ? 'selected' : ''}>Descarga</option>
-                        <option value="Entrega" ${rowData.operacao === 'Entrega' ? 'selected' : ''}>Entrega</option>
-                        <option value="Outro" ${rowData.operacao === 'Outro' ? 'selected' : ''}>Outro</option>
-                    </select>
-                </td>
-                <td>
-                    <select data-field="status">
-                        <option value="Pendente" ${rowData.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
-                        <option value="Em Andamento" ${rowData.status === 'Em Andamento' ? 'selected' : ''}>Em Andamento</option>
-                        <option value="Concluído" ${rowData.status === 'Concluído' ? 'selected' : ''}>Concluído</option>
-                        <option value="Cancelado" ${rowData.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
-                    </select>
-                </td>
-                <td><input type="text" value="${rowData.destino || ''}" data-field="destino"></td>
-                <td><input type="text" value="${rowData.origem || ''}" data-field="origem"></td>
-                <td><input type="text" value="${rowData.produto || ''}" data-field="produto"></td>
-                <td><input type="text" value="${rowData.cte || ''}" data-field="cte"></td>
-                <td><input type="text" value="${rowData.nf || ''}" data-field="nf"></td>
-                <td><input type="number" step="0.01" value="${rowData.valor || ''}" data-field="valor"></td>
-                <td><input type="text" value="${rowData.observacoes || ''}" data-field="observacoes"></td>
+                <div class="card-footer">
+                    <div class="card-actions">
+                        <button class="action-btn primary" onclick="event.stopPropagation(); avancarEtapa('${coleta.id}')">
+                            <i class="fas fa-arrow-right"></i> Avançar
+                        </button>
+                        <button class="action-btn warning" onclick="event.stopPropagation(); openEditColetaModal('${coleta.id}')">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                    </div>
+                    <div class="card-date">
+                        Recebida em ${formatarData(coleta.dataRecebimento)}
+                    </div>
+                </div>
             `;
 
-            // Ações (se não for modo leitura)
-            if (!document.body.classList.contains('read-only')) {
-                html += `
-                    <td class="row-actions">
-                        <button class="save-btn" onclick="saveRow(this, ${rowIndex})" title="Salvar">
-                            <i class="fas fa-save"></i>
-                        </button>
-                        <button class="edit-btn" onclick="editColeta(this)" title="Editar Coleta">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="cancel-btn" onclick="deleteColeta(this)" title="Excluir Coleta">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
+            // Atualizar cores da barra de progresso
+            setTimeout(() => {
+                ETAPAS.forEach((etapa, index) => {
+                    const progressBar = card.querySelector(`.etapa-${etapa.id}`);
+                    if (coleta.etapasConcluidas.includes(etapa.id)) {
+                        progressBar.style.opacity = '1';
+                    } else if (coleta.etapaAtual === etapa.id) {
+                        progressBar.style.opacity = '0.7';
+                    } else {
+                        progressBar.style.opacity = '0.3';
+                    }
+                });
+            }, 100);
+
+            return card;
+        }
+
+        // Calcular progresso das etapas
+        function calcularProgressoEtapas(coleta) {
+            const etapaAtualIndex = ETAPAS.findIndex(e => e.id === coleta.etapaAtual);
+            const etapasConcluidasCount = coleta.etapasConcluidas.length;
+            const totalEtapas = ETAPAS.length;
+            
+            return {
+                concluidas: etapasConcluidasCount,
+                total: totalEtapas,
+                porcentagem: (etapasConcluidasCount / totalEtapas) * 100,
+                etapaAtual: ETAPAS[etapaAtualIndex]?.nome || 'Não definida'
+            };
+        }
+
+        // Abrir modal para nova coleta
+        function openNewColetaModal() {
+            currentEditingId = null;
+            document.getElementById('modalTitle').textContent = 'Nova Coleta';
+            document.getElementById('coletaForm').reset();
+            document.getElementById('dataRecebimento').valueAsDate = new Date();
+            document.getElementById('status').value = 'pendente';
+            document.getElementById('etapaAtual').value = 'cs';
+            
+            document.getElementById('coletaModal').classList.add('active');
+        }
+
+        // Abrir modal para editar coleta
+        function openEditColetaModal(coletaId) {
+            const coleta = coletasData.find(c => c.id === coletaId);
+            if (!coleta) return;
+
+            currentEditingId = coletaId;
+            document.getElementById('modalTitle').textContent = `Editar Coleta - ${coleta.id}`;
+            
+            // Preencher formulário
+            Object.keys(coleta).forEach(key => {
+                const input = document.getElementById(key);
+                if (input) input.value = coleta[key];
+            });
+
+            document.getElementById('coletaModal').classList.add('active');
+        }
+
+        // Fechar modal
+        function closeModal() {
+            document.getElementById('coletaModal').classList.remove('active');
+            currentEditingId = null;
+        }
+
+        // Salvar coleta
+        document.getElementById('coletaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const coletaData = Object.fromEntries(formData);
+            
+            // Processar dados
+            coletaData.km = parseFloat(coletaData.km) || 0;
+            coletaData.etapasConcluidas = coletaData.etapasConcluidas || ['cs'];
+            
+            if (currentEditingId) {
+                // Editar coleta existente
+                const index = coletasData.findIndex(c => c.id === currentEditingId);
+                coletasData[index] = { ...coletasData[index], ...coletaData };
+                showNotification('Coleta atualizada com sucesso!', 'success');
             } else {
-                html += `
-                    <td class="row-actions">
-                        <button class="view-btn" onclick="viewColeta(this)" title="Visualizar Coleta">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </td>
-                `;
+                // Nova coleta
+                const novaColeta = {
+                    id: 'COL-' + (coletasData.length + 1).toString().padStart(3, '0'),
+                    ...coletaData,
+                    etapasConcluidas: ['cs'],
+                    valor: coletaData.valor ? parseFloat(coletaData.valor) : 0
+                };
+                coletasData.unshift(novaColeta);
+                showNotification('Nova coleta criada com sucesso!', 'success');
             }
-
-            return html;
-        }
-
-        // Adicionar linha à tabela
-        function addRowToTable(spreadsheetName, rowData, rowIndex) {
-            const tableBody = document.querySelector(`#${spreadsheetName}-table tbody`);
-            if (!tableBody) return;
-
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = generateRowHTML(spreadsheetName, rowData, rowIndex);
-            tableBody.appendChild(newRow);
-        }
-
-        // Salvar linha
-        function saveRow(button, rowIndex) {
-            const row = button.closest('tr');
-            const inputs = row.querySelectorAll('input, select');
-            const rowData = {};
-
-            inputs.forEach(input => {
-                const field = input.getAttribute('data-field');
-                if (field) {
-                    rowData[field] = input.value;
-                }
-            });
-
-            spreadsheetData[currentSpreadsheet][rowIndex] = rowData;
-            showNotification('Linha salva com sucesso!', 'success');
-        }
-
-        // Editar Coleta
-        function editColeta(rowElement) {
-            if (document.body.classList.contains('read-only')) {
-                showNotification('Você não tem permissão para editar coletas', 'error');
-                return;
-            }
-
-            const row = rowElement.closest('tr');
-            const inputs = row.querySelectorAll('input, select');
             
-            // Habilitar edição
-            inputs.forEach(input => {
-                input.removeAttribute('readonly');
-                input.style.backgroundColor = '#fff';
-                input.style.border = '2px solid #4361ee';
-            });
-
-            // Mostrar botões de salvar/cancelar
-            const actionCell = row.querySelector('.row-actions');
-            if (actionCell) {
-                const rowIndex = Array.from(row.parentNode.children).indexOf(row);
-                actionCell.innerHTML = `
-                    <button class="save-btn" onclick="saveColeta(this)">
-                        <i class="fas fa-save"></i> Salvar
-                    </button>
-                    <button class="cancel-btn" onclick="cancelEdit(this)">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
-                `;
-            }
-
-            showNotification('Modo edição ativado para esta coleta', 'info');
-        }
-
-        // Salvar Coleta Editada
-        function saveColeta(button) {
-            const row = button.closest('tr');
-            const rowIndex = Array.from(row.parentNode.children).indexOf(row);
-            
-            saveRow(button, rowIndex);
-            
-            // Restaurar estilo normal
-            const inputs = row.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                input.style.backgroundColor = '';
-                input.style.border = '';
-            });
-
-            // Restaurar botões normais
-            const actionCell = row.querySelector('.row-actions');
-            if (actionCell) {
-                actionCell.innerHTML = `
-                    <button class="save-btn" onclick="saveRow(this, ${rowIndex})" title="Salvar">
-                        <i class="fas fa-save"></i>
-                    </button>
-                    <button class="edit-btn" onclick="editColeta(this)" title="Editar Coleta">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="cancel-btn" onclick="deleteColeta(this)" title="Excluir Coleta">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-            }
-        }
-
-        // Cancelar Edição
-        function cancelEdit(button) {
-            const row = button.closest('tr');
-            const rowIndex = Array.from(row.parentNode.children).indexOf(row);
-            
-            // Restaurar dados originais
-            const originalData = spreadsheetData[currentSpreadsheet][rowIndex];
-            const inputs = row.querySelectorAll('input, select');
-            
-            inputs.forEach(input => {
-                const field = input.getAttribute('data-field');
-                if (field && originalData[field]) {
-                    input.value = originalData[field];
-                }
-                input.style.backgroundColor = '';
-                input.style.border = '';
-            });
-
-            // Restaurar botões normais
-            const actionCell = row.querySelector('.row-actions');
-            if (actionCell) {
-                actionCell.innerHTML = `
-                    <button class="save-btn" onclick="saveRow(this, ${rowIndex})" title="Salvar">
-                        <i class="fas fa-save"></i>
-                    </button>
-                    <button class="edit-btn" onclick="editColeta(this)" title="Editar Coleta">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="cancel-btn" onclick="deleteColeta(this)" title="Excluir Coleta">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-            }
-
-            showNotification('Edição cancelada', 'info');
-        }
-
-        // Excluir Coleta
-        function deleteColeta(rowElement) {
-            if (document.body.classList.contains('read-only')) {
-                showNotification('Você não tem permissão para excluir coletas', 'error');
-                return;
-            }
-
-            const row = rowElement.closest('tr');
-            const rowIndex = Array.from(row.parentNode.children).indexOf(row);
-            
-            if (confirm('Tem certeza que deseja excluir esta coleta?')) {
-                spreadsheetData[currentSpreadsheet].splice(rowIndex, 1);
-                row.remove();
-                showNotification('Coleta excluída com sucesso!', 'success');
-            }
-        }
-
-        // Deletar linha
-        function deleteRow(button, rowIndex) {
-            if (confirm('Tem certeza que deseja excluir esta linha?')) {
-                spreadsheetData[currentSpreadsheet].splice(rowIndex, 1);
-                button.closest('tr').remove();
-                showNotification('Linha excluída com sucesso!', 'success');
-            }
-        }
-
-        // Visualizar Coleta (modo leitura)
-        function viewColeta(button) {
-            const row = button.closest('tr');
-            const rowData = {};
-            const inputs = row.querySelectorAll('input, select');
-            
-            inputs.forEach(input => {
-                const field = input.getAttribute('data-field');
-                if (field) {
-                    rowData[field] = input.value;
-                }
-            });
-            
-            // Mostrar detalhes em um modal ou alerta
-            const details = Object.entries(rowData)
-                .map(([key, value]) => `${key}: ${value}`)
-                .join('\n');
-            
-            alert(`Detalhes da Coleta:\n\n${details}`);
-        }
-
-        // Salvar alterações
-        function saveChanges(spreadsheetName) {
-            // Simular salvamento (substituir por API real)
-            setTimeout(() => {
-                showNotification('Alterações salvas com sucesso!', 'success');
-                console.log('Dados salvos:', spreadsheetData[spreadsheetName]);
-            }, 1000);
-        }
-
-        // Gerar PDF
-        function generatePDF(spreadsheetName) {
-            showNotification('Gerando PDF...', 'info');
-            // Simular geração de PDF
-            setTimeout(() => {
-                showNotification('PDF gerado com sucesso!', 'success');
-            }, 2000);
-        }
-
-        // Filtrar tabela
-        function filterTable(spreadsheetName) {
-            const filialFilter = document.getElementById('filialFilter')?.value || '';
-            const statusFilter = document.getElementById('statusFilter')?.value || '';
-            const searchFilter = document.getElementById('searchFilter')?.value.toLowerCase() || '';
-
-            const rows = document.querySelectorAll(`#${spreadsheetName}-table tbody tr`);
-            
-            rows.forEach(row => {
-                let showRow = true;
-                const cells = row.querySelectorAll('td');
-                
-                // Filtrar por filial
-                if (filialFilter) {
-                    const filialCell = Array.from(cells).find(cell => {
-                        const select = cell.querySelector('select[data-field="filial"]');
-                        return select && select.value === filialFilter;
-                    });
-                    if (!filialCell) showRow = false;
-                }
-                
-                // Filtrar por status
-                if (statusFilter) {
-                    const statusCell = Array.from(cells).find(cell => {
-                        const select = cell.querySelector('select[data-field="status"]');
-                        return select && select.value === statusFilter;
-                    });
-                    if (!statusCell) showRow = false;
-                }
-                
-                // Buscar texto
-                if (searchFilter) {
-                    const rowText = row.textContent.toLowerCase();
-                    if (!rowText.includes(searchFilter)) showRow = false;
-                }
-                
-                row.style.display = showRow ? '' : 'none';
-            });
-        }
-
-        // Alternar menu flutuante
-        function toggleFAB() {
-            const fabMenu = document.querySelector('.fab-menu');
-            fabMenu.classList.toggle('show');
-        }
-
-        // Fechar menu flutuante ao clicar fora
-        document.addEventListener('click', function(event) {
-            const fabButtons = document.querySelector('.floating-action-buttons');
-            const fabMenu = document.querySelector('.fab-menu');
-            
-            if (fabMenu.classList.contains('show') && !fabButtons.contains(event.target)) {
-                fabMenu.classList.remove('show');
-            }
+            renderColetas();
+            closeModal();
         });
 
-        // Funções específicas
-        function openCSDemandas() {
-            showNotification('CS Demandas - Acesso restrito para usuários autorizados', 'info');
-            // Implementar lógica específica para CS Demandas
+        // Avançar etapa
+        function avancarEtapa(coletaId) {
+            const coleta = coletasData.find(c => c.id === coletaId);
+            if (!coleta) return;
+
+            const etapaAtualIndex = ETAPAS.findIndex(e => e.id === coleta.etapaAtual);
+            if (etapaAtualIndex < ETAPAS.length - 1) {
+                // Marcar etapa atual como concluída
+                if (!coleta.etapasConcluidas.includes(coleta.etapaAtual)) {
+                    coleta.etapasConcluidas.push(coleta.etapaAtual);
+                }
+                
+                // Avançar para próxima etapa
+                coleta.etapaAtual = ETAPAS[etapaAtualIndex + 1].id;
+                
+                // Se é a última etapa, marcar como concluída
+                if (etapaAtualIndex + 1 === ETAPAS.length - 1) {
+                    coleta.status = 'concluida';
+                    coleta.etapasConcluidas.push(coleta.etapaAtual);
+                } else {
+                    coleta.status = 'andamento';
+                }
+                
+                renderColetas();
+                showNotification(`Etapa avançada para ${ETAPAS[etapaAtualIndex + 1].nome}`, 'success');
+            }
         }
 
-        function openDivulgacaoFretes() {
-            showNotification('Divulgação de Fretes - Em desenvolvimento', 'info');
-            // Implementar lógica específica para Divulgação de Fretes
+        // Filtrar coletas
+        function filterColetas() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const etapaFilter = document.getElementById('etapaFilter').value;
+            const filialFilter = document.getElementById('filialFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+            const dataInicio = document.getElementById('dataInicio').value;
+            const dataFim = document.getElementById('dataFim').value;
+
+            const filtered = coletasData.filter(coleta => {
+                // Filtro por status
+                if (statusFilter && coleta.status !== statusFilter) return false;
+                
+                // Filtro por etapa
+                if (etapaFilter && coleta.etapaAtual !== etapaFilter) return false;
+                
+                // Filtro por filial (simplificado - poderia ser por UF de origem)
+                if (filialFilter && !coleta.origem.includes(filialFilter)) return false;
+                
+                // Filtro por data
+                if (dataInicio && coleta.dataRecebimento < dataInicio) return false;
+                if (dataFim && coleta.dataRecebimento > dataFim) return false;
+                
+                // Filtro por busca
+                if (searchFilter) {
+                    const searchableText = `${coleta.cliente} ${coleta.origem} ${coleta.destino} ${coleta.id}`.toLowerCase();
+                    if (!searchableText.includes(searchFilter)) return false;
+                }
+                
+                return true;
+            });
+
+            renderColetas(filtered);
         }
 
-        // Notificações
+        // Definir período rápido
+        function setQuickDate(periodo) {
+            const hoje = new Date();
+            let dataInicio, dataFim;
+
+            switch(periodo) {
+                case 'hoje':
+                    dataInicio = hoje;
+                    dataFim = hoje;
+                    break;
+                case 'semana':
+                    dataInicio = new Date(hoje.getTime() - 6 * 24 * 60 * 60 * 1000); // 7 dias atrás
+                    dataFim = hoje;
+                    break;
+                case 'mes':
+                    dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                    dataFim = hoje;
+                    break;
+                case 'trimestre':
+                    const trimestreAtual = Math.floor(hoje.getMonth() / 3);
+                    dataInicio = new Date(hoje.getFullYear(), trimestreAtual * 3, 1);
+                    dataFim = hoje;
+                    break;
+            }
+
+            document.getElementById('dataInicio').value = formatarDataParaInput(dataInicio);
+            document.getElementById('dataFim').value = formatarDataParaInput(dataFim);
+            
+            // Ativar botão selecionado
+            document.querySelectorAll('.quick-date-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            filterColetas();
+        }
+
+        // Limpar filtros de data
+        function clearDateFilters() {
+            document.getElementById('dataInicio').value = '';
+            document.getElementById('dataFim').value = '';
+            document.querySelectorAll('.quick-date-btn').forEach(btn => btn.classList.remove('active'));
+            filterColetas();
+        }
+
+        // Atualizar estatísticas
+        function updateStats(data = coletasData) {
+            document.getElementById('totalColetas').textContent = data.length;
+            document.getElementById('pendentesCount').textContent = data.filter(c => c.status === 'pendente').length;
+            document.getElementById('andamentoCount').textContent = data.filter(c => c.status === 'andamento').length;
+            document.getElementById('concluidasCount').textContent = data.filter(c => c.status === 'concluida').length;
+        }
+
+        // Funções utilitárias
+        function getStatusText(status) {
+            const statusMap = {
+                'pendente': 'Pendente',
+                'andamento': 'Em Andamento',
+                'concluida': 'Concluída',
+                'cancelada': 'Cancelada'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatarData(dataString) {
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        function formatarDataParaInput(data) {
+            return data.toISOString().split('T')[0];
+        }
+
         function showNotification(message, type = 'info') {
             const notification = document.getElementById('notification');
             notification.textContent = message;
@@ -1920,30 +1547,12 @@
             }, 4000);
         }
 
-        // Exportar dados
-        function exportToCSV(spreadsheetName) {
-            const data = spreadsheetData[spreadsheetName];
-            if (!data.length) {
-                showNotification('Nenhum dado para exportar', 'warning');
-                return;
+        // Fechar modal ao clicar fora
+        document.getElementById('coletaModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
             }
-
-            const headers = Object.keys(data[0]);
-            const csvContent = [
-                headers.join(','),
-                ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
-            ].join('\n');
-
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${spreadsheetName}-${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            showNotification('Dados exportados para CSV', 'success');
-        }
+        });
     </script>
 </body>
 </html>
