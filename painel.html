@@ -811,9 +811,9 @@ async function iniciarDisparo() {
     progBar.style.width = progress + '%';
     progressText.textContent = `${progress}%`;
     
-    // Aplicar delay aleatório entre mensagens (30s a 2min) - exceto na última
+    // Aplicar delay aleatório entre mensagens (30s a 60s) - exceto na última
     if (envioAtivo && completed < contacts.length) {
-      const delaySeconds = Math.floor(Math.random() * (120 - 30 + 1)) + 30;
+      const delaySeconds = Math.floor(Math.random() * (60 - 30 + 1)) + 30;
       
       statusDiv.innerHTML = `
         <div class="text-center">
