@@ -91,7 +91,7 @@ function getEvolutionConfigByUser(usuario) {
       instanceName: process.env.USINA_INSTANCE_NAME,
       webhookUrl: process.env.USINA_WEBHOOK_URL
     },
-    'USINA': {
+    'DISP3': {
       apiKey: process.env.DISP3_API_KEY,
       instanceName: process.env.DISP3_INSTANCE_NAME,
       webhookUrl: process.env.DISP3_WEBHOOK_URL
