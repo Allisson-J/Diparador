@@ -907,6 +907,8 @@
                     <label for="etapaFilter"><i class="fas fa-layer-group"></i> Etapa</label>
                     <select id="etapaFilter" onchange="filterColetas()">
                         <option value="">Todas as Etapas</option>
+                        <option value="comercial">Comercial</option>
+                        <option value="price">Price</option>
                         <option value="cs">CS</option>
                         <option value="contratacao">Contratação</option>
                         <option value="gr">GR</option>
@@ -914,8 +916,6 @@
                         <option value="controladoria">Controladoria</option>
                         <option value="contas-pagar">Contas a Pagar</option>
                         <option value="contas-receber">Contas a Receber</option>
-                        <option value="price">Price</option>
-                        <option value="comercial">Comercial</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -1019,6 +1019,8 @@
                     <div class="form-group">
                         <label for="etapaAtual">Etapa Atual</label>
                         <select id="etapaAtual" name="etapaAtual">
+                            <option value="comercial">Comercial</option>
+                            <option value="price">Price</option>
                             <option value="cs">CS</option>
                             <option value="contratacao">Contratação</option>
                             <option value="gr">GR</option>
@@ -1026,8 +1028,6 @@
                             <option value="controladoria">Controladoria</option>
                             <option value="contas-pagar">Contas a Pagar</option>
                             <option value="contas-receber">Contas a Receber</option>
-                            <option value="price">Price</option>
-                            <option value="comercial">Comercial</option>
                         </select>
                     </div>
                     <div class="form-group full-width">
@@ -1076,15 +1076,17 @@
 
         // Etapas do processo
         const ETAPAS = [
-            { id: 'cs', nome: 'CS', ordem: 1 },
-            { id: 'contratacao', nome: 'Contratação', ordem: 2 },
-            { id: 'gr', nome: 'GR', ordem: 3 },
-            { id: 'documentacao', nome: 'Documentação', ordem: 4 },
-            { id: 'controladoria', nome: 'Controladoria', ordem: 5 },
-            { id: 'contas-pagar', nome: 'Contas a Pagar', ordem: 6 },
-            { id: 'contas-receber', nome: 'Contas a Receber', ordem: 7 },
-            { id: 'price', nome: 'Price', ordem: 8 },
-            { id: 'comercial', nome: 'Comercial', ordem: 9 }
+            
+            { id: 'comercial', nome: 'Comercial', ordem: 1 },
+            { id: 'price', nome: 'Price', ordem: 2 },
+            { id: 'cs', nome: 'CS', ordem: 3 },
+            { id: 'contratacao', nome: 'Contratação', ordem: 4 },
+            { id: 'gr', nome: 'GR', ordem: 5 },
+            { id: 'documentacao', nome: 'Documentação', ordem: 6 },
+            { id: 'controladoria', nome: 'Controladoria', ordem: 7 },
+            { id: 'contas-pagar', nome: 'Contas a Pagar', ordem: 8 },
+            { id: 'contas-receber', nome: 'Contas a Receber', ordem: 9 }
+            
         ];
 
         // Inicialização
@@ -1145,6 +1147,7 @@
             coletasData = [
                 {
                     id: 'COL-001',
+                    Filial: 'JBO',
                     cliente: 'Cliente A Ltda',
                     dataRecebimento: datas[0],
                     origem: 'São Paulo - SP',
@@ -1159,6 +1162,7 @@
                 },
                 {
                     id: 'COL-002',
+                    Filial: 'JBO',
                     cliente: 'Empresa B S/A',
                     dataRecebimento: datas[1],
                     origem: 'Belo Horizonte - MG',
@@ -1173,6 +1177,7 @@
                 },
                 {
                     id: 'COL-003',
+                    Filial: 'JBO',
                     cliente: 'Comércio C ME',
                     dataRecebimento: datas[2],
                     origem: 'Curitiba - PR',
@@ -1187,6 +1192,7 @@
                 },
                 {
                     id: 'COL-004',
+                    Filial: 'JBO',
                     cliente: 'Indústria D EIRELI',
                     dataRecebimento: datas[3],
                     origem: 'Campinas - SP',
