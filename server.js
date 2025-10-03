@@ -43,7 +43,6 @@ console.log('USINA_INSTANCE_NAME:', process.env.USINA_INSTANCE_NAME || 'NÃO ENC
 console.log('DISP3_API_KEY:', process.env.DISP3_API_KEY ? '***' + process.env.DISP3_API_KEY.slice(-4) : 'NÃO ENCONTRADA');
 console.log('DISP3_INSTANCE_NAME:', process.env.DISP3_INSTANCE_NAME || 'NÃO ENCONTRADA');
 
-
 // ========== CONFIGURAÇÕES POR USUÁRIO ==========
 function getEvolutionConfigByUser(usuario) {
   const userConfigs = {
@@ -91,7 +90,13 @@ function getEvolutionConfigByUser(usuario) {
       apiKey: process.env.USINA_API_KEY,
       instanceName: process.env.USINA_INSTANCE_NAME,
       webhookUrl: process.env.USINA_WEBHOOK_URL
+    },
+    'USINA': {
+      apiKey: process.env.DISP3_API_KEY,
+      instanceName: process.env.DISP3_INSTANCE_NAME,
+      webhookUrl: process.env.DISP3_WEBHOOK_URL
     }
+
   };
   
   const config = userConfigs[usuario];
