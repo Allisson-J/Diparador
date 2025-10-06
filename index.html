@@ -11,6 +11,7 @@
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             --success-gradient: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            --warning-gradient: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
             --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
         }
@@ -87,7 +88,7 @@
             box-shadow: var(--card-shadow);
             overflow: hidden;
             width: 100%;
-            max-width: 420px;
+            max-width: 450px;
             transition: var(--transition);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -322,6 +323,14 @@
             margin: 2px;
         }
 
+        .user-badge.admin {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .user-badge.user {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+        }
+
         .alert {
             border-radius: 12px;
             border: none;
@@ -345,6 +354,12 @@
             background: rgba(243, 156, 18, 0.1);
             color: #f39c12;
             border-left: 4px solid #f39c12;
+        }
+
+        .alert-info {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border-left: 4px solid #3498db;
         }
 
         /* Responsividade */
@@ -423,18 +438,12 @@
             
             <!-- Informações dos Usuários -->
             <div class="users-info">
-                <h6><i class="fas fa-users"></i> Filiais:</h6>
+                <h6><i class="fas fa-users"></i> Usuários do Sistema:</h6>
                 <div>
-                    <span class="user-badge">JBO</span>
-                    <span class="user-badge">CABO</span>
-                    <span class="user-badge">SP</span>
-                    <span class="user-badge">AL</span>
-                    <span class="user-badge">BA</span>
-                    <span class="user-badge">PB</span>
-                    <span class="user-badge">AMBEV</span>
-                    <span class="user-badge">USINAS</span>
+                    <span class="user-badge admin">admin (Administrador)</span>
+                    <span class="user-badge user">user (Usuário Comum)</span>
                 </div>
-                <small class="text-muted">Cada usuário possui instância individual do WhatsApp</small>
+                <small class="text-muted">Use "admin" como usuário para acesso administrativo</small>
             </div>
             
             <div class="login-footer">
@@ -447,17 +456,16 @@
     </div>
 
     <script>
+    // ========== CONFIGURAÇÕES ==========
     const SERVER_URL = window.location.origin;
     
-    console.log('🚀 Sistema de login inicializado');
-    console.log('📍 Servidor:', SERVER_URL);
-    
-    // Elementos DOM
+    // ========== ELEMENTOS DOM ==========
     const loginForm = document.getElementById('loginForm');
     const submitBtn = document.getElementById('submitBtn');
     const alertDiv = document.getElementById('loginAlert');
     const systemInfo = document.getElementById('systemInfo');
-    
+
+    // ========== FUNÇÕES UTILITÁRIAS ==========
     function togglePassword() {
         const senhaInput = document.getElementById('senha');
         const toggleIcon = document.querySelector('.password-toggle i');
@@ -498,8 +506,8 @@
                      type === 'error' ? 'fa-exclamation-circle' : 'fa-server';
         systemInfo.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
     }
-    
-    // ✅ FUNÇÃO DE LOGIN SIMPLIFICADA E CORRIGIDA
+
+    // ========== SISTEMA DE AUTENTICAÇÃO ==========
     async function fazerLogin(usuario, senha) {
         console.log('🔐 Tentando login para:', usuario);
         
@@ -509,7 +517,7 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ usuario, senha }),
-            credentials: 'include' // IMPORTANTE: para cookies de sessão
+            credentials: 'include'
         });
         
         console.log('📡 Status:', response.status);
@@ -520,8 +528,66 @@
         
         return await response.json();
     }
-    
-    // ✅ TESTE DE CONEXÃO
+
+    // ========== SISTEMA DE STORAGE ==========
+    function salvarUsuarioLocalStorage(usuario) {
+        try {
+            // ✅ DETERMINAR SE É ADMIN BASEADO NO USERNAME (APÓS LOGIN BEM-SUCEDIDO)
+            const isAdmin = usuario.toLowerCase() === 'admin';
+            const userData = {
+                email: usuario,
+                nome: usuario,
+                isAdmin: isAdmin,
+                departamento: isAdmin ? 'admin' : 'user',
+                loginTimestamp: Date.now(),
+                authenticated: true // ✅ MARCA COMO AUTENTICADO
+            };
+            
+            localStorage.setItem('loggedInUser', JSON.stringify(userData));
+            console.log('✅ Usuário salvo no localStorage:', userData);
+            
+            return userData;
+        } catch (error) {
+            console.error('❌ Erro ao salvar no localStorage:', error);
+            return null;
+        }
+    }
+
+    function verificarUsuarioLocalStorage() {
+        try {
+            const userData = localStorage.getItem('loggedInUser');
+            if (!userData) {
+                return null;
+            }
+            
+            const user = JSON.parse(userData);
+            
+            // ✅ VERIFICAR SE FOI AUTENTICADO CORRETAMENTE
+            if (!user.authenticated) {
+                console.log('❌ Usuário não autenticado no localStorage');
+                return null;
+            }
+            
+            // Verificar se a sessão expirou (12 horas)
+            const now = Date.now();
+            const sessionAge = now - user.loginTimestamp;
+            const SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 horas
+            
+            if (sessionAge > SESSION_TIMEOUT) {
+                console.log('🕒 Sessão expirada, limpando localStorage');
+                localStorage.removeItem('loggedInUser');
+                return null;
+            }
+            
+            console.log('✅ Usuário autenticado encontrado no localStorage:', user);
+            return user;
+        } catch (error) {
+            console.error('❌ Erro ao verificar localStorage:', error);
+            return null;
+        }
+    }
+
+    // ========== TESTES DE CONEXÃO ==========
     async function testarConexao() {
         try {
             console.log('🧪 Testando conexão...');
@@ -542,36 +608,56 @@
             return false;
         }
     }
-    
-    // ✅ VERIFICAR SE JÁ ESTÁ LOGADO
-    async function verificarLogin() {
+
+    // ========== VERIFICAÇÃO DE LOGIN ==========
+    async function verificarLoginExistente() {
         try {
-            console.log('🔐 Verificando autenticação...');
+            console.log('🔐 Verificando autenticação existente...');
+            
+            // ✅ PRIMEIRO VERIFICAR NO SERVIDOR (MAIS CONFIÁVEL)
             const response = await fetch(`${SERVER_URL}/api/auth/status`, {
                 credentials: 'include'
             });
             
             if (response.ok) {
                 const data = await response.json();
-                console.log('📊 Status auth:', data);
+                console.log('📊 Status auth do servidor:', data);
                 
-                if (data.autenticado) {
-                    console.log('✅ Usuário já logado, redirecionando...');
-                    showAlert(`<i class="fas fa-check-circle"></i> Bem-vindo de volta, ${data.usuario}!`, 'success');
-                    
-                    setTimeout(() => {
-                        window.location.href = '/portal.html';
-                    }, 1500);
-                    return true;
+                if (data.autenticado && data.usuario) {
+                    // ✅ SALVAR NO LOCALSTORAGE COM AUTENTICAÇÃO
+                    const userData = salvarUsuarioLocalStorage(data.usuario);
+                    if (userData) {
+                        console.log('✅ Usuário já logado (servidor), redirecionando...');
+                        showAlert(`<i class="fas fa-check-circle"></i> Bem-vindo de volta, ${data.usuario}!`, 'success');
+                        
+                        setTimeout(() => {
+                            window.location.href = '/portal.html';
+                        }, 1500);
+                        return true;
+                    }
                 }
             }
+            
+            // ✅ SE NÃO TEM NO SERVIDOR, VERIFICAR NO LOCALSTORAGE (COM VALIDAÇÃO)
+            const localUser = verificarUsuarioLocalStorage();
+            if (localUser && localUser.authenticated) {
+                console.log('✅ Usuário já logado (localStorage), redirecionando...');
+                showAlert(`<i class="fas fa-check-circle"></i> Bem-vindo de volta, ${localUser.nome}!`, 'success');
+                
+                setTimeout(() => {
+                    window.location.href = '/portal.html';
+                }, 1500);
+                return true;
+            }
+            
         } catch (error) {
             console.log('🔐 Usuário não autenticado');
         }
+        
         return false;
     }
-    
-    // ✅ EVENTO DE SUBMIT
+
+    // ========== EVENTO DE LOGIN ==========
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -590,6 +676,9 @@
             const resultado = await fazerLogin(usuario, senha);
             
             if (resultado.success) {
+                // ✅ SALVAR NO LOCALSTORAGE APÓS LOGIN BEM-SUCEDIDO
+                const userData = salvarUsuarioLocalStorage(usuario);
+                
                 showAlert(`<i class="fas fa-check-circle"></i> Login realizado! Redirecionando...`, 'success');
                 updateSystemInfo(`Usuário ${usuario} autenticado`, 'success');
                 
@@ -613,10 +702,11 @@
             showLoading(false);
         }
     });
-    
-    // ✅ INICIALIZAÇÃO
+
+    // ========== INICIALIZAÇÃO ==========
     document.addEventListener('DOMContentLoaded', async () => {
-        console.log('🚀 Página carregada');
+        console.log('🚀 Sistema de Login inicializado');
+        console.log('📍 Servidor:', SERVER_URL);
         
         // Foco no campo de usuário
         document.getElementById('usuario').focus();
@@ -625,8 +715,8 @@
         const conexaoOk = await testarConexao();
         
         if (conexaoOk) {
-            // Verificar se já está logado
-            await verificarLogin();
+            // Verificar se já está logado (APENAS SE CONEXÃO OK)
+            await verificarLoginExistente();
         }
     });
 
@@ -636,6 +726,6 @@
             loginForm.dispatchEvent(new Event('submit'));
         }
     });
-</script>
+    </script>
 </body>
 </html>
