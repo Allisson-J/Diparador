@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Sistema de Coletas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --danger: #e63946;
+            --info: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --text: #2b2d42;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --gradient-success: linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%);
+            --gradient-warning: linear-gradient(135deg, #f72585 0%, #b5179e 100%);
+            --gradient-dark: linear-gradient(135deg, #212529 0%, #343a40 100%);
+            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .dark-mode {
+            --primary: #4cc9f0;
+            --secondary: #4895ef;
+            --success: #4361ee;
+            --warning: #f72585;
+            --danger: #e63946;
+            --info: #7209b7;
+            --light: #343a40;
+            --dark: #f8f9fa;
+            --text: #e9ecef;
+            --text-light: #adb5bd;
+            --border: #495057;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --gradient-primary: linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%);
+            --gradient-dark: linear-gradient(135deg, #343a40 0%, #212529 100%);
+            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            --hover-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        /* Header Moderno */
+        .main-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,197.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            animation: wave 10s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(-30px); }
+            100% { transform: translateX(0); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .header-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-title i {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.8rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+            margin-top: 0.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Botões Modernos */
+        .btn-modern {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: var(--transition);
+        }
+
+        .btn-modern:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+
+        .dark-mode-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dark-mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        /* Container Principal */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Filtros e Controles */
+        .controls-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Filtros de Data */
+        .date-filters {
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+            flex-wrap: wrap;
+            padding: 1.5rem;
+            background: rgba(67, 97, 238, 0.05);
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(67, 97, 238, 0.1);
+        }
+
+        .date-filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            min-width: 180px;
+        }
+
+        .quick-date-buttons {
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .quick-date-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .quick-date-btn:hover,
+        .quick-date-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Botões de Ação */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .action-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.9rem;
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .action-btn.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Grid de Relatórios */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .report-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .report-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .report-description {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .report-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            opacity: 0.8;
+        }
+
+        .report-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* Gráficos */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-btn {
+            padding: 0.5rem 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: var(--transition);
+            background: var(--light);
+            color: var(--text);
+        }
+
+        .chart-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* Tabela de Dados */
+        .data-table-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 3rem;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .data-table th {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .data-table tr:nth-child(even) {
+            background: rgba(248, 249, 250, 0.8);
+        }
+
+        .data-table tr:hover {
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        /* Footer */
+        .main-footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            background: var(--gradient-dark);
+            color: white;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,197.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        /* Notificações */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1.2rem 1.8rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: var(--transition);
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success { 
+            background: linear-gradient(135deg, rgba(76, 201, 240, 0.9) 0%, rgba(72, 149, 239, 0.9) 100%);
+        }
+        .notification.error { 
+            background: linear-gradient(135deg, rgba(230, 57, 70, 0.9) 0%, rgba(229, 9, 20, 0.9) 100%);
+        }
+        .notification.info { 
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.9) 0%, rgba(58, 12, 163, 0.9) 100%);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .filters-row {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                min-width: auto;
+            }
+
+            .date-filters {
+                flex-direction: column;
+            }
+
+            .date-filter-group {
+                min-width: auto;
+            }
+
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- Botão Dark Mode -->
+    <button id="darkModeToggle" class="dark-mode-toggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <div>
+                <h1 class="header-title">
+                    <i class="fas fa-chart-bar"></i> Relatórios
+                </h1>
+                <p class="header-subtitle">Análises e métricas do sistema de coletas</p>
+            </div>
+            <div class="header-actions">
+                <a href="coletas.html" class="btn-modern">
+                    <i class="fas fa-truck-loading"></i> Voltar às Coletas
+                </a>
+                <a href="portal.html" class="btn-modern">
+                    <i class="fas fa-home"></i> Portal
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <div class="main-container">
+        <!-- Controles e Filtros -->
+        <div class="controls-container">
+            <!-- Filtros de Data -->
+            <div class="date-filters">
+                <div class="date-filter-group">
+                    <label for="dataInicio"><i class="fas fa-calendar-alt"></i> Data Início</label>
+                    <input type="date" id="dataInicio">
+                </div>
+                <div class="date-filter-group">
+                    <label for="dataFim"><i class="fas fa-calendar-alt"></i> Data Fim</label>
+                    <input type="date" id="dataFim">
+                </div>
+                <div class="date-filter-group">
+                    <label><i class="fas fa-bolt"></i> Período Rápido</label>
+                    <div class="quick-date-buttons">
+                        <button class="quick-date-btn" onclick="setQuickDate('hoje')">Hoje</button>
+                        <button class="quick-date-btn" onclick="setQuickDate('semana')">Esta Semana</button>
+                        <button class="quick-date-btn" onclick="setQuickDate('mes')">Este Mês</button>
+                        <button class="quick-date-btn" onclick="setQuickDate('trimestre')">Este Trimestre</button>
+                        <button class="quick-date-btn" onclick="clearDateFilters()">Limpar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label for="filialFilter"><i class="fas fa-building"></i> Filial</label>
+                    <select id="filialFilter">
+                        <option value="">Todas as Filiais</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="ES">Espírito Santo</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="etapaFilter"><i class="fas fa-layer-group"></i> Etapa</label>
+                    <select id="etapaFilter">
+                        <option value="">Todas as Etapas</option>
+                        <option value="comercial">Comercial</option>
+                        <option value="price">Price</option>
+                        <option value="cs">CS</option>
+                        <option value="contratacao">Contratação</option>
+                        <option value="gr">GR</option>
+                        <option value="documentacao">Documentação</option>
+                        <option value="controladoria">Controladoria</option>
+                        <option value="contas-pagar">Contas a Pagar</option>
+                        <option value="contas-receber">Contas a Receber</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="statusFilter"><i class="fas fa-filter"></i> Status</label>
+                    <select id="statusFilter">
+                        <option value="">Todos os Status</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="andamento">Em Andamento</option>
+                        <option value="concluida">Concluída</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="tipoRelatorio"><i class="fas fa-chart-line"></i> Tipo de Relatório</label>
+                    <select id="tipoRelatorio">
+                        <option value="geral">Geral</option>
+                        <option value="operacional">Operacional</option>
+                        <option value="financeiro">Financeiro</option>
+                        <option value="performance">Performance</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn warning" onclick="clearFilters()">
+                    <i class="fas fa-broom"></i> Limpar Filtros
+                </button>
+                <button class="action-btn primary" onclick="applyFilters()">
+                    <i class="fas fa-sync-alt"></i> Aplicar Filtros
+                </button>
+                <button class="action-btn success" onclick="generateReport()">
+                    <i class="fas fa-file-pdf"></i> Gerar PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- Cards de Resumo -->
+        <div class="reports-grid">
+            <div class="report-card">
+                <div class="report-header">
+                    <div>
+                        <h3 class="report-title">Total de Coletas</h3>
+                        <p class="report-description">Número total de coletas no período</p>
+                    </div>
+                    <i class="fas fa-truck-loading report-icon"></i>
+                </div>
+                <div class="report-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalColetas">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="coletasConcluidas">0</div>
+                        <div class="stat-label">Concluídas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="taxaSucesso">0%</div>
+                        <div class="stat-label">Taxa de Sucesso</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-header">
+                    <div>
+                        <h3 class="report-title">Volume Financeiro</h3>
+                        <p class="report-description">Valor total das operações</p>
+                    </div>
+                    <i class="fas fa-dollar-sign report-icon"></i>
+                </div>
+                <div class="report-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="valorTotal">R$ 0</div>
+                        <div class="stat-label">Valor Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="valorMedio">R$ 0</div>
+                        <div class="stat-label">Valor Médio</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="crescimento">0%</div>
+                        <div class="stat-label">Crescimento</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-header">
+                    <div>
+                        <h3 class="report-title">Performance por Etapa</h3>
+                        <p class="report-description">Tempo médio em cada etapa</p>
+                    </div>
+                    <i class="fas fa-tachometer-alt report-icon"></i>
+                </div>
+                <div class="report-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="tempoMedio">0h</div>
+                        <div class="stat-label">Tempo Médio</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="etapaMaisRapida">-</div>
+                        <div class="stat-label">Etapa Mais Rápida</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="etapaMaisLenta">-</div>
+                        <div class="stat-label">Etapa Mais Lenta</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="charts-container">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Coletas por Status</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn" onclick="downloadChart('statusChart')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Volume por Etapa</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn" onclick="downloadChart('etapaChart')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="etapaChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Evolução Mensal</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn" onclick="downloadChart('evolucaoChart')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="evolucaoChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Distribuição por Filial</h3>
+                    <div class="chart-actions">
+                        <button class="chart-btn" onclick="downloadChart('filialChart')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="filialChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Dados Detalhados -->
+        <div class="data-table-container">
+            <div class="table-header">
+                <h3 class="table-title">Detalhamento de Coletas</h3>
+                <div class="action-buttons">
+                    <button class="action-btn primary" onclick="exportToCSV()">
+                        <i class="fas fa-file-csv"></i> Exportar CSV
+                    </button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="data-table" id="detailedTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Origem</th>
+                            <th>Destino</th>
+                            <th>Status</th>
+                            <th>Etapa</th>
+                            <th>Valor (R$)</th>
+                            <th>KM</th>
+                            <th>Filial</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Dados serão carregados via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-truck-moving"></i> MULTI MODAL
+            </div>
+            <p>Sistema de Gestão de Operações Logísticas</p>
+            <p>© 2025 - Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <!-- Notificação -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Dados de exemplo para relatórios
+        let reportData = [];
+        let charts = {};
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📊 Sistema de Relatórios inicializado');
+            initializeDarkMode();
+            initializeDateFilters();
+            loadReportData();
+            initializeCharts();
+            updateDashboard();
+        });
+
+        // Dark Mode
+        function initializeDarkMode() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+
+            darkModeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                document.body.classList.toggle('light-mode');
+                
+                const icon = this.querySelector('i');
+                if (document.body.classList.contains('dark-mode')) {
+                    icon.className = 'fas fa-sun';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    icon.className = 'fas fa-moon';
+                    localStorage.setItem('theme', 'light');
+                }
+                
+                // Recriar gráficos com o tema correto
+                setTimeout(() => {
+                    initializeCharts();
+                }, 100);
+            });
+        }
+
+        // Inicializar filtros de data
+        function initializeDateFilters() {
+            const hoje = new Date();
+            const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+            
+            document.getElementById('dataInicio').value = formatarDataParaInput(inicioMes);
+            document.getElementById('dataFim').value = formatarDataParaInput(hoje);
+        }
+
+        // Carregar dados de relatórios
+        function loadReportData() {
+            // Simular dados de exemplo
+            reportData = [
+                {
+                    id: 'COL-001',
+                    cliente: 'Cliente A Ltda',
+                    dataRecebimento: '2024-01-15',
+                    origem: 'São Paulo - SP',
+                    destino: 'Rio de Janeiro - RJ',
+                    km: 450,
+                    veiculo: 'Bitruck',
+                    status: 'concluida',
+                    etapaAtual: 'comercial',
+                    valor: 2500.00,
+                    filial: 'SP'
+                },
+                {
+                    id: 'COL-002',
+                    cliente: 'Empresa B S/A',
+                    dataRecebimento: '2024-01-14',
+                    origem: 'Belo Horizonte - MG',
+                    destino: 'Vitória - ES',
+                    km: 520,
+                    veiculo: 'Carreta',
+                    status: 'andamento',
+                    etapaAtual: 'contratacao',
+                    valor: 3200.00,
+                    filial: 'MG'
+                },
+                {
+                    id: 'COL-003',
+                    cliente: 'Comércio C ME',
+                    dataRecebimento: '2024-01-10',
+                    origem: 'Curitiba - PR',
+                    destino: 'Porto Alegre - RS',
+                    km: 700,
+                    veiculo: 'Truck',
+                    status: 'concluida',
+                    etapaAtual: 'comercial',
+                    valor: 1800.00,
+                    filial: 'PR'
+                },
+                {
+                    id: 'COL-004',
+                    cliente: 'Indústria D EIRELI',
+                    dataRecebimento: '2024-01-08',
+                    origem: 'Campinas - SP',
+                    destino: 'Santos - SP',
+                    km: 150,
+                    veiculo: 'VUC',
+                    status: 'pendente',
+                    etapaAtual: 'price',
+                    valor: 1200.00,
+                    filial: 'SP'
+                },
+                {
+                    id: 'COL-005',
+                    cliente: 'Logística E S/A',
+                    dataRecebimento: '2024-01-05',
+                    origem: 'Rio de Janeiro - RJ',
+                    destino: 'Belo Horizonte - MG',
+                    km: 400,
+                    veiculo: 'Bitruck',
+                    status: 'concluida',
+                    etapaAtual: 'comercial',
+                    valor: 2800.00,
+                    filial: 'RJ'
+                },
+                {
+                    id: 'COL-006',
+                    cliente: 'Transportes F Ltda',
+                    dataRecebimento: '2024-01-03',
+                    origem: 'Porto Alegre - RS',
+                    destino: 'Florianópolis - SC',
+                    km: 450,
+                    veiculo: 'Carreta',
+                    status: 'cancelada',
+                    etapaAtual: 'cs',
+                    valor: 2200.00,
+                    filial: 'RS'
+                }
+            ];
+
+            updateDetailedTable();
+        }
+
+        // Inicializar gráficos
+        function initializeCharts() {
+            // Gráfico de Status
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            charts.statusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Concluídas', 'Em Andamento', 'Pendentes', 'Canceladas'],
+                    datasets: [{
+                        data: [3, 1, 1, 1],
+                        backgroundColor: [
+                            '#4cc9f0',
+                            '#7209b7',
+                            '#f72585',
+                            '#e63946'
+                        ],
+                        borderWidth: 2,
+                        borderColor: document.body.classList.contains('dark-mode') ? '#343a40' : '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text'),
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Etapas
+            const etapaCtx = document.getElementById('etapaChart').getContext('2d');
+            charts.etapaChart = new Chart(etapaCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Comercial', 'Price', 'CS', 'Contratação', 'GR', 'Documentação'],
+                    datasets: [{
+                        label: 'Quantidade',
+                        data: [3, 1, 1, 1, 0, 0],
+                        backgroundColor: '#4361ee',
+                        borderColor: '#3a0ca3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text')
+                            },
+                            grid: {
+                                color: getComputedStyle(document.body).getPropertyValue('--border')
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text')
+                            },
+                            grid: {
+                                color: getComputedStyle(document.body).getPropertyValue('--border')
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text')
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Evolução
+            const evolucaoCtx = document.getElementById('evolucaoChart').getContext('2d');
+            charts.evolucaoChart = new Chart(evolucaoCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    datasets: [{
+                        label: 'Coletas',
+                        data: [12, 19, 15, 17, 14, 16, 18, 20, 22, 25, 28, 30],
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text')
+                            },
+                            grid: {
+                                color: getComputedStyle(document.body).getPropertyValue('--border')
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text')
+                            },
+                            grid: {
+                                color: getComputedStyle(document.body).getPropertyValue('--border')
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text')
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Filiais
+            const filialCtx = document.getElementById('filialChart').getContext('2d');
+            charts.filialChart = new Chart(filialCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['São Paulo', 'Minas Gerais', 'Rio de Janeiro', 'Paraná', 'Rio Grande do Sul'],
+                    datasets: [{
+                        data: [3, 1, 1, 1, 1],
+                        backgroundColor: [
+                            '#4361ee',
+                            '#4cc9f0',
+                            '#7209b7',
+                            '#f72585',
+                            '#560bad'
+                        ],
+                        borderWidth: 2,
+                        borderColor: document.body.classList.contains('dark-mode') ? '#343a40' : '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: getComputedStyle(document.body).getPropertyValue('--text'),
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Atualizar dashboard
+        function updateDashboard() {
+            // Estatísticas básicas
+            const totalColetas = reportData.length;
+            const coletasConcluidas = reportData.filter(c => c.status === 'concluida').length;
+            const taxaSucesso = totalColetas > 0 ? ((coletasConcluidas / totalColetas) * 100).toFixed(1) : 0;
+            
+            const valorTotal = reportData.reduce((sum, coleta) => sum + (coleta.valor || 0), 0);
+            const valorMedio = totalColetas > 0 ? (valorTotal / totalColetas).toFixed(2) : 0;
+
+            document.getElementById('totalColetas').textContent = totalColetas;
+            document.getElementById('coletasConcluidas').textContent = coletasConcluidas;
+            document.getElementById('taxaSucesso').textContent = `${taxaSucesso}%`;
+            document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('valorMedio').textContent = `R$ ${valorMedio}`;
+        }
+
+        // Atualizar tabela detalhada
+        function updateDetailedTable() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            reportData.forEach(coleta => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${coleta.id}</td>
+                    <td>${coleta.cliente}</td>
+                    <td>${formatarData(coleta.dataRecebimento)}</td>
+                    <td>${coleta.origem}</td>
+                    <td>${coleta.destino}</td>
+                    <td><span class="status-badge status-${coleta.status}">${getStatusText(coleta.status)}</span></td>
+                    <td>${getEtapaText(coleta.etapaAtual)}</td>
+                    <td>R$ ${coleta.valor?.toFixed(2) || '0,00'}</td>
+                    <td>${coleta.km}</td>
+                    <td>${coleta.filial}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Aplicar filtros
+        function applyFilters() {
+            showNotification('Filtros aplicados com sucesso!', 'success');
+            // Em uma implementação real, aqui você recarregaria os dados com os filtros
+        }
+
+        // Limpar filtros
+        function clearFilters() {
+            document.getElementById('filialFilter').value = '';
+            document.getElementById('etapaFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('tipoRelatorio').value = 'geral';
+            clearDateFilters();
+            showNotification('Filtros limpos!', 'info');
+        }
+
+        // Definir período rápido
+        function setQuickDate(periodo) {
+            const hoje = new Date();
+            let dataInicio, dataFim;
+
+            switch(periodo) {
+                case 'hoje':
+                    dataInicio = hoje;
+                    dataFim = hoje;
+                    break;
+                case 'semana':
+                    dataInicio = new Date(hoje.getTime() - 6 * 24 * 60 * 60 * 1000);
+                    dataFim = hoje;
+                    break;
+                case 'mes':
+                    dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                    dataFim = hoje;
+                    break;
+                case 'trimestre':
+                    const trimestreAtual = Math.floor(hoje.getMonth() / 3);
+                    dataInicio = new Date(hoje.getFullYear(), trimestreAtual * 3, 1);
+                    dataFim = hoje;
+                    break;
+            }
+
+            document.getElementById('dataInicio').value = formatarDataParaInput(dataInicio);
+            document.getElementById('dataFim').value = formatarDataParaInput(dataFim);
+            
+            document.querySelectorAll('.quick-date-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Limpar filtros de data
+        function clearDateFilters() {
+            document.getElementById('dataInicio').value = '';
+            document.getElementById('dataFim').value = '';
+            document.querySelectorAll('.quick-date-btn').forEach(btn => btn.classList.remove('active'));
+        }
+
+        // Gerar relatório PDF
+        function generateReport() {
+            showNotification('Gerando relatório PDF...', 'info');
+            
+            // Simular geração de PDF
+            setTimeout(() => {
+                showNotification('Relatório PDF gerado com sucesso!', 'success');
+                
+                // Em uma implementação real, aqui você usaria jsPDF
+                // const { jsPDF } = window.jspdf;
+                // const doc = new jsPDF();
+                // doc.text('Relatório de Coletas', 20, 20);
+                // doc.save('relatorio-coletas.pdf');
+            }, 2000);
+        }
+
+        // Exportar para CSV
+        function exportToCSV() {
+            const headers = ['ID', 'Cliente', 'Data', 'Origem', 'Destino', 'Status', 'Etapa', 'Valor (R$)', 'KM', 'Filial'];
+            const csvContent = [
+                headers.join(','),
+                ...reportData.map(coleta => [
+                    coleta.id,
+                    `"${coleta.cliente}"`,
+                    coleta.dataRecebimento,
+                    `"${coleta.origem}"`,
+                    `"${coleta.destino}"`,
+                    coleta.status,
+                    coleta.etapaAtual,
+                    coleta.valor?.toFixed(2) || '0.00',
+                    coleta.km,
+                    coleta.filial
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `relatorio-coletas-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Dados exportados para CSV!', 'success');
+        }
+
+        // Download de gráfico
+        function downloadChart(chartId) {
+            const chart = charts[chartId];
+            if (chart) {
+                const url = chart.toBase64Image();
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${chartId}-${new Date().toISOString().split('T')[0]}.png`;
+                a.click();
+                showNotification('Gráfico baixado com sucesso!', 'success');
+            }
+        }
+
+        // Funções utilitárias
+        function getStatusText(status) {
+            const statusMap = {
+                'pendente': 'Pendente',
+                'andamento': 'Em Andamento',
+                'concluida': 'Concluída',
+                'cancelada': 'Cancelada'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getEtapaText(etapa) {
+            const etapaMap = {
+                'comercial': 'Comercial',
+                'price': 'Price',
+                'cs': 'CS',
+                'contratacao': 'Contratação',
+                'gr': 'GR',
+                'documentacao': 'Documentação',
+                'controladoria': 'Controladoria',
+                'contas-pagar': 'Contas a Pagar',
+                'contas-receber': 'Contas a Receber'
+            };
+            return etapaMap[etapa] || etapa;
+        }
+
+        function formatarData(dataString) {
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        function formatarDataParaInput(data) {
+            return data.toISOString().split('T')[0];
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

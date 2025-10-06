@@ -5,47 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Coletas - Portal de Ferramentas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
-            --primary: #4361ee;
-            --secondary: #3a0ca3;
-            --success: #4cc9f0;
-            --warning: #f72585;
-            --danger: #e63946;
-            --info: #7209b7;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --text: #2b2d42;
-            --text-light: #6c757d;
-            --border: #dee2e6;
+            --azul-escuro: #002776;
+            --vermelho: #C60C30;
+            --branco: #FFFFFF;
+            --cinza-claro: #F5F5F5;
+            --cinza-escuro: #333333;
+            --azul-claro: #4A7BFF;
+            --gradient-primary: linear-gradient(135deg, #002776 0%, #0044AA 100%);
+            --gradient-danger: linear-gradient(135deg, #C60C30 0%, #E63946 100%);
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
-            --gradient-success: linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%);
-            --gradient-warning: linear-gradient(135deg, #f72585 0%, #b5179e 100%);
-            --gradient-dark: linear-gradient(135deg, #212529 0%, #343a40 100%);
             --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             --hover-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .dark-mode {
-            --primary: #4cc9f0;
-            --secondary: #4895ef;
-            --success: #4361ee;
-            --warning: #f72585;
-            --danger: #e63946;
-            --info: #7209b7;
-            --light: #343a40;
-            --dark: #f8f9fa;
-            --text: #e9ecef;
-            --text-light: #adb5bd;
-            --border: #495057;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            --gradient-primary: linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%);
-            --gradient-dark: linear-gradient(135deg, #343a40 0%, #212529 100%);
-            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            --hover-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
         }
 
         * {
@@ -56,8 +29,8 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: var(--text);
+            background: var(--cinza-claro);
+            color: var(--cinza-escuro);
             line-height: 1.6;
             min-height: 100vh;
             transition: var(--transition);
@@ -67,7 +40,7 @@
         /* Header Moderno */
         .main-header {
             background: var(--gradient-primary);
-            color: white;
+            color: var(--branco);
             padding: 1.5rem 0;
             box-shadow: var(--shadow);
             position: relative;
@@ -139,7 +112,7 @@
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
+            color: var(--branco);
             padding: 0.8rem 1.5rem;
             border-radius: 12px;
             cursor: pointer;
@@ -174,27 +147,6 @@
             left: 100%;
         }
 
-        .dark-mode-toggle {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.3rem;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .dark-mode-toggle:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: rotate(15deg) scale(1.1);
-        }
-
         /* Container Principal */
         .main-container {
             max-width: 1400px;
@@ -204,13 +156,12 @@
 
         /* Filtros e Controles */
         .controls-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: var(--branco);
             border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: var(--card-shadow);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .filters-row {
@@ -229,7 +180,7 @@
 
         .filter-group label {
             font-weight: 600;
-            color: var(--primary);
+            color: var(--azul-escuro);
             font-size: 0.9rem;
             display: flex;
             align-items: center;
@@ -239,19 +190,19 @@
         .filter-group select,
         .filter-group input {
             padding: 0.8rem 1rem;
-            border: 2px solid var(--border);
+            border: 2px solid #ddd;
             border-radius: 10px;
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.9);
-            color: var(--text);
+            background: var(--branco);
+            color: var(--cinza-escuro);
             transition: var(--transition);
         }
 
         .filter-group select:focus,
         .filter-group input:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            border-color: var(--azul-escuro);
+            box-shadow: 0 0 0 3px rgba(0, 39, 118, 0.1);
             transform: translateY(-2px);
         }
 
@@ -262,10 +213,10 @@
             align-items: end;
             flex-wrap: wrap;
             padding: 1.5rem;
-            background: rgba(67, 97, 238, 0.05);
+            background: rgba(0, 39, 118, 0.05);
             border-radius: 15px;
             margin-bottom: 1.5rem;
-            border: 1px solid rgba(67, 97, 238, 0.1);
+            border: 1px solid rgba(0, 39, 118, 0.1);
         }
 
         .date-filter-group {
@@ -277,7 +228,7 @@
 
         .date-filter-group label {
             font-weight: 600;
-            color: var(--primary);
+            color: var(--azul-escuro);
             font-size: 0.9rem;
             display: flex;
             align-items: center;
@@ -293,9 +244,9 @@
 
         .quick-date-btn {
             padding: 0.5rem 1rem;
-            border: 1px solid var(--primary);
+            border: 1px solid var(--azul-escuro);
             background: transparent;
-            color: var(--primary);
+            color: var(--azul-escuro);
             border-radius: 8px;
             cursor: pointer;
             font-size: 0.8rem;
@@ -305,8 +256,8 @@
 
         .quick-date-btn:hover,
         .quick-date-btn.active {
-            background: var(--primary);
-            color: white;
+            background: var(--azul-escuro);
+            color: var(--branco);
         }
 
         .stats-container {
@@ -317,12 +268,12 @@
 
         .stat-card {
             background: var(--gradient-primary);
-            color: white;
+            color: var(--branco);
             padding: 1rem 1.5rem;
             border-radius: 12px;
             text-align: center;
             min-width: 120px;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 39, 118, 0.3);
         }
 
         .stat-number {
@@ -345,13 +296,12 @@
         }
 
         .coleta-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: var(--branco);
             border-radius: 20px;
             padding: 1.5rem;
             box-shadow: var(--card-shadow);
             transition: var(--transition);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -366,10 +316,10 @@
             height: 4px;
         }
 
-        .coleta-card.pendente::before { background: var(--warning); }
-        .coleta-card.andamento::before { background: var(--info); }
-        .coleta-card.concluida::before { background: var(--success); }
-        .coleta-card.cancelada::before { background: var(--danger); }
+        .coleta-card.pendente::before { background: var(--vermelho); }
+        .coleta-card.andamento::before { background: var(--azul-claro); }
+        .coleta-card.concluida::before { background: #28a745; }
+        .coleta-card.cancelada::before { background: #6c757d; }
 
         .coleta-card:hover {
             transform: translateY(-5px);
@@ -386,14 +336,14 @@
         .card-title {
             font-size: 1.2rem;
             font-weight: 700;
-            color: var(--text);
+            color: var(--cinza-escuro);
             margin-bottom: 0.3rem;
         }
 
         .card-id {
             font-size: 0.8rem;
-            color: var(--text-light);
-            background: var(--light);
+            color: var(--cinza-escuro);
+            background: var(--cinza-claro);
             padding: 0.3rem 0.6rem;
             border-radius: 20px;
             font-weight: 600;
@@ -408,10 +358,10 @@
             letter-spacing: 0.5px;
         }
 
-        .status-pendente { background: rgba(247, 37, 133, 0.1); color: var(--warning); border: 1px solid var(--warning); }
-        .status-andamento { background: rgba(114, 9, 183, 0.1); color: var(--info); border: 1px solid var(--info); }
-        .status-concluida { background: rgba(76, 201, 240, 0.1); color: var(--success); border: 1px solid var(--success); }
-        .status-cancelada { background: rgba(230, 57, 70, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+        .status-pendente { background: rgba(198, 12, 48, 0.1); color: var(--vermelho); border: 1px solid var(--vermelho); }
+        .status-andamento { background: rgba(74, 123, 255, 0.1); color: var(--azul-claro); border: 1px solid var(--azul-claro); }
+        .status-concluida { background: rgba(40, 167, 69, 0.1); color: #28a745; border: 1px solid #28a745; }
+        .status-cancelada { background: rgba(108, 117, 125, 0.1); color: #6c757d; border: 1px solid #6c757d; }
 
         .card-content {
             margin-bottom: 1.5rem;
@@ -425,12 +375,12 @@
         }
 
         .info-label {
-            color: var(--text-light);
+            color: #6c757d;
             font-weight: 500;
         }
 
         .info-value {
-            color: var(--text);
+            color: var(--cinza-escuro);
             font-weight: 600;
             text-align: right;
         }
@@ -442,7 +392,7 @@
 
         .etapas-title {
             font-size: 0.9rem;
-            color: var(--text-light);
+            color: #6c757d;
             margin-bottom: 0.8rem;
             font-weight: 600;
             display: flex;
@@ -453,7 +403,7 @@
         .etapas-progress {
             display: flex;
             height: 6px;
-            background: var(--border);
+            background: #ddd;
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 1rem;
@@ -464,15 +414,15 @@
             transition: var(--transition);
         }
 
-        .etapa-cs { background: var(--info); }
-        .etapa-contratacao { background: var(--primary); }
-        .etapa-gr { background: var(--success); }
-        .etapa-documentacao { background: var(--warning); }
+        .etapa-cs { background: var(--azul-claro); }
+        .etapa-contratacao { background: var(--azul-escuro); }
+        .etapa-gr { background: #28a745; }
+        .etapa-documentacao { background: var(--vermelho); }
         .etapa-controladoria { background: #560bad; }
         .etapa-contas-pagar { background: #480ca8; }
         .etapa-contas-receber { background: #3f37c9; }
-        .etapa-price { background: #4361ee; }
-        .etapa-comercial { background: #4895ef; }
+        .etapa-price { background: var(--azul-escuro); }
+        .etapa-comercial { background: var(--azul-claro); }
 
         .etapas-labels {
             display: flex;
@@ -485,22 +435,22 @@
             border-radius: 15px;
             font-size: 0.7rem;
             font-weight: 600;
-            background: var(--light);
-            color: var(--text-light);
-            border: 1px solid var(--border);
+            background: var(--cinza-claro);
+            color: #6c757d;
+            border: 1px solid #ddd;
             transition: var(--transition);
         }
 
         .etapa-badge.ativa {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+            background: var(--azul-escuro);
+            color: var(--branco);
+            border-color: var(--azul-escuro);
         }
 
         .etapa-badge.concluida {
-            background: var(--success);
-            color: white;
-            border-color: var(--success);
+            background: #28a745;
+            color: var(--branco);
+            border-color: #28a745;
         }
 
         .card-footer {
@@ -508,7 +458,7 @@
             justify-content: space-between;
             align-items: center;
             padding-top: 1rem;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid #ddd;
         }
 
         .card-actions {
@@ -530,18 +480,18 @@
         }
 
         .action-btn.primary {
-            background: var(--primary);
-            color: white;
+            background: var(--azul-escuro);
+            color: var(--branco);
         }
 
         .action-btn.success {
-            background: var(--success);
-            color: white;
+            background: #28a745;
+            color: var(--branco);
         }
 
         .action-btn.warning {
-            background: var(--warning);
-            color: white;
+            background: var(--vermelho);
+            color: var(--branco);
         }
 
         .action-btn:hover {
@@ -551,7 +501,7 @@
 
         .card-date {
             font-size: 0.8rem;
-            color: var(--text-light);
+            color: #6c757d;
         }
 
         /* Modal de Detalhes */
@@ -581,8 +531,7 @@
         }
 
         .modal-content {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: var(--branco);
             border-radius: 20px;
             padding: 2rem;
             max-width: 800px;
@@ -590,7 +539,7 @@
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: var(--hover-shadow);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             position: relative;
         }
 
@@ -600,21 +549,21 @@
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid var(--border);
+            border-bottom: 2px solid #ddd;
         }
 
         .modal-title {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--azul-escuro);
             display: flex;
             align-items: center;
             gap: 1rem;
         }
 
         .close-modal {
-            background: var(--danger);
-            color: white;
+            background: var(--vermelho);
+            color: var(--branco);
             border: none;
             width: 40px;
             height: 40px;
@@ -645,7 +594,7 @@
 
         .form-group label {
             font-weight: 600;
-            color: var(--primary);
+            color: var(--azul-escuro);
             font-size: 0.9rem;
         }
 
@@ -653,11 +602,11 @@
         .form-group select,
         .form-group textarea {
             padding: 0.8rem 1rem;
-            border: 2px solid var(--border);
+            border: 2px solid #ddd;
             border-radius: 10px;
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.9);
-            color: var(--text);
+            background: var(--branco);
+            color: var(--cinza-escuro);
             transition: var(--transition);
         }
 
@@ -665,8 +614,8 @@
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+            border-color: var(--azul-escuro);
+            box-shadow: 0 0 0 3px rgba(0, 39, 118, 0.1);
         }
 
         .form-group.full-width {
@@ -686,6 +635,9 @@
             bottom: 2.5rem;
             right: 2.5rem;
             z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .fab-main {
@@ -694,10 +646,10 @@
             border-radius: 50%;
             background: var(--gradient-primary);
             border: none;
-            color: white;
+            color: var(--branco);
             font-size: 1.8rem;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 39, 118, 0.4);
             transition: var(--transition);
             display: flex;
             align-items: center;
@@ -706,7 +658,28 @@
 
         .fab-main:hover {
             transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 12px 35px rgba(67, 97, 238, 0.6);
+            box-shadow: 0 12px 35px rgba(0, 39, 118, 0.6);
+        }
+
+        .fab-secondary {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-danger);
+            border: none;
+            color: var(--branco);
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(198, 12, 48, 0.4);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab-secondary:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(198, 12, 48, 0.6);
         }
 
         /* Footer */
@@ -714,8 +687,8 @@
             text-align: center;
             padding: 3rem 2rem;
             margin-top: 4rem;
-            background: var(--gradient-dark);
-            color: white;
+            background: var(--azul-escuro);
+            color: var(--branco);
             border-top-left-radius: 30px;
             border-top-right-radius: 30px;
             position: relative;
@@ -757,7 +730,7 @@
             right: 2rem;
             padding: 1.2rem 1.8rem;
             border-radius: 12px;
-            color: white;
+            color: var(--branco);
             font-weight: 600;
             z-index: 1000;
             opacity: 0;
@@ -774,13 +747,13 @@
         }
 
         .notification.success { 
-            background: linear-gradient(135deg, rgba(76, 201, 240, 0.9) 0%, rgba(72, 149, 239, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.9) 0%, rgba(33, 136, 56, 0.9) 100%);
         }
         .notification.error { 
-            background: linear-gradient(135deg, rgba(230, 57, 70, 0.9) 0%, rgba(229, 9, 20, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(198, 12, 48, 0.9) 0%, rgba(166, 10, 40, 0.9) 100%);
         }
         .notification.info { 
-            background: linear-gradient(135deg, rgba(67, 97, 238, 0.9) 0%, rgba(58, 12, 163, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(0, 39, 118, 0.9) 0%, rgba(0, 29, 87, 0.9) 100%);
         }
 
         /* Responsividade */
@@ -834,21 +807,16 @@
                 height: 60px;
                 font-size: 1.5rem;
             }
-        }
 
-        /* Modo somente leitura */
-        .read-only .fab-main,
-        .read-only .action-btn {
-            display: none !important;
+            .fab-secondary {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
-<body class="light-mode">
-    <!-- Botão Dark Mode -->
-    <button id="darkModeToggle" class="dark-mode-toggle">
-        <i class="fas fa-moon"></i>
-    </button>
-
+<body>
     <!-- Header -->
     <header class="main-header">
         <div class="header-content">
@@ -939,15 +907,15 @@
                     <div class="stat-number" id="totalColetas">0</div>
                     <div class="stat-label">Total</div>
                 </div>
-                <div class="stat-card" style="background: var(--gradient-warning);">
+                <div class="stat-card" style="background: var(--gradient-danger);">
                     <div class="stat-number" id="pendentesCount">0</div>
                     <div class="stat-label">Pendentes</div>
                 </div>
-                <div class="stat-card" style="background: var(--gradient-success);">
+                <div class="stat-card" style="background: linear-gradient(135deg, #4A7BFF 0%, #3A6BE8 100%);">
                     <div class="stat-number" id="andamentoCount">0</div>
                     <div class="stat-label">Em Andamento</div>
                 </div>
-                <div class="stat-card" style="background: var(--gradient-dark);">
+                <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #218838 100%);">
                     <div class="stat-number" id="concluidasCount">0</div>
                     <div class="stat-label">Concluídas</div>
                 </div>
@@ -1048,9 +1016,15 @@
         </div>
     </div>
 
-    <!-- Botão Flutuante -->
+    <!-- Botões Flutuantes -->
     <div class="floating-action-buttons">
-        <button class="fab-main" onclick="openNewColetaModal()">
+        <button class="fab-secondary" onclick="window.location.href='settings.html'" title="Configurações">
+            <i class="fas fa-cog"></i>
+        </button>
+        <button class="fab-secondary" onclick="window.location.href='relatorios.html'" title="Relatórios">
+            <i class="fas fa-chart-bar"></i>
+        </button>
+        <button class="fab-main" onclick="openNewColetaModal()" title="Nova Coleta">
             <i class="fas fa-plus"></i>
         </button>
     </div>
@@ -1059,10 +1033,10 @@
     <footer class="main-footer">
         <div class="footer-content">
             <div class="footer-logo">
-                <i class="fas fa-truck-moving"></i> LOGÍSTICA MODAL
+                <i class="fas fa-truck-moving"></i> Multi Modal
             </div>
             <p>Sistema de Gestão de Operações Logísticas</p>
-            <p>© 2024 - Todos os direitos reservados</p>
+            <p>© 2025 - Todos os direitos reservados</p>
         </div>
     </footer>
 
@@ -1076,7 +1050,6 @@
 
         // Etapas do processo
         const ETAPAS = [
-            
             { id: 'comercial', nome: 'Comercial', ordem: 1 },
             { id: 'price', nome: 'Price', ordem: 2 },
             { id: 'cs', nome: 'CS', ordem: 3 },
@@ -1086,43 +1059,15 @@
             { id: 'controladoria', nome: 'Controladoria', ordem: 7 },
             { id: 'contas-pagar', nome: 'Contas a Pagar', ordem: 8 },
             { id: 'contas-receber', nome: 'Contas a Receber', ordem: 9 }
-            
         ];
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚚 Sistema de Coletas inicializado');
-            initializeDarkMode();
             initializeDateFilters();
             loadColetas();
             updateStats();
         });
-
-        // Dark Mode
-        function initializeDarkMode() {
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                document.body.classList.remove('light-mode');
-                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            }
-
-            darkModeToggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-mode');
-                document.body.classList.toggle('light-mode');
-                
-                const icon = this.querySelector('i');
-                if (document.body.classList.contains('dark-mode')) {
-                    icon.className = 'fas fa-sun';
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    icon.className = 'fas fa-moon';
-                    localStorage.setItem('theme', 'light');
-                }
-            });
-        }
 
         // Inicializar filtros de data
         function initializeDateFilters() {
@@ -1219,7 +1164,7 @@
 
             if (dataToRender.length === 0) {
                 grid.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-light);">
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #6c757d;">
                         <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
                         <h3>Nenhuma coleta encontrada</h3>
                         <p>Tente ajustar os filtros para ver mais resultados</p>
