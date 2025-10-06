@@ -465,6 +465,157 @@
             width: 16px;
         }
 
+        /* Seção de Anexos nos Cards */
+        .anexos-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .anexos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .anexos-title {
+            font-size: 0.85rem;
+            color: var(--azul-escuro);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-anexar {
+            background: var(--gradient-success);
+            border: none;
+            color: var(--branco);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-anexar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .anexos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .anexo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0.8rem;
+            background: var(--branco);
+            border-radius: 8px;
+            border-left: 3px solid var(--azul-escuro);
+            transition: var(--transition);
+        }
+
+        .anexo-item:hover {
+            background: #f8f9fa;
+            transform: translateX(2px);
+        }
+
+        .anexo-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex: 1;
+        }
+
+        .anexo-icon {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .anexo-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .anexo-nome {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--cinza-escuro);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .anexo-tamanho {
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+
+        .anexo-actions {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .btn-anexo-action {
+            background: transparent;
+            border: none;
+            padding: 0.4rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        .btn-anexo-view {
+            color: var(--azul-escuro);
+            border: 1px solid var(--azul-escuro);
+        }
+
+        .btn-anexo-view:hover {
+            background: var(--azul-escuro);
+            color: white;
+        }
+
+        .btn-anexo-download {
+            color: var(--verde);
+            border: 1px solid var(--verde);
+        }
+
+        .btn-anexo-download:hover {
+            background: var(--verde);
+            color: white;
+        }
+
+        .btn-anexo-delete {
+            color: var(--vermelho);
+            border: 1px solid var(--vermelho);
+        }
+
+        .btn-anexo-delete:hover {
+            background: var(--vermelho);
+            color: white;
+        }
+
         /* Barra de Progresso das Etapas Modernizada */
         .etapas-container {
             margin: 1rem 0;
@@ -727,6 +878,284 @@
             gap: 1rem;
             justify-content: flex-end;
             margin-top: 2rem;
+        }
+
+        /* Modal de Anexos */
+        .modal-anexos {
+            max-width: 600px;
+        }
+
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-area:hover {
+            border-color: var(--azul-escuro);
+            background: #e9ecef;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--verde);
+            background: #d4edda;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text h5 {
+            color: var(--azul-escuro);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-text p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .file-types {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .file-type-badge {
+            padding: 0.3rem 0.6rem;
+            background: var(--azul-escuro);
+            color: var(--branco);
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .selected-files {
+            margin-top: 1.5rem;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: var(--branco);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex: 1;
+        }
+
+        .file-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--cinza-escuro);
+            font-size: 0.9rem;
+        }
+
+        .file-size {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .file-remove {
+            background: var(--vermelho);
+            color: var(--branco);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .file-remove:hover {
+            transform: scale(1.1);
+        }
+
+        .upload-progress {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-success);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        /* Modal de Visualização de Arquivos */
+        .modal-visualizador {
+            max-width: 90%;
+            max-height: 90vh;
+        }
+
+        .visualizador-container {
+            display: flex;
+            flex-direction: column;
+            height: 70vh;
+        }
+
+        .visualizador-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            background: var(--azul-escuro);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .visualizador-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: #f8f9fa;
+            overflow: auto;
+        }
+
+        .visualizador-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-top: 1px solid #e9ecef;
+            background: white;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .btn-download {
+            background: var(--gradient-success);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .preview-pdf {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .preview-document {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .unsupported-file {
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .unsupported-file i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .file-info-preview {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .file-info-preview h4 {
+            color: var(--azul-escuro);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-details-preview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .file-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .file-detail-label {
+            font-weight: 600;
+            color: var(--azul-escuro);
+        }
+
+        .file-detail-value {
+            color: #6c757d;
         }
 
         /* Botões Flutuantes */
@@ -1164,6 +1593,112 @@
         </div>
     </div>
 
+    <!-- Modal de Anexos -->
+    <div class="modal-overlay" id="anexosModal">
+        <div class="modal-content modal-anexos">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-paperclip"></i>
+                    <span id="modalAnexosTitle">Anexos da Coleta</span>
+                </h2>
+                <button class="close-modal" onclick="closeAnexosModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">
+                    <h5>Arraste arquivos aqui ou clique para selecionar</h5>
+                    <p>PDF, imagens, Excel, Word (Máx. 10MB por arquivo)</p>
+                </div>
+                <div class="file-types">
+                    <span class="file-type-badge">PDF</span>
+                    <span class="file-type-badge">XLS/XLSX</span>
+                    <span class="file-type-badge">JPG/PNG</span>
+                    <span class="file-type-badge">DOC/DOCX</span>
+                </div>
+            </div>
+            
+            <input type="file" id="fileInput" multiple style="display: none;" 
+                   accept=".pdf,.jpg,.jpeg,.png,.xls,.xlsx,.doc,.docx" onchange="handleFileSelect(this.files)">
+            
+            <div class="selected-files" id="selectedFiles" style="display: none;">
+                <h6>Arquivos selecionados:</h6>
+                <div id="filesList" class="mt-2"></div>
+            </div>
+            
+            <div class="upload-progress" id="uploadProgress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progressText">0%</div>
+            </div>
+
+            <div class="anexos-list-modal" id="anexosListModal">
+                <!-- Lista de anexos será preenchida aqui -->
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="action-btn warning" onclick="closeAnexosModal()">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+                <button type="button" class="action-btn success" id="btnUpload" onclick="fazerUpload()" disabled>
+                    <i class="fas fa-upload"></i> Enviar Arquivos
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Visualização de Arquivos -->
+    <div class="modal-overlay" id="visualizadorModal">
+        <div class="modal-content modal-visualizador">
+            <div class="visualizador-header">
+                <h3 id="visualizadorTitle">Visualizando Arquivo</h3>
+                <button class="close-modal" onclick="closeVisualizador()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="file-info-preview">
+                <h4 id="fileNamePreview"></h4>
+                <div class="file-details-preview">
+                    <div class="file-detail">
+                        <span class="file-detail-label">Tipo:</span>
+                        <span class="file-detail-value" id="fileTypePreview"></span>
+                    </div>
+                    <div class="file-detail">
+                        <span class="file-detail-label">Tamanho:</span>
+                        <span class="file-detail-value" id="fileSizePreview"></span>
+                    </div>
+                    <div class="file-detail">
+                        <span class="file-detail-label">Coleta:</span>
+                        <span class="file-detail-value" id="fileColetaPreview"></span>
+                    </div>
+                    <div class="file-detail">
+                        <span class="file-detail-label">Data:</span>
+                        <span class="file-detail-value" id="fileDatePreview"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualizador-content" id="visualizadorContent">
+                <!-- Conteúdo do arquivo será carregado aqui -->
+            </div>
+
+            <div class="visualizador-actions">
+                <button class="btn-download" onclick="downloadArquivo()">
+                    <i class="fas fa-download"></i> Baixar Arquivo
+                </button>
+                <button class="action-btn primary" onclick="closeVisualizador()">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Botões Flutuantes -->
     <div class="floating-action-buttons">
         <button class="fab-secondary" onclick="window.location.href='relatorios.html'" title="Relatórios">
@@ -1192,6 +1727,10 @@
         // Dados das coletas
         let coletasData = [];
         let currentEditingId = null;
+        let currentAnexosColetaId = null;
+        let selectedFiles = [];
+        let currentViewingFile = null;
+        let currentViewingColeta = null;
 
         // Etapas do processo
         const ETAPAS = [
@@ -1247,7 +1786,46 @@
             initializeDateFilters();
             carregarColetasDoStorage();
             updateStats();
+            setupDragAndDrop();
         });
+
+        // Configurar drag and drop
+        function setupDragAndDrop() {
+            const uploadArea = document.getElementById('uploadArea');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                uploadArea.classList.add('dragover');
+            }
+            
+            function unhighlight() {
+                uploadArea.classList.remove('dragover');
+            }
+            
+            uploadArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFileSelect(files);
+            }
+        }
 
         // Inicializar filtros de data
         function initializeDateFilters() {
@@ -1282,7 +1860,11 @@
                     etapaAtual: 'gr',
                     etapasConcluidas: ['cs', 'contratacao'],
                     valor: 2500.00,
-                    observacoes: 'Coleta urgente - cliente preferencial'
+                    observacoes: 'Coleta urgente - cliente preferencial',
+                    anexos: [
+                        { id: '1', nome: 'nota_fiscal.pdf', tamanho: 2400000, tipo: 'pdf' },
+                        { id: '2', nome: 'planilha_custos.xlsx', tamanho: 156000, tipo: 'excel' }
+                    ]
                 },
                 {
                     id: 'COL-002',
@@ -1297,7 +1879,8 @@
                     etapaAtual: 'contratacao',
                     etapasConcluidas: ['cs'],
                     valor: 3200.00,
-                    observacoes: 'Aguardando aprovação do cliente'
+                    observacoes: 'Aguardando aprovação do cliente',
+                    anexos: []
                 },
                 {
                     id: 'COL-003',
@@ -1312,7 +1895,10 @@
                     etapaAtual: 'comercial',
                     etapasConcluidas: ETAPAS.map(e => e.id),
                     valor: 1800.00,
-                    observacoes: 'Entrega realizada com sucesso'
+                    observacoes: 'Entrega realizada com sucesso',
+                    anexos: [
+                        { id: '3', nome: 'foto_entrega.jpg', tamanho: 1800000, tipo: 'image' }
+                    ]
                 },
                 {
                     id: 'COL-004',
@@ -1327,7 +1913,8 @@
                     etapaAtual: 'documentacao',
                     etapasConcluidas: ['cs', 'contratacao', 'gr'],
                     valor: 1200.00,
-                    observacoes: 'Coleta local - prioridade média'
+                    observacoes: 'Coleta local - prioridade média',
+                    anexos: []
                 }
             ];
         }
@@ -1413,6 +2000,50 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Seção de Anexos -->
+                    <div class="anexos-section">
+                        <div class="anexos-header">
+                            <div class="anexos-title">
+                                <i class="fas fa-paperclip"></i> Anexos
+                                <span class="badge" style="background: var(--azul-escuro); color: white; margin-left: 0.5rem; font-size: 0.7rem;">
+                                    ${coleta.anexos?.length || 0}
+                                </span>
+                            </div>
+                            <button class="btn-anexar" onclick="event.stopPropagation(); abrirModalAnexos('${coleta.id}')">
+                                <i class="fas fa-plus"></i> Adicionar
+                            </button>
+                        </div>
+                        <div class="anexos-list">
+                            ${(coleta.anexos && coleta.anexos.length > 0) ? 
+                                coleta.anexos.map(anexo => `
+                                    <div class="anexo-item">
+                                        <div class="anexo-info">
+                                            <div class="anexo-icon ${getFileIconClass(anexo.tipo)}">
+                                                <i class="fas ${getFileIcon(anexo.tipo)}"></i>
+                                            </div>
+                                            <div class="anexo-details">
+                                                <div class="anexo-nome">${anexo.nome}</div>
+                                                <div class="anexo-tamanho">${formatFileSize(anexo.tamanho)}</div>
+                                            </div>
+                                        </div>
+                                        <div class="anexo-actions">
+                                            <button class="btn-anexo-action btn-anexo-view" onclick="event.stopPropagation(); visualizarAnexo('${anexo.id}')" title="Visualizar">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn-anexo-action btn-anexo-download" onclick="event.stopPropagation(); downloadAnexoDireto('${coleta.id}', '${anexo.id}')" title="Baixar">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <button class="btn-anexo-action btn-anexo-delete" onclick="event.stopPropagation(); excluirAnexo('${coleta.id}', '${anexo.id}')" title="Excluir">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('') : 
+                                '<div style="text-align: center; color: #6c757d; font-size: 0.8rem; padding: 1rem;">Nenhum anexo adicionado</div>'
+                            }
+                        </div>
+                    </div>
                 </div>
 
                 <div class="etapas-container">
@@ -1481,6 +2112,448 @@
             return card;
         }
 
+        // === SISTEMA DE ANEXOS ===
+
+        // Abrir modal de anexos
+        function abrirModalAnexos(coletaId) {
+            currentAnexosColetaId = coletaId;
+            const coleta = coletasData.find(c => c.id === coletaId);
+            
+            if (!coleta) return;
+            
+            document.getElementById('modalAnexosTitle').textContent = `Anexos - ${coleta.id}`;
+            
+            // Resetar o modal
+            document.getElementById('selectedFiles').style.display = 'none';
+            document.getElementById('uploadProgress').style.display = 'none';
+            document.getElementById('btnUpload').disabled = true;
+            document.getElementById('filesList').innerHTML = '';
+            selectedFiles = [];
+            
+            // Carregar lista de anexos existentes
+            carregarListaAnexos(coleta);
+            
+            const modal = document.getElementById('anexosModal');
+            modal.classList.add('active');
+        }
+
+        // Fechar modal de anexos
+        function closeAnexosModal() {
+            document.getElementById('anexosModal').classList.remove('active');
+            currentAnexosColetaId = null;
+        }
+
+        // Carregar lista de anexos existentes
+        function carregarListaAnexos(coleta) {
+            const anexosList = document.getElementById('anexosListModal');
+            
+            if (!coleta.anexos || coleta.anexos.length === 0) {
+                anexosList.innerHTML = `
+                    <div style="text-align: center; color: #6c757d; padding: 2rem;">
+                        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>Nenhum anexo adicionado ainda</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            anexosList.innerHTML = `
+                <h6 style="margin-bottom: 1rem; color: var(--azul-escuro);">Anexos existentes:</h6>
+                ${coleta.anexos.map(anexo => `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-icon ${getFileIconClass(anexo.tipo)}">
+                                <i class="fas ${getFileIcon(anexo.tipo)}"></i>
+                            </div>
+                            <div class="file-details">
+                                <div class="file-name">${anexo.nome}</div>
+                                <div class="file-size">${formatFileSize(anexo.tamanho)}</div>
+                            </div>
+                        </div>
+                        <div class="anexo-actions">
+                            <button class="btn-anexo-action btn-anexo-view" onclick="visualizarAnexo('${anexo.id}')" title="Visualizar">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-anexo-action btn-anexo-download" onclick="downloadAnexoDireto('${coleta.id}', '${anexo.id}')" title="Baixar">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="btn-anexo-action btn-anexo-delete" onclick="excluirAnexo('${coleta.id}', '${anexo.id}')" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Manipular seleção de arquivos
+        function handleFileSelect(files) {
+            selectedFiles = Array.from(files);
+            const filesList = document.getElementById('filesList');
+            filesList.innerHTML = '';
+            
+            selectedFiles.forEach((file, index) => {
+                const fileType = getFileType(file.type);
+                const fileElement = document.createElement('div');
+                fileElement.className = 'file-item';
+                fileElement.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-icon ${getFileIconClass(fileType)}">
+                            <i class="fas ${getFileIcon(fileType)}"></i>
+                        </div>
+                        <div class="file-details">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${formatFileSize(file.size)}</div>
+                        </div>
+                    </div>
+                    <button class="file-remove" onclick="removerArquivo(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                filesList.appendChild(fileElement);
+            });
+            
+            document.getElementById('selectedFiles').style.display = 'block';
+            document.getElementById('btnUpload').disabled = false;
+        }
+
+        // Função para obter ícone baseado no tipo de arquivo
+        function getFileIcon(fileType) {
+            const icons = {
+                'pdf': 'fa-file-pdf',
+                'excel': 'fa-file-excel',
+                'image': 'fa-image',
+                'word': 'fa-file-word',
+                'default': 'fa-file'
+            };
+            
+            return icons[fileType] || icons.default;
+        }
+
+        // Função para obter classe CSS baseada no tipo de arquivo
+        function getFileIconClass(fileType) {
+            const classes = {
+                'pdf': 'text-danger',
+                'excel': 'text-success',
+                'image': 'text-info',
+                'word': 'text-primary',
+                'default': 'text-secondary'
+            };
+            
+            return classes[fileType] || classes.default;
+        }
+
+        // Determinar tipo de arquivo
+        function getFileType(mimeType) {
+            if (mimeType.includes('pdf')) return 'pdf';
+            if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) return 'excel';
+            if (mimeType.includes('image')) return 'image';
+            if (mimeType.includes('word') || mimeType.includes('document')) return 'word';
+            return 'default';
+        }
+
+        // Formatar tamanho do arquivo
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Remover arquivo da lista
+        function removerArquivo(index) {
+            selectedFiles.splice(index, 1);
+            handleFileSelect(selectedFiles);
+            if (selectedFiles.length === 0) {
+                document.getElementById('selectedFiles').style.display = 'none';
+                document.getElementById('btnUpload').disabled = true;
+            }
+        }
+
+        // Simular upload de arquivos
+        function fazerUpload() {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const uploadProgress = document.getElementById('uploadProgress');
+            
+            uploadProgress.style.display = 'block';
+            document.getElementById('btnUpload').disabled = true;
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                progressFill.style.width = progress + '%';
+                progressText.textContent = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Simular sucesso do upload
+                    setTimeout(() => {
+                        adicionarAnexosNaColeta();
+                        showNotification('Arquivos enviados com sucesso!', 'success');
+                        
+                        // Recarregar a lista de anexos
+                        const coleta = coletasData.find(c => c.id === currentAnexosColetaId);
+                        if (coleta) {
+                            carregarListaAnexos(coleta);
+                        }
+                        
+                        // Resetar interface de upload
+                        document.getElementById('selectedFiles').style.display = 'none';
+                        document.getElementById('uploadProgress').style.display = 'none';
+                        document.getElementById('filesList').innerHTML = '';
+                        selectedFiles = [];
+                        
+                        // Atualizar cards
+                        renderColetas();
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        // Adicionar anexos à coleta
+        function adicionarAnexosNaColeta() {
+            const coletaIndex = coletasData.findIndex(c => c.id === currentAnexosColetaId);
+            if (coletaIndex === -1) return;
+            
+            if (!coletasData[coletaIndex].anexos) {
+                coletasData[coletaIndex].anexos = [];
+            }
+            
+            selectedFiles.forEach(file => {
+                const fileType = getFileType(file.type);
+                const novoAnexo = {
+                    id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+                    nome: file.name,
+                    tamanho: file.size,
+                    tipo: fileType,
+                    arquivo: file // Em produção, isso seria enviado para o servidor
+                };
+                
+                coletasData[coletaIndex].anexos.push(novoAnexo);
+            });
+            
+            // Salvar no localStorage
+            salvarColetasNoStorage();
+        }
+
+        // === SISTEMA DE VISUALIZAÇÃO E DOWNLOAD ===
+
+        // Função para visualizar arquivo
+        function visualizarAnexo(anexoId) {
+            // Encontrar o anexo em todas as coletas
+            let anexoEncontrado = null;
+            let coletaEncontrada = null;
+            
+            for (const coleta of coletasData) {
+                if (coleta.anexos) {
+                    anexoEncontrado = coleta.anexos.find(a => a.id === anexoId);
+                    if (anexoEncontrado) {
+                        coletaEncontrada = coleta;
+                        break;
+                    }
+                }
+            }
+            
+            if (anexoEncontrado) {
+                currentViewingFile = anexoEncontrado;
+                currentViewingColeta = coletaEncontrada;
+                abrirVisualizador(anexoEncontrado, coletaEncontrada);
+            } else {
+                showNotification('Anexo não encontrado', 'error');
+            }
+        }
+
+        // Função para abrir o visualizador
+        function abrirVisualizador(anexo, coleta) {
+            document.getElementById('visualizadorTitle').textContent = `Visualizando: ${anexo.nome}`;
+            document.getElementById('fileNamePreview').textContent = anexo.nome;
+            document.getElementById('fileTypePreview').textContent = anexo.tipo.toUpperCase();
+            document.getElementById('fileSizePreview').textContent = formatFileSize(anexo.tamanho);
+            document.getElementById('fileColetaPreview').textContent = coleta.id;
+            document.getElementById('fileDatePreview').textContent = formatarData(coleta.dataRecebimento);
+
+            const visualizadorContent = document.getElementById('visualizadorContent');
+            visualizadorContent.innerHTML = '';
+
+            // Criar URL temporária para o arquivo (em produção, isso viria do servidor)
+            let fileUrl = null;
+            if (anexo.arquivo) {
+                fileUrl = URL.createObjectURL(anexo.arquivo);
+            }
+
+            switch (anexo.tipo) {
+                case 'pdf':
+                    if (fileUrl) {
+                        visualizadorContent.innerHTML = `
+                            <iframe src="${fileUrl}" class="preview-pdf" 
+                                    title="Visualização do PDF: ${anexo.nome}">
+                            </iframe>
+                        `;
+                    } else {
+                        visualizadorContent.innerHTML = `
+                            <div class="unsupported-file">
+                                <i class="fas fa-file-pdf"></i>
+                                <h4>Pré-visualização não disponível</h4>
+                                <p>O arquivo PDF precisa ser baixado para visualização.</p>
+                                <p><small>Arquivo: ${anexo.nome}</small></p>
+                            </div>
+                        `;
+                    }
+                    break;
+
+                case 'image':
+                    if (fileUrl) {
+                        visualizadorContent.innerHTML = `
+                            <img src="${fileUrl}" alt="${anexo.nome}" class="preview-image"
+                                 onerror="this.style.display='none'; document.getElementById('imageError').style.display='block'">
+                            <div id="imageError" style="display: none;" class="unsupported-file">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h4>Erro ao carregar imagem</h4>
+                                <p>Não foi possível carregar a pré-visualização da imagem.</p>
+                            </div>
+                        `;
+                    } else {
+                        visualizadorContent.innerHTML = `
+                            <div class="unsupported-file">
+                                <i class="fas fa-image"></i>
+                                <h4>Pré-visualização não disponível</h4>
+                                <p>A imagem precisa ser baixada para visualização.</p>
+                                <p><small>Arquivo: ${anexo.nome}</small></p>
+                            </div>
+                        `;
+                    }
+                    break;
+
+                case 'excel':
+                    visualizadorContent.innerHTML = `
+                        <div class="unsupported-file">
+                            <i class="fas fa-file-excel"></i>
+                            <h4>Pré-visualização não disponível</h4>
+                            <p>Arquivos Excel precisam ser baixados para visualização.</p>
+                            <p><small>Arquivo: ${anexo.nome}</small></p>
+                            <p><small>Dica: Use o Microsoft Excel ou Google Sheets para abrir este arquivo.</small></p>
+                        </div>
+                    `;
+                    break;
+
+                case 'word':
+                    visualizadorContent.innerHTML = `
+                        <div class="unsupported-file">
+                            <i class="fas fa-file-word"></i>
+                            <h4>Pré-visualização não disponível</h4>
+                            <p>Arquivos Word precisam ser baixados para visualização.</p>
+                            <p><small>Arquivo: ${anexo.nome}</small></p>
+                            <p><small>Dica: Use o Microsoft Word ou Google Docs para abrir este arquivo.</small></p>
+                        </div>
+                    `;
+                    break;
+
+                default:
+                    visualizadorContent.innerHTML = `
+                        <div class="unsupported-file">
+                            <i class="fas fa-file"></i>
+                            <h4>Tipo de arquivo não suportado</h4>
+                            <p>Este tipo de arquivo não pode ser visualizado no navegador.</p>
+                            <p><small>Arquivo: ${anexo.nome}</small></p>
+                            <p><small>Tipo: ${anexo.tipo}</small></p>
+                        </div>
+                    `;
+            }
+
+            document.getElementById('visualizadorModal').classList.add('active');
+        }
+
+        // Função para fechar o visualizador
+        function closeVisualizador() {
+            document.getElementById('visualizadorModal').classList.remove('active');
+            currentViewingFile = null;
+            currentViewingColeta = null;
+            
+            // Limpar URLs temporárias para liberar memória
+            const iframes = document.querySelectorAll('.preview-pdf');
+            iframes.forEach(iframe => {
+                iframe.src = '';
+            });
+        }
+
+        // Função para baixar arquivo
+        function downloadArquivo() {
+            if (!currentViewingFile) return;
+
+            if (currentViewingFile.arquivo) {
+                // Criar link de download temporário
+                const url = URL.createObjectURL(currentViewingFile.arquivo);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = currentViewingFile.nome;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification(`Download iniciado: ${currentViewingFile.nome}`, 'success');
+            } else {
+                // Em produção, aqui faria o download do servidor
+                showNotification('Arquivo não disponível para download', 'error');
+            }
+        }
+
+        // Função para baixar diretamente (sem abrir visualizador)
+        function downloadAnexoDireto(coletaId, anexoId) {
+            // Encontrar o anexo
+            const coleta = coletasData.find(c => c.id === coletaId);
+            if (!coleta || !coleta.anexos) return;
+
+            const anexo = coleta.anexos.find(a => a.id === anexoId);
+            if (!anexo) return;
+
+            if (anexo.arquivo) {
+                const url = URL.createObjectURL(anexo.arquivo);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = anexo.nome;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification(`Download iniciado: ${anexo.nome}`, 'success');
+            } else {
+                showNotification('Arquivo não disponível para download', 'error');
+            }
+        }
+
+        // Excluir anexo
+        function excluirAnexo(coletaId, anexoId) {
+            if (!confirm('Tem certeza que deseja excluir este anexo?')) {
+                return;
+            }
+            
+            const coletaIndex = coletasData.findIndex(c => c.id === coletaId);
+            if (coletaIndex === -1) return;
+            
+            if (coletasData[coletaIndex].anexos) {
+                coletasData[coletaIndex].anexos = coletasData[coletaIndex].anexos.filter(a => a.id !== anexoId);
+                
+                // Salvar no localStorage
+                salvarColetasNoStorage();
+                
+                // Atualizar interface
+                if (currentAnexosColetaId === coletaId) {
+                    const coleta = coletasData[coletaIndex];
+                    carregarListaAnexos(coleta);
+                }
+                
+                renderColetas();
+                showNotification('Anexo excluído com sucesso', 'success');
+            }
+        }
+
+        // === FUNÇÕES EXISTENTES DO SISTEMA ===
+
         // Calcular progresso das etapas
         function calcularProgressoEtapas(coleta) {
             const etapaAtualIndex = ETAPAS.findIndex(e => e.id === coleta.etapaAtual);
@@ -1542,6 +2615,7 @@
             coletaData.km = parseFloat(coletaData.km) || 0;
             coletaData.valor = parseFloat(coletaData.valor) || 0;
             coletaData.etapasConcluidas = coletaData.etapasConcluidas || ['cs'];
+            coletaData.anexos = coletaData.anexos || [];
             
             if (currentEditingId) {
                 // Editar coleta existente
@@ -1553,7 +2627,8 @@
                 const novaColeta = {
                     id: 'COL-' + (coletasData.length + 1).toString().padStart(3, '0'),
                     ...coletaData,
-                    etapasConcluidas: ['cs']
+                    etapasConcluidas: ['cs'],
+                    anexos: []
                 };
                 coletasData.unshift(novaColeta);
                 showNotification('Nova coleta criada com sucesso!', 'success');
@@ -1715,6 +2790,18 @@
         document.getElementById('coletaModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal();
+            }
+        });
+
+        document.getElementById('anexosModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAnexosModal();
+            }
+        });
+
+        document.getElementById('visualizadorModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeVisualizador();
             }
         });
     </script>
