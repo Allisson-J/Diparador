@@ -7,56 +7,329 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { padding: 20px; background-color: #f8f9fa; }
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --success-gradient: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+      --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --danger-gradient: linear-gradient(135deg, #ff5858 0%, #f09819 100%);
+    }
+    
+    body { 
+      padding: 20px; 
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
     .header-section { 
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--primary-gradient);
       color: white;
       padding: 25px;
       border-radius: 15px;
       margin-bottom: 25px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
     }
+    
+    .header-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      transform: rotate(30deg);
+    }
+    
     .category-card { 
       cursor: pointer; 
-      transition: all 0.3s; 
-      border: 2px solid #dee2e6;
+      transition: all 0.3s ease; 
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      background: white;
     }
+    
     .category-card:hover { 
-      transform: translateY(-2px); 
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transform: translateY(-5px) scale(1.02); 
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      border-color: #667eea;
     }
+    
     .category-card.active { 
       border: 2px solid #0d6efd; 
-      background-color: #0d6efd; 
+      background: var(--primary-gradient); 
       color: #fff; 
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
     }
+    
     #contactsInfo { text-align: center; margin-bottom: 20px; font-weight: 500; }
-    #progBar { height: 20px; transition: width 0.3s; }
-    .contact-form { background-color: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .contact-list { max-height: 400px; overflow-y: auto; margin-top: 15px; border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; }
-    .contact-item { border-bottom: 1px solid #e9ecef; padding: 10px 0; }
+    #progBar { height: 25px; transition: width 0.4s ease; border-radius: 10px; }
+    .contact-form { 
+      background-color: #fff; 
+      padding: 25px; 
+      border-radius: 15px; 
+      margin-bottom: 20px; 
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      border-left: 4px solid #667eea;
+    }
+    
+    .contact-list { 
+      max-height: 500px; 
+      overflow-y: auto; 
+      margin-top: 15px; 
+      border: 1px solid #e9ecef; 
+      border-radius: 10px; 
+      padding: 15px;
+      background: #f8f9fa;
+    }
+    
+    .contact-item { 
+      border-bottom: 1px solid #e9ecef; 
+      padding: 12px 0; 
+      transition: background-color 0.2s;
+      border-radius: 8px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    
+    .contact-item:hover {
+      background-color: #e9ecef;
+    }
+    
     .contact-item:last-child { border-bottom: none; }
     .evolution-status { font-size: 0.9rem; }
-    .btn-stop { background-color: #dc3545; border-color: #dc3545; color: white; }
-    .btn-stop:hover { background-color: #c82333; border-color: #bd2130; }
-    .status-card { margin-bottom: 20px; }
-    .alert { border: none; border-radius: 8px; }
+    
+    .btn-stop { 
+      background: var(--danger-gradient);
+      border: none;
+      color: white;
+      transition: all 0.3s;
+    }
+    
+    .btn-stop:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+    
+    .status-card { 
+      margin-bottom: 20px; 
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      border: none;
+    }
+    
+    .status-card .card-header {
+      border-radius: 0;
+      font-weight: 600;
+    }
+    
+    .alert { 
+      border: none; 
+      border-radius: 12px; 
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+    
     .btn-logout {
       background: rgba(255,255,255,0.2);
       border: 2px solid rgba(255,255,255,0.3);
       color: white;
       transition: all 0.3s;
+      border-radius: 10px;
+      font-weight: 500;
     }
+    
     .btn-logout:hover {
       background: rgba(255,255,255,0.3);
       border-color: rgba(255,255,255,0.5);
       transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
+    
     .user-info {
-      background: rgba(255,255,255,0.1);
-      padding: 10px 15px;
-      border-radius: 10px;
+      background: rgba(255,255,255,0.15);
+      padding: 12px 18px;
+      border-radius: 12px;
       margin-top: 10px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .progress {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .btn-success {
+      background: var(--success-gradient);
+      border: none;
+      transition: all 0.3s;
+    }
+    
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+    }
+    
+    .btn-warning {
+      background: var(--warning-gradient);
+      border: none;
+      transition: all 0.3s;
+    }
+    
+    .btn-warning:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+    }
+    
+    .btn-primary {
+      background: var(--primary-gradient);
+      border: none;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-danger {
+      background: var(--danger-gradient);
+      border: none;
+      transition: all 0.3s;
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 88, 88, 0.4);
+    }
+    
+    .form-control, .form-select {
+      border-radius: 10px;
+      padding: 10px 15px;
+      border: 2px solid #e9ecef;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .card {
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+    }
+    
+    /* Custom scrollbar */
+    .contact-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .contact-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    .contact-list::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 10px;
+    }
+    
+    .contact-list::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+    
+    /* Loading animation */
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    
+    .loading {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    /* Badge improvements */
+    .badge {
+      border-radius: 8px;
+      font-weight: 500;
+    }
+    
+    /* Pagination Styles */
+    .pagination-container {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .page-size-selector {
+      max-width: 120px;
+    }
+    
+    .page-info {
+      font-weight: 500;
+      color: #495057;
+    }
+    
+    .contact-checkbox {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+    
+    .selection-info {
+      background: var(--primary-gradient);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .select-all-section {
+      background: #e9ecef;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid #667eea;
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      .header-section {
+        padding: 20px 15px;
+      }
+      
+      .contact-form {
+        padding: 15px;
+      }
+      
+      .category-card {
+        margin-bottom: 10px;
+      }
+      
+      .pagination-container .d-flex {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .page-size-selector {
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -67,15 +340,15 @@
   <div class="header-section">
     <div class="row align-items-center">
       <div class="col">
-        <h1 class="mb-2">📱 Disparador de Mensagens WhatsApp</h1>
+        <h1 class="mb-2"><i class="fas fa-rocket me-2"></i>Disparador de Mensagens WhatsApp</h1>
         <div class="user-info">
-          <i class="fas fa-user"></i> <span id="currentUser">Carregando...</span> | 
-          <i class="fas fa-plug"></i> <span id="userInstance">Carregando instância...</span>
+          <i class="fas fa-user me-1"></i> <span id="currentUser">Carregando...</span> | 
+          <i class="fas fa-plug me-1"></i> <span id="userInstance">Carregando instância...</span>
         </div>
       </div>
       <div class="col-auto">
         <button id="btnLogout" class="btn btn-logout">
-          <i class="fas fa-sign-out-alt"></i> Sair do Sistema
+          <i class="fas fa-sign-out-alt me-1"></i> Sair do Sistema
         </button>
       </div>
     </div>
@@ -83,18 +356,18 @@
 
   <!-- Alerta de Segurança -->
   <div class="alert alert-info text-center">
-    <strong>🔒 Modo Seguro Ativo</strong> - Delay aleatório de <strong>30 segundos a 60 segundos</strong> entre mensagens para evitar bloqueios
+    <strong><i class="fas fa-shield-alt me-2"></i>Modo Seguro Ativo</strong> - Delay aleatório de <strong>30 segundos a 60 segundos</strong> entre mensagens para evitar bloqueios
   </div>
 
   <!-- Status do Sistema -->
   <div class="card status-card">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">🔧 Status do Sistema</h5>
-      <button onclick="verificarStatus()" class="btn btn-sm btn-outline-light">🔄 Atualizar</button>
+      <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Status do Sistema</h5>
+      <button onclick="verificarStatus()" class="btn btn-sm btn-outline-light"><i class="fas fa-sync-alt me-1"></i>Atualizar</button>
     </div>
     <div class="card-body">
       <div id="evolutionStatus" class="evolution-status">
-        <div class="text-muted">Verificando conexão com o Evolution API...</div>
+        <div class="text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Verificando conexão com o Evolution API...</div>
       </div>
     </div>
   </div>
@@ -102,26 +375,26 @@
   <!-- Importar Contatos -->
   <div class="card status-card">
     <div class="card-header bg-success text-white">
-      <h5 class="mb-0">📥 Importar Contatos</h5>
+      <h5 class="mb-0"><i class="fas fa-download me-2"></i>Importar Contatos</h5>
     </div>
     <div class="card-body">
       <div class="row">
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-body">
-              <h6>🔄 Do Arquivo CSV</h6>
+            <div class="card-body text-center">
+              <h6><i class="fas fa-sync me-2"></i>Do Arquivo CSV</h6>
               <p class="card-text">Importa automaticamente do arquivo <code>contatos.csv</code></p>
-              <button onclick="atualizarDoCSV()" class="btn btn-success w-100">📁 Importar CSV</button>
+              <button onclick="atualizarDoCSV()" class="btn btn-success w-100"><i class="fas fa-file-csv me-2"></i>Importar CSV</button>
             </div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-body">
-              <h6>📤 Upload de Arquivo</h6>
+            <div class="card-body text-center">
+              <h6><i class="fas fa-upload me-2"></i>Upload de Arquivo</h6>
               <p class="card-text">Faça upload de um arquivo CSV</p>
               <input type="file" id="csvFile" class="form-control mb-2" accept=".csv">
-              <button onclick="importarCSVUpload()" class="btn btn-info w-100">📤 Fazer Upload</button>
+              <button onclick="importarCSVUpload()" class="btn btn-info w-100"><i class="fas fa-cloud-upload-alt me-2"></i>Fazer Upload</button>
             </div>
           </div>
         </div>
@@ -132,7 +405,7 @@
 
   <!-- Gerenciar Contatos -->
   <div class="contact-form">
-    <h3>👥 Gerenciar Contatos</h3>
+    <h3><i class="fas fa-users me-2"></i>Gerenciar Contatos</h3>
     <div class="row g-3 mb-3">
       <div class="col-md-4">
         <input type="text" id="newName" class="form-control" placeholder="Nome completo">
@@ -156,14 +429,52 @@
         </select>
       </div>
       <div class="col-md-2">
-        <button id="addContact" class="btn btn-success w-100">➕ Adicionar</button>
+        <button id="addContact" class="btn btn-success w-100"><i class="fas fa-plus me-1"></i>Adicionar</button>
+      </div>
+    </div>
+    
+    <!-- Informações de Seleção -->
+    <div id="selectionInfo" class="selection-info" style="display: none;">
+      <i class="fas fa-check-circle me-2"></i>
+      <span id="selectedCount">0</span> contatos selecionados para envio
+    </div>
+    
+    <!-- Seção Selecionar Todos -->
+    <div id="selectAllSection" class="select-all-section" style="display: none;">
+      <div class="form-check">
+        <input class="form-check-input contact-checkbox" type="checkbox" id="selectAllCheckbox">
+        <label class="form-check-label fw-bold" for="selectAllCheckbox">
+          Selecionar todos os contatos desta página
+        </label>
       </div>
     </div>
     
     <div class="contact-list" id="contactsList">
       <div class="text-center text-muted py-4">
+        <div><i class="fas fa-list-alt fa-2x mb-3"></i></div>
         <div>📋 Selecione uma categoria para ver os contatos</div>
         <small>Os contatos aparecerão aqui após selecionar uma categoria</small>
+      </div>
+    </div>
+    
+    <!-- Paginação -->
+    <div id="paginationContainer" class="pagination-container" style="display: none;">
+      <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <div class="d-flex align-items-center gap-3">
+          <span class="page-info" id="pageInfo">Página 1 de 1</span>
+          <select id="pageSize" class="form-select page-size-selector">
+            <option value="50">50 por página</option>
+            <option value="100" selected>100 por página</option>
+            <option value="200">200 por página</option>
+            <option value="500">500 por página</option>
+          </select>
+        </div>
+        
+        <nav>
+          <ul class="pagination mb-0" id="pagination">
+            <!-- Paginação será gerada aqui -->
+          </ul>
+        </nav>
       </div>
     </div>
   </div>
@@ -171,7 +482,7 @@
   <!-- Teste Rápido -->
   <div class="card status-card">
     <div class="card-header bg-warning text-dark">
-      <h5 class="mb-0">🧪 Teste Rápido</h5>
+      <h5 class="mb-0"><i class="fas fa-vial me-2"></i>Teste Rápido</h5>
     </div>
     <div class="card-body">
       <div class="row g-3 align-items-end">
@@ -184,7 +495,7 @@
           <input type="text" id="testMessage" class="form-control" value="✅ Teste do sistema de disparo">
         </div>
         <div class="col-md-3">
-          <button onclick="testarEnvio()" class="btn btn-warning w-100 fw-bold">📤 Enviar Teste</button>
+          <button onclick="testarEnvio()" class="btn btn-warning w-100 fw-bold"><i class="fas fa-paper-plane me-1"></i>Enviar Teste</button>
         </div>
       </div>
       <div id="testResult" class="mt-3"></div>
@@ -194,7 +505,7 @@
   <!-- Categorias -->
   <div class="card status-card">
     <div class="card-header bg-primary text-white">
-      <h5 class="mb-0">📂 Categorias de Contatos</h5>
+      <h5 class="mb-0"><i class="fas fa-folder me-2"></i>Categorias de Contatos</h5>
     </div>
     <div class="card-body">
       <div class="row g-3" id="categories">
@@ -259,30 +570,30 @@
 
   <!-- Informações dos Contatos -->
   <div class="alert alert-info text-center" id="contactsInfo">
-    👆 Selecione uma categoria acima para carregar os contatos
+    <i class="fas fa-hand-point-up me-2"></i>Selecione uma categoria acima para carregar os contatos
   </div>
 
   <!-- Mensagem e Envio -->
   <div class="card status-card">
     <div class="card-header bg-danger text-white">
-      <h5 class="mb-0">🚀 Disparo em Massa</h5>
+      <h5 class="mb-0"><i class="fas fa-rocket me-2"></i>Disparo em Massa</h5>
     </div>
     <div class="card-body">
       <div class="mb-3">
-        <label for="msg" class="form-label fw-bold">💬 Mensagem Personalizada:</label>
+        <label for="msg" class="form-label fw-bold"><i class="fas fa-comment me-1"></i>Mensagem Personalizada:</label>
         <textarea id="msg" class="form-control" rows="4" placeholder="Digite sua mensagem aqui...">Olá {{name}}, temos uma viagem disponível para você na categoria {{category}}.</textarea>
         <small class="text-muted">
-          🔧 Variáveis disponíveis: <code>{{name}}</code>, <code>{{number}}</code>, <code>{{category}}</code>
+          <i class="fas fa-tools me-1"></i>Variáveis disponíveis: <code>{{name}}</code>, <code>{{number}}</code>, <code>{{category}}</code>
         </small>
       </div>
 
       <!-- Botões de Envio e Parada -->
       <div class="row g-2 mb-3">
         <div class="col-md-9">
-          <button id="sendBtn" class="btn btn-danger w-100 fw-bold py-2">🚀 INICIAR DISPARO EM MASSA</button>
+          <button id="sendBtn" class="btn btn-danger w-100 fw-bold py-2"><i class="fas fa-play me-2"></i>INICIAR DISPARO EM MASSA</button>
         </div>
         <div class="col-md-3">
-          <button id="stopBtn" class="btn btn-stop w-100 fw-bold py-2" style="display: none;">🛑 PARAR ENVIO</button>
+          <button id="stopBtn" class="btn btn-stop w-100 fw-bold py-2" style="display: none;"><i class="fas fa-stop me-2"></i>PARAR ENVIO</button>
         </div>
       </div>
 
@@ -295,7 +606,7 @@
       
       <!-- Status Detalhado -->
       <div id="status" class="text-center fw-semibold alert alert-light">
-        Pronto para iniciar o disparo
+        <i class="fas fa-check-circle text-success me-2"></i>Pronto para iniciar o disparo
       </div>
     </div>
   </div>
@@ -309,6 +620,9 @@ const SERVER_URL = window.location.origin;
 let envioAtivo = false;
 let selectedCat = null;
 let contacts = [];
+let currentPage = 1;
+let pageSize = 100;
+let selectedContacts = new Set();
 
 // ========== INICIALIZAÇÃO ==========
 document.addEventListener('DOMContentLoaded', function() {
@@ -370,35 +684,6 @@ async function carregarInformacoesUsuario() {
   }
 }
 
-// ✅ DEBUG SEGURO (OPCIONAL - pode remover completamente se quiser)
-async function debugAuthSafe() {
-  console.log('=== 🔍 DEBUG SEGURO ===');
-  
-  try {
-    // Apenas verifica status atual SEM fazer login
-    const statusRes = await fetch('/api/auth/status', {
-      credentials: 'include'
-    });
-    
-    const statusData = await statusRes.json();
-    console.log('🔐 Status de autenticação:', statusData);
-    
-    // Testa conexão com Evolution
-    const evolutionRes = await fetch('/webhook/status-evolution', {
-      credentials: 'include'
-    });
-    
-    const evolutionData = await evolutionRes.json();
-    console.log('📡 Status Evolution:', evolutionData);
-    
-  } catch (error) {
-    console.error('❌ Erro no debug:', error);
-  }
-}
-
-// NÃO execute automaticamente - apenas para uso manual no console
-// debugAuthSafe() // ← DEIXE COMENTADO!
-
 // ✅ FUNÇÃO DE LOGOUT
 async function fazerLogout() {
   if (confirm('Deseja realmente sair do sistema?')) {
@@ -425,7 +710,7 @@ async function fazerLogout() {
 // ========== STATUS DO SISTEMA ==========
 async function verificarStatus() {
   const statusDiv = document.getElementById('evolutionStatus');
-  statusDiv.innerHTML = '<div class="text-info">🔍 Verificando conexão com Evolution API...</div>';
+  statusDiv.innerHTML = '<div class="text-info"><i class="fas fa-spinner fa-spin me-2"></i>Verificando conexão com Evolution API...</div>';
   
   try {
     const res = await fetch(`${SERVER_URL}/webhook/status-evolution`);
@@ -434,13 +719,13 @@ async function verificarStatus() {
     if (data.connected) {
       statusDiv.innerHTML = `
         <div class="alert alert-success">
-          <strong>✅ ${data.message}</strong>
+          <strong><i class="fas fa-check-circle me-2"></i>${data.message}</strong>
           <div class="row mt-2">
             <div class="col-6">
-              <small>Versão: <strong>${data.version || 'N/A'}</strong></small>
+              <small><i class="fas fa-code me-1"></i>Versão: <strong>${data.version || 'N/A'}</strong></small>
             </div>
             <div class="col-6">
-              <small>Instância: <strong>${data.instance || 'N/A'}</strong></small>
+              <small><i class="fas fa-server me-1"></i>Instância: <strong>${data.instance || 'N/A'}</strong></small>
             </div>
           </div>
         </div>
@@ -448,7 +733,7 @@ async function verificarStatus() {
     } else {
       statusDiv.innerHTML = `
         <div class="alert alert-danger">
-          <strong>❌ ${data.error || 'Erro de conexão'}</strong>
+          <strong><i class="fas fa-exclamation-triangle me-2"></i>${data.error || 'Erro de conexão'}</strong>
           <div class="small">${data.message || ''}</div>
         </div>
       `;
@@ -456,7 +741,7 @@ async function verificarStatus() {
   } catch (err) {
     statusDiv.innerHTML = `
       <div class="alert alert-danger">
-        <strong>❌ Servidor não responde</strong>
+        <strong><i class="fas fa-unlink me-2"></i>Servidor não responde</strong>
         <div class="small">Verifique se o servidor está rodando na porta 5680</div>
       </div>
     `;
@@ -468,7 +753,7 @@ async function atualizarDoCSV() {
   const statusDiv = document.getElementById('csvStatus');
   statusDiv.innerHTML = `
     <div class="alert alert-info">
-      <strong>📤 Importando do contatos.csv...</strong>
+      <strong><i class="fas fa-sync fa-spin me-2"></i>Importando do contatos.csv...</strong>
       <div class="progress mt-2">
         <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
       </div>
@@ -482,10 +767,10 @@ async function atualizarDoCSV() {
     if (result.success) {
       statusDiv.innerHTML = `
         <div class="alert alert-success">
-          <strong>✅ CSV Importado com Sucesso!</strong><br>
-          📊 Total processado: ${result.total} contatos<br>
-          ✅ Novos inseridos: ${result.inseridos}<br>
-          ⚠️ Duplicados ignorados: ${result.erros}
+          <strong><i class="fas fa-check-circle me-2"></i>CSV Importado com Sucesso!</strong><br>
+          <i class="fas fa-chart-bar me-1"></i>Total processado: ${result.total} contatos<br>
+          <i class="fas fa-plus-circle me-1"></i>Novos inseridos: ${result.inseridos}<br>
+          <i class="fas fa-exclamation-triangle me-1"></i>Duplicados ignorados: ${result.erros}
         </div>
       `;
       
@@ -495,11 +780,11 @@ async function atualizarDoCSV() {
       }
       
     } else {
-      statusDiv.innerHTML = `<div class="alert alert-danger">❌ ${result.error}</div>`;
+      statusDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>${result.error}</div>`;
     }
     
   } catch (err) {
-    statusDiv.innerHTML = '<div class="alert alert-danger">❌ Erro de conexão com o servidor</div>';
+    statusDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-unlink me-2"></i>Erro de conexão com o servidor</div>';
   }
 }
 
@@ -509,11 +794,11 @@ async function importarCSVUpload() {
   const statusDiv = document.getElementById('csvStatus');
   
   if (!file) {
-    statusDiv.innerHTML = '<div class="alert alert-warning">⚠️ Selecione um arquivo CSV</div>';
+    statusDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Selecione um arquivo CSV</div>';
     return;
   }
   
-  statusDiv.innerHTML = '<div class="alert alert-info">📤 Processando arquivo...</div>';
+  statusDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i>Processando arquivo...</div>';
   
   try {
     const text = await file.text();
@@ -537,7 +822,7 @@ async function importarCSVUpload() {
     }
     
     if (contatos.length === 0) {
-      statusDiv.innerHTML = '<div class="alert alert-warning">⚠️ Nenhum contato válido encontrado</div>';
+      statusDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Nenhum contato válido encontrado</div>';
       return;
     }
     
@@ -553,10 +838,10 @@ async function importarCSVUpload() {
     if (response.ok) {
       statusDiv.innerHTML = `
         <div class="alert alert-success">
-          <strong>✅ Upload Concluído!</strong><br>
-          📊 Total: ${result.total} contatos<br>
-          ✅ Inseridos: ${result.inseridos} novos<br>
-          ⚠️ Duplicados: ${result.erros} ignorados
+          <strong><i class="fas fa-check-circle me-2"></i>Upload Concluído!</strong><br>
+          <i class="fas fa-chart-bar me-1"></i>Total: ${result.total} contatos<br>
+          <i class="fas fa-plus-circle me-1"></i>Inseridos: ${result.inseridos} novos<br>
+          <i class="fas fa-exclamation-triangle me-1"></i>Duplicados: ${result.erros} ignorados
         </div>
       `;
       
@@ -568,11 +853,11 @@ async function importarCSVUpload() {
       }
       
     } else {
-      statusDiv.innerHTML = `<div class="alert alert-danger">❌ Erro: ${result.error}</div>`;
+      statusDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>Erro: ${result.error}</div>`;
     }
     
   } catch (err) {
-    statusDiv.innerHTML = '<div class="alert alert-danger">❌ Erro ao processar arquivo</div>';
+    statusDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>Erro ao processar arquivo</div>';
   }
 }
 
@@ -583,11 +868,11 @@ async function testarEnvio() {
   const resultDiv = document.getElementById('testResult');
   
   if (!testNumber) {
-    resultDiv.innerHTML = '<div class="alert alert-warning">⚠️ Digite um número para teste</div>';
+    resultDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Digite um número para teste</div>';
     return;
   }
   
-  resultDiv.innerHTML = '<div class="alert alert-info">📤 Enviando mensagem de teste...</div>';
+  resultDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-paper-plane me-2"></i>Enviando mensagem de teste...</div>';
   
   try {
     const response = await fetch(`${SERVER_URL}/webhook/send`, {
@@ -604,12 +889,12 @@ async function testarEnvio() {
     const result = await response.json();
     
     if (result.success) {
-      resultDiv.innerHTML = '<div class="alert alert-success">✅ Mensagem enviada com sucesso!</div>';
+      resultDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>Mensagem enviada com sucesso!</div>';
     } else {
-      resultDiv.innerHTML = `<div class="alert alert-danger">❌ ${result.error}</div>`;
+      resultDiv.innerHTML = `<div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>${result.error}</div>`;
     }
   } catch (err) {
-    resultDiv.innerHTML = '<div class="alert alert-danger">❌ Erro de conexão com o servidor</div>';
+    resultDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-unlink me-2"></i>Erro de conexão com o servidor</div>';
   }
 }
 
@@ -631,10 +916,38 @@ function carregarEventos() {
 
   // ✅ Botão de logout
   document.getElementById('btnLogout').addEventListener('click', fazerLogout);
+
+  // Paginação - Tamanho da página
+  document.getElementById('pageSize').addEventListener('change', function() {
+    pageSize = parseInt(this.value);
+    currentPage = 1;
+    if (selectedCat) {
+      atualizarListaContatos();
+    }
+  });
+
+  // Selecionar todos
+  document.getElementById('selectAllCheckbox').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.contact-checkbox:not(#selectAllCheckbox)');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = this.checked;
+      const contactId = checkbox.dataset.contactId;
+      if (this.checked) {
+        selectedContacts.add(contactId);
+      } else {
+        selectedContacts.delete(contactId);
+      }
+    });
+    atualizarContadorSelecionados();
+  });
 }
 
 // ========== FUNÇÕES PRINCIPAIS ==========
 async function carregarContatos(categoria) {
+  // Resetar seleções
+  selectedContacts.clear();
+  currentPage = 1;
+  
   // Ativar categoria
   document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active'));
   document.querySelector(`[data-cat="${categoria}"]`).classList.add('active');
@@ -643,8 +956,8 @@ async function carregarContatos(categoria) {
   const contactsInfo = document.getElementById('contactsInfo');
   const contactsList = document.getElementById('contactsList');
   
-  contactsInfo.innerHTML = `<div class="text-info">📋 Carregando contatos para ${categoria}...</div>`;
-  contactsList.innerHTML = '<div class="text-center py-3">⏳ Carregando...</div>';
+  contactsInfo.innerHTML = `<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i>Carregando contatos para ${categoria}...</div>`;
+  contactsList.innerHTML = '<div class="text-center py-3"><i class="fas fa-spinner fa-spin me-2"></i>Carregando...</div>';
 
   try {
     const url = `${SERVER_URL}/webhook/contatos?categoria=${categoria}`;
@@ -655,42 +968,139 @@ async function carregarContatos(categoria) {
     contacts = await res.json();
     contactsInfo.innerHTML = `
       <div class="alert alert-success">
-        <strong>📊 ${contacts.length} contatos encontrados</strong>
-        <div class="small">Categoria: ${categoria}</div>
+        <strong><i class="fas fa-check-circle me-2"></i>${contacts.length} contatos encontrados</strong>
+        <div class="small"><i class="fas fa-tag me-1"></i>Categoria: ${categoria}</div>
       </div>
     `;
     
     atualizarListaContatos();
   } catch (err) {
     console.error('❌ Erro ao carregar contatos:', err);
-    contactsInfo.innerHTML = '<div class="alert alert-danger">❌ Erro ao carregar contatos</div>';
-    contactsList.innerHTML = '<div class="text-center text-danger py-3">❌ Erro ao carregar contatos</div>';
+    contactsInfo.innerHTML = '<div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>Erro ao carregar contatos</div>';
+    contactsList.innerHTML = '<div class="text-center text-danger py-3"><i class="fas fa-times-circle me-2"></i>Erro ao carregar contatos</div>';
   }
 }
 
 function atualizarListaContatos() {
   const contactsList = document.getElementById('contactsList');
-  
+  const paginationContainer = document.getElementById('paginationContainer');
+  const selectAllSection = document.getElementById('selectAllSection');
+  const selectionInfo = document.getElementById('selectionInfo');
+
   if (contacts.length === 0) {
-    contactsList.innerHTML = '<div class="text-center text-muted py-4">📭 Nenhum contato encontrado</div>';
+    contactsList.innerHTML = '<div class="text-center text-muted py-4"><i class="fas fa-inbox fa-2x mb-3"></i><div>📭 Nenhum contato encontrado</div></div>';
+    paginationContainer.style.display = 'none';
+    selectAllSection.style.display = 'none';
+    selectionInfo.style.display = 'none';
     return;
   }
-  
+
+  // Calcular paginação
+  const totalPages = Math.ceil(contacts.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, contacts.length);
+  const currentContacts = contacts.slice(startIndex, endIndex);
+
+  // Mostrar/ocultar elementos de seleção
+  selectAllSection.style.display = 'block';
+  selectionInfo.style.display = 'block';
+  paginationContainer.style.display = 'block';
+
+  // Atualizar informações da página
+  document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages} - ${startIndex + 1} a ${endIndex} de ${contacts.length} contatos`;
+
+  // Gerar lista de contatos
   let html = '';
-  contacts.forEach(contact => {
+  currentContacts.forEach((contact, index) => {
+    const contactId = `${contact.number}-${index}`;
+    const isSelected = selectedContacts.has(contactId);
+    
     html += `
       <div class="contact-item">
         <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <strong>${contact.name}</strong><br>
-            <small class="text-muted">${contact.number}</small>
+          <div class="d-flex align-items-center">
+            <input class="form-check-input contact-checkbox" type="checkbox" 
+                   data-contact-id="${contactId}" 
+                   ${isSelected ? 'checked' : ''}
+                   onchange="toggleContactSelection('${contactId}', this.checked)">
+            <div class="ms-3">
+              <strong><i class="fas fa-user me-1"></i>${contact.name}</strong><br>
+              <small class="text-muted"><i class="fas fa-phone me-1"></i>${contact.number}</small>
+            </div>
           </div>
-          <span class="badge bg-secondary">${contact.category}</span>
+          <span class="badge bg-secondary"><i class="fas fa-tag me-1"></i>${contact.category}</span>
         </div>
       </div>
     `;
   });
   contactsList.innerHTML = html;
+
+  // Atualizar paginação
+  atualizarPaginacao(totalPages);
+  
+  // Atualizar contador de selecionados
+  atualizarContadorSelecionados();
+  
+  // Resetar selecionar todos
+  document.getElementById('selectAllCheckbox').checked = false;
+}
+
+function atualizarPaginacao(totalPages) {
+  const pagination = document.getElementById('pagination');
+  let html = '';
+
+  // Botão anterior
+  html += `
+    <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+      <a class="page-link" href="#" onclick="mudarPagina(${currentPage - 1})">‹</a>
+    </li>
+  `;
+
+  // Páginas
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+      html += `
+        <li class="page-item ${i === currentPage ? 'active' : ''}">
+          <a class="page-link" href="#" onclick="mudarPagina(${i})">${i}</a>
+        </li>
+      `;
+    } else if (i === currentPage - 3 || i === currentPage + 3) {
+      html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+    }
+  }
+
+  // Botão próximo
+  html += `
+    <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+      <a class="page-link" href="#" onclick="mudarPagina(${currentPage + 1})">›</a>
+    </li>
+  `;
+
+  pagination.innerHTML = html;
+}
+
+function mudarPagina(pagina) {
+  currentPage = pagina;
+  atualizarListaContatos();
+}
+
+function toggleContactSelection(contactId, isSelected) {
+  if (isSelected) {
+    selectedContacts.add(contactId);
+  } else {
+    selectedContacts.delete(contactId);
+  }
+  atualizarContadorSelecionados();
+  
+  // Atualizar checkbox "Selecionar todos"
+  const checkboxes = document.querySelectorAll('.contact-checkbox:not(#selectAllCheckbox)');
+  const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+  document.getElementById('selectAllCheckbox').checked = allChecked;
+}
+
+function atualizarContadorSelecionados() {
+  const selectedCount = document.getElementById('selectedCount');
+  selectedCount.textContent = selectedContacts.size;
 }
 
 async function adicionarContato() {
@@ -735,15 +1145,15 @@ function renderMessage(template, contact) {
     .replace(/{{\s*category\s*}}/gi, contact.category || '');
 }
 
-// ========== DISPARO EM MASSA COM DELAY ALEATÓRIO ==========
+// ========== DISPARO EM MASSA COM SELEÇÃO ==========
 async function iniciarDisparo() {
   if (!selectedCat) {
     alert('⚠️ Selecione uma categoria primeiro');
     return;
   }
   
-  if (!contacts.length) {
-    alert('⚠️ Nenhum contato carregado para disparo');
+  if (selectedContacts.size === 0) {
+    alert('⚠️ Selecione pelo menos um contato para enviar');
     return;
   }
 
@@ -753,11 +1163,17 @@ async function iniciarDisparo() {
     return;
   }
 
+  // Filtrar contatos selecionados
+  const contactsToSend = contacts.filter(contact => {
+    const contactId = `${contact.number}-${contacts.indexOf(contact)}`;
+    return selectedContacts.has(contactId);
+  });
+
   // Calcular tempo estimado (30-120 segundos por mensagem)
-  const tempoMin = Math.ceil((contacts.length * 30) / 60);
-  const tempoMax = Math.ceil((contacts.length * 120) / 60);
+  const tempoMin = Math.ceil((contactsToSend.length * 30) / 60);
+  const tempoMax = Math.ceil((contactsToSend.length * 120) / 60);
   
-  if (!confirm(`🚀 Iniciar disparo para ${contacts.length} contatos?\n\n⏰ Tempo estimado: ${tempoMin} a ${tempoMax} minutos\n🔒 Delay de segurança: 30s a 2min entre mensagens`)) {
+  if (!confirm(`🚀 Iniciar disparo para ${contactsToSend.length} contatos selecionados?\n\n⏰ Tempo estimado: ${tempoMin} a ${tempoMax} minutos\n🔒 Delay de segurança: 30s a 2min entre mensagens`)) {
     return;
   }
 
@@ -780,7 +1196,7 @@ async function iniciarDisparo() {
   let errorCount = 0;
 
   // Enviar mensagens COM DELAY ALEATÓRIO
-  for (const contact of contacts) {
+  for (const contact of contactsToSend) {
     if (!envioAtivo) break;
     
     const message = renderMessage(template, contact);
@@ -813,20 +1229,20 @@ async function iniciarDisparo() {
     
     // Atualizar progresso
     completed++;
-    const progress = Math.round((completed / contacts.length) * 100);
+    const progress = Math.round((completed / contactsToSend.length) * 100);
     progBar.style.width = progress + '%';
     progressText.textContent = `${progress}%`;
     
     // Aplicar delay aleatório entre mensagens (30s a 60s) - exceto na última
-    if (envioAtivo && completed < contacts.length) {
+    if (envioAtivo && completed < contactsToSend.length) {
       const delaySeconds = Math.floor(Math.random() * (60 - 30 + 1)) + 30;
       
       statusDiv.innerHTML = `
         <div class="text-center">
-          <strong>📤 Enviando: ${completed} / ${contacts.length}</strong><br>
-          <small>✅ Sucessos: ${successCount} | ❌ Erros: ${errorCount}</small>
+          <strong><i class="fas fa-paper-plane me-2"></i>Enviando: ${completed} / ${contactsToSend.length}</strong><br>
+          <small><i class="fas fa-check-circle text-success me-1"></i>Sucessos: ${successCount} | <i class="fas fa-times-circle text-danger me-1"></i>Erros: ${errorCount}</small>
           <div class="mt-1">
-            <small class="text-warning">⏰ Próxima mensagem em ${delaySeconds} segundos...</small>
+            <small class="text-warning"><i class="fas fa-clock me-1"></i>Próxima mensagem em ${delaySeconds} segundos...</small>
           </div>
         </div>
       `;
@@ -838,15 +1254,15 @@ async function iniciarDisparo() {
     } else {
       statusDiv.innerHTML = `
         <div class="text-center">
-          <strong>📤 Enviando: ${completed} / ${contacts.length}</strong><br>
-          <small>✅ Sucessos: ${successCount} | ❌ Erros: ${errorCount}</small>
+          <strong><i class="fas fa-paper-plane me-2"></i>Enviando: ${completed} / ${contactsToSend.length}</strong><br>
+          <small><i class="fas fa-check-circle text-success me-1"></i>Sucessos: ${successCount} | <i class="fas fa-times-circle text-danger me-1"></i>Erros: ${errorCount}</small>
         </div>
       `;
     }
   }
 
   // Finalizar
-  finalizarEnvio(successCount, errorCount);
+  finalizarEnvio(successCount, errorCount, contactsToSend.length);
 }
 
 function pararEnvio() {
@@ -855,10 +1271,10 @@ function pararEnvio() {
   const statusDiv = document.getElementById('status');
   
   stopBtn.style.display = 'none';
-  statusDiv.innerHTML = '<div class="alert alert-warning">🛑 Envio interrompido pelo usuário</div>';
+  statusDiv.innerHTML = '<div class="alert alert-warning"><i class="fas fa-stop-circle me-2"></i>Envio interrompido pelo usuário</div>';
 }
 
-function finalizarEnvio(successCount, errorCount) {
+function finalizarEnvio(successCount, errorCount, totalEnviados) {
   envioAtivo = false;
   const sendBtn = document.getElementById('sendBtn');
   const stopBtn = document.getElementById('stopBtn');
@@ -868,14 +1284,14 @@ function finalizarEnvio(successCount, errorCount) {
   
   // ✅ RESETAR TODA A INTERFACE
   sendBtn.disabled = false;
-  sendBtn.textContent = '🚀 INICIAR DISPARO EM MASSA';
+  sendBtn.textContent = '<i class="fas fa-play me-2"></i>INICIAR DISPARO EM MASSA';
   stopBtn.style.display = 'none';
   progBar.style.width = '100%';
   progBar.classList.remove('progress-bar-animated');
   progressText.textContent = '100%';
   
   let message = `✅ Disparo concluído!\n\n`;
-  message += `📊 Total de contatos: ${contacts.length}\n`;
+  message += `📊 Total selecionado: ${totalEnviados}\n`;
   message += `✅ Mensagens enviadas: ${successCount}\n`;
   
   if (errorCount > 0) {
@@ -886,10 +1302,10 @@ function finalizarEnvio(successCount, errorCount) {
   
   statusDiv.innerHTML = `
     <div class="alert alert-success">
-      <strong>✅ Disparo Concluído!</strong><br>
-      📊 Total: ${contacts.length} contatos<br>
-      ✅ Sucessos: ${successCount} mensagens<br>
-      ${errorCount > 0 ? `❌ Erros: ${errorCount} mensagens` : '🎉 Todos os envios foram bem-sucedidos!'}
+      <strong><i class="fas fa-check-circle me-2"></i>Disparo Concluído!</strong><br>
+      <i class="fas fa-chart-bar me-1"></i>Total selecionado: ${totalEnviados} contatos<br>
+      <i class="fas fa-check-circle me-1"></i>Sucessos: ${successCount} mensagens<br>
+      ${errorCount > 0 ? `<i class="fas fa-times-circle me-1"></i>Erros: ${errorCount} mensagens` : '<i class="fas fa-party-horn me-1"></i>Todos os envios foram bem-sucedidos!'}
     </div>
   `;
   
@@ -901,6 +1317,7 @@ document.getElementById('sendBtn').addEventListener('click', iniciarDisparo);
 
 console.log('✅ Sistema carregado com sucesso!');
 console.log('🔒 Modo seguro ativo: Delay aleatório de 30s a 60s entre mensagens');
+console.log('📄 Sistema de paginação ativo: Selecione contatos específicos para envio');
 </script>
 </body>
 </html>

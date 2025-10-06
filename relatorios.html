@@ -446,6 +446,73 @@
             letter-spacing: 0.5px;
         }
 
+        /* CARD DE VOLUME FINANCEIRO ESPECÍFICO */
+        .finance-card .report-stats {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .finance-card .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+            padding: 0.8rem;
+            background: rgba(0, 39, 118, 0.03);
+            border-radius: 10px;
+            border-left: 4px solid var(--success);
+        }
+
+        .finance-card .stat-item:nth-child(2) {
+            border-left-color: var(--primary);
+        }
+
+        .finance-card .stat-item:nth-child(3) {
+            border-left-color: var(--warning);
+        }
+
+        .finance-card .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0;
+        }
+
+        .finance-card .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .finance-card .value-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .finance-card .value-trend {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            margin-top: 0.2rem;
+        }
+
+        .value-trend.positive {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .value-trend.negative {
+            background: rgba(198, 12, 48, 0.1);
+            color: var(--danger);
+        }
+
+        .value-trend.neutral {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
         /* Gráficos - DESIGN MODERNIZADO */
         .charts-container {
             display: grid;
@@ -759,6 +826,16 @@
             .data-table td {
                 padding: 0.8rem 0.5rem;
             }
+
+            .finance-card .stat-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+
+            .finance-card .value-container {
+                align-items: center;
+            }
         }
 
         /* Animações adicionais */
@@ -920,26 +997,36 @@
                 </div>
             </div>
 
-            <div class="report-card">
+            <!-- CARD DE VOLUME FINANCEIRO MELHORADO -->
+            <div class="report-card finance-card">
                 <div class="report-header">
                     <div>
                         <h3 class="report-title">Volume Financeiro</h3>
-                        <p class="report-description">Valor total das operações</p>
+                        <p class="report-description">Análise financeira das operações</p>
                     </div>
                     <i class="fas fa-chart-line report-icon"></i>
                 </div>
                 <div class="report-stats">
                     <div class="stat-item">
-                        <div class="stat-value" id="valorTotal">R$ 0</div>
                         <div class="stat-label">Valor Total</div>
+                        <div class="value-container">
+                            <div class="stat-value" id="valorTotal">R$ 0</div>
+                            <span class="value-trend positive" id="trendTotal">+12%</span>
+                        </div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="valorMedio">R$ 0</div>
-                        <div class="stat-label">Valor Médio</div>
+                        <div class="stat-label">Valor Médio por Coleta</div>
+                        <div class="value-container">
+                            <div class="stat-value" id="valorMedio">R$ 0</div>
+                            <span class="value-trend neutral" id="trendMedio">±0%</span>
+                        </div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" id="crescimento">0%</div>
-                        <div class="stat-label">Crescimento</div>
+                        <div class="stat-label">Crescimento Mensal</div>
+                        <div class="value-container">
+                            <div class="stat-value" id="crescimento">0%</div>
+                            <span class="value-trend positive" id="trendCrescimento">↗</span>
+                        </div>
                     </div>
                 </div>
             </div>
