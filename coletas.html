@@ -13,12 +13,19 @@
             --cinza-claro: #F5F5F5;
             --cinza-escuro: #333333;
             --azul-claro: #4A7BFF;
+            --verde: #28a745;
+            --laranja: #fd7e14;
+            --roxo: #6f42c1;
+            --ciano: #20c997;
             --gradient-primary: linear-gradient(135deg, #002776 0%, #0044AA 100%);
             --gradient-danger: linear-gradient(135deg, #C60C30 0%, #E63946 100%);
+            --gradient-success: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --gradient-warning: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             --hover-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            --border-radius: 16px;
         }
 
         * {
@@ -157,7 +164,7 @@
         /* Filtros e Controles */
         .controls-container {
             background: var(--branco);
-            border-radius: 20px;
+            border-radius: var(--border-radius);
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: var(--card-shadow);
@@ -176,6 +183,7 @@
             flex-direction: column;
             gap: 0.7rem;
             min-width: 200px;
+            flex: 1;
         }
 
         .filter-group label {
@@ -190,7 +198,7 @@
         .filter-group select,
         .filter-group input {
             padding: 0.8rem 1rem;
-            border: 2px solid #ddd;
+            border: 2px solid #e9ecef;
             border-radius: 10px;
             font-size: 0.9rem;
             background: var(--branco);
@@ -224,6 +232,7 @@
             flex-direction: column;
             gap: 0.7rem;
             min-width: 180px;
+            flex: 1;
         }
 
         .date-filter-group label {
@@ -269,15 +278,22 @@
         .stat-card {
             background: var(--gradient-primary);
             color: var(--branco);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
             text-align: center;
-            min-width: 120px;
+            min-width: 140px;
+            flex: 1;
             box-shadow: 0 4px 15px rgba(0, 39, 118, 0.3);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 39, 118, 0.4);
         }
 
         .stat-number {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 700;
             margin-bottom: 0.3rem;
         }
@@ -285,19 +301,20 @@
         .stat-label {
             font-size: 0.8rem;
             opacity: 0.9;
+            font-weight: 500;
         }
 
-        /* Grid de Cards de Coletas */
+        /* Grid de Cards de Coletas - DESIGN MODERNIZADO */
         .coletas-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
             margin-bottom: 3rem;
         }
 
         .coleta-card {
             background: var(--branco);
-            border-radius: 20px;
+            border-radius: var(--border-radius);
             padding: 1.5rem;
             box-shadow: var(--card-shadow);
             transition: var(--transition);
@@ -305,6 +322,9 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .coleta-card::before {
@@ -317,93 +337,165 @@
         }
 
         .coleta-card.pendente::before { background: var(--vermelho); }
-        .coleta-card.andamento::before { background: var(--azul-claro); }
-        .coleta-card.concluida::before { background: #28a745; }
+        .coleta-card.andamento::before { background: var(--laranja); }
+        .coleta-card.concluida::before { background: var(--verde); }
         .coleta-card.cancelada::before { background: #6c757d; }
 
         .coleta-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
             box-shadow: var(--hover-shadow);
         }
 
+        /* Header do Card Modernizado */
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .card-title-section {
+            flex: 1;
         }
 
         .card-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--cinza-escuro);
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
         }
 
         .card-id {
             font-size: 0.8rem;
             color: var(--cinza-escuro);
             background: var(--cinza-claro);
-            padding: 0.3rem 0.6rem;
+            padding: 0.3rem 0.8rem;
             border-radius: 20px;
             font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
         }
 
         .status-badge {
-            padding: 0.4rem 0.8rem;
+            padding: 0.5rem 1rem;
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
-        .status-pendente { background: rgba(198, 12, 48, 0.1); color: var(--vermelho); border: 1px solid var(--vermelho); }
-        .status-andamento { background: rgba(74, 123, 255, 0.1); color: var(--azul-claro); border: 1px solid var(--azul-claro); }
-        .status-concluida { background: rgba(40, 167, 69, 0.1); color: #28a745; border: 1px solid #28a745; }
-        .status-cancelada { background: rgba(108, 117, 125, 0.1); color: #6c757d; border: 1px solid #6c757d; }
-
-        .card-content {
-            margin-bottom: 1.5rem;
+        .status-pendente { 
+            background: rgba(198, 12, 48, 0.1); 
+            color: var(--vermelho); 
+            border: 1px solid var(--vermelho); 
+        }
+        .status-andamento { 
+            background: rgba(253, 126, 20, 0.1); 
+            color: var(--laranja); 
+            border: 1px solid var(--laranja); 
+        }
+        .status-concluida { 
+            background: rgba(40, 167, 69, 0.1); 
+            color: var(--verde); 
+            border: 1px solid var(--verde); 
+        }
+        .status-cancelada { 
+            background: rgba(108, 117, 125, 0.1); 
+            color: #6c757d; 
+            border: 1px solid #6c757d; 
         }
 
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.7rem;
+        .valor-badge {
+            background: var(--gradient-primary);
+            color: var(--branco);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
             font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0, 39, 118, 0.3);
+        }
+
+        /* Conteúdo do Card Modernizado */
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
         }
 
         .info-label {
+            font-size: 0.75rem;
             color: #6c757d;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .info-value {
-            color: var(--cinza-escuro);
-            font-weight: 600;
-            text-align: right;
-        }
-
-        /* Barra de Progresso das Etapas */
-        .etapas-container {
-            margin: 1.5rem 0;
-        }
-
-        .etapas-title {
             font-size: 0.9rem;
-            color: #6c757d;
-            margin-bottom: 0.8rem;
+            color: var(--cinza-escuro);
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
+        .info-value i {
+            color: var(--azul-escuro);
+            width: 16px;
+        }
+
+        /* Barra de Progresso das Etapas Modernizada */
+        .etapas-container {
+            margin: 1rem 0;
+        }
+
+        .etapas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .etapas-title {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: var(--azul-escuro);
+            font-weight: 600;
+        }
+
         .etapas-progress {
             display: flex;
-            height: 6px;
-            background: #ddd;
+            height: 8px;
+            background: #e9ecef;
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 1rem;
@@ -416,13 +508,13 @@
 
         .etapa-cs { background: var(--azul-claro); }
         .etapa-contratacao { background: var(--azul-escuro); }
-        .etapa-gr { background: #28a745; }
+        .etapa-gr { background: var(--verde); }
         .etapa-documentacao { background: var(--vermelho); }
-        .etapa-controladoria { background: #560bad; }
+        .etapa-controladoria { background: var(--roxo); }
         .etapa-contas-pagar { background: #480ca8; }
         .etapa-contas-receber { background: #3f37c9; }
-        .etapa-price { background: var(--azul-escuro); }
-        .etapa-comercial { background: var(--azul-claro); }
+        .etapa-price { background: var(--laranja); }
+        .etapa-comercial { background: var(--ciano); }
 
         .etapas-labels {
             display: flex;
@@ -431,7 +523,7 @@
         }
 
         .etapa-badge {
-            padding: 0.3rem 0.6rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 15px;
             font-size: 0.7rem;
             font-weight: 600;
@@ -439,6 +531,9 @@
             color: #6c757d;
             border: 1px solid #ddd;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
         }
 
         .etapa-badge.ativa {
@@ -448,17 +543,19 @@
         }
 
         .etapa-badge.concluida {
-            background: #28a745;
+            background: var(--verde);
             color: var(--branco);
-            border-color: #28a745;
+            border-color: var(--verde);
         }
 
+        /* Footer do Card Modernizado */
         .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding-top: 1rem;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid #e9ecef;
+            margin-top: auto;
         }
 
         .card-actions {
@@ -467,15 +564,15 @@
         }
 
         .action-btn {
-            padding: 0.5rem 0.8rem;
+            padding: 0.6rem 1rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 0.8rem;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
             font-weight: 600;
         }
 
@@ -485,7 +582,7 @@
         }
 
         .action-btn.success {
-            background: #28a745;
+            background: var(--verde);
             color: var(--branco);
         }
 
@@ -502,6 +599,9 @@
         .card-date {
             font-size: 0.8rem;
             color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         /* Modal de Detalhes */
@@ -532,7 +632,7 @@
 
         .modal-content {
             background: var(--branco);
-            border-radius: 20px;
+            border-radius: var(--border-radius);
             padding: 2rem;
             max-width: 800px;
             width: 100%;
@@ -549,7 +649,7 @@
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid #ddd;
+            border-bottom: 2px solid #e9ecef;
         }
 
         .modal-title {
@@ -602,7 +702,7 @@
         .form-group select,
         .form-group textarea {
             padding: 0.8rem 1rem;
-            border: 2px solid #ddd;
+            border: 2px solid #e9ecef;
             border-radius: 10px;
             font-size: 0.9rem;
             background: var(--branco);
@@ -813,6 +913,23 @@
                 height: 50px;
                 font-size: 1.3rem;
             }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .status-section {
+                flex-direction: row;
+                align-items: center;
+                width: 100%;
+                justify-content: space-between;
+                margin-top: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -890,10 +1007,33 @@
                     <label for="filialFilter"><i class="fas fa-building"></i> Filial</label>
                     <select id="filialFilter" onchange="filterColetas()">
                         <option value="">Todas as Filiais</option>
-                        <option value="SP">São Paulo</option>
-                        <option value="RJ">Rio de Janeiro</option>
-                        <option value="MG">Minas Gerais</option>
+                        <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
                         <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goiás</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -911,11 +1051,11 @@
                     <div class="stat-number" id="pendentesCount">0</div>
                     <div class="stat-label">Pendentes</div>
                 </div>
-                <div class="stat-card" style="background: linear-gradient(135deg, #4A7BFF 0%, #3A6BE8 100%);">
+                <div class="stat-card" style="background: var(--gradient-warning);">
                     <div class="stat-number" id="andamentoCount">0</div>
                     <div class="stat-label">Em Andamento</div>
                 </div>
-                <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #218838 100%);">
+                <div class="stat-card" style="background: var(--gradient-success);">
                     <div class="stat-number" id="concluidasCount">0</div>
                     <div class="stat-label">Concluídas</div>
                 </div>
@@ -944,6 +1084,10 @@
             <form id="coletaForm">
                 <div class="form-grid">
                     <div class="form-group">
+                        <label for="filial">Filial *</label>
+                        <input type="text" id="filial" name="filial" required>
+                    </div>
+                    <div class="form-group">
                         <label for="cliente">Cliente *</label>
                         <input type="text" id="cliente" name="cliente" required>
                     </div>
@@ -953,27 +1097,31 @@
                     </div>
                     <div class="form-group">
                         <label for="origem">Origem *</label>
-                        <input type="text" id="origem" name="origem" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="ufOrigem">UF Origem</label>
-                        <input type="text" id="ufOrigem" name="ufOrigem" maxlength="2">
+                        <input type="text" id="origem" name="origem" placeholder="Cidade - UF" required>
                     </div>
                     <div class="form-group">
                         <label for="destino">Destino *</label>
-                        <input type="text" id="destino" name="destino" required>
+                        <input type="text" id="destino" name="destino" placeholder="Cidade - UF" required>
                     </div>
                     <div class="form-group">
-                        <label for="ufDestino">UF Destino</label>
-                        <input type="text" id="ufDestino" name="ufDestino" maxlength="2">
+                        <label for="valor">Valor (R$) *</label>
+                        <input type="number" id="valor" name="valor" step="0.01" min="0" placeholder="0,00" required>
                     </div>
                     <div class="form-group">
                         <label for="km">KM</label>
-                        <input type="number" id="km" name="km" step="0.1">
+                        <input type="number" id="km" name="km" step="0.1" min="0" placeholder="0">
                     </div>
                     <div class="form-group">
                         <label for="veiculo">Veículo</label>
-                        <input type="text" id="veiculo" name="veiculo">
+                        <select id="veiculo" name="veiculo">
+                            <option value="">Selecione o veículo</option>
+                            <option value="VUC">VUC</option>
+                            <option value="Bitruck">Bitruck</option>
+                            <option value="Truck">Truck</option>
+                            <option value="Carreta">Carreta</option>
+                            <option value="Bitrem">Bitrem</option>
+                            <option value="Rodotrem">Rodotrem</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>
@@ -1000,7 +1148,7 @@
                     </div>
                     <div class="form-group full-width">
                         <label for="observacoes">Observações</label>
-                        <textarea id="observacoes" name="observacoes" rows="3"></textarea>
+                        <textarea id="observacoes" name="observacoes" rows="3" placeholder="Informações adicionais sobre a coleta..."></textarea>
                     </div>
                 </div>
                 
@@ -1058,11 +1206,46 @@
             { id: 'contas-receber', nome: 'Contas a Receber', ordem: 9 }
         ];
 
+        // === FUNÇÕES DE LOCALSTORAGE ===
+
+        // Salvar todas as coletas no localStorage
+        function salvarColetasNoStorage() {
+            try {
+                localStorage.setItem('coletasData', JSON.stringify(coletasData));
+                console.log('✅ Coletas salvas no localStorage:', coletasData.length, 'itens');
+            } catch (error) {
+                console.error('❌ Erro ao salvar no localStorage:', error);
+                showNotification('Erro ao salvar dados localmente', 'error');
+            }
+        }
+
+        // Carregar coletas do localStorage
+        function carregarColetasDoStorage() {
+            try {
+                const coletasSalvas = localStorage.getItem('coletasData');
+                if (coletasSalvas) {
+                    coletasData = JSON.parse(coletasSalvas);
+                    console.log('📦 Coletas carregadas do localStorage:', coletasData.length, 'itens');
+                    showNotification('Dados carregados com sucesso', 'success');
+                } else {
+                    console.log('📝 Nenhum dado salvo encontrado, usando dados de exemplo');
+                    carregarDadosExemplo();
+                    salvarColetasNoStorage();
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar do localStorage:', error);
+                carregarDadosExemplo();
+                showNotification('Erro ao carregar dados salvos', 'error');
+            }
+        }
+
+        // === FUNÇÕES PRINCIPAIS ===
+
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚚 Sistema de Coletas inicializado');
             initializeDateFilters();
-            loadColetas();
+            carregarColetasDoStorage();
             updateStats();
         });
 
@@ -1075,9 +1258,8 @@
             document.getElementById('dataFim').value = formatarDataParaInput(hoje);
         }
 
-        // Carregar coletas
-        function loadColetas() {
-            // Simular dados de exemplo com datas variadas
+        // Carregar dados de exemplo (apenas se não houver dados salvos)
+        function carregarDadosExemplo() {
             const hoje = new Date();
             const datas = [
                 formatarDataParaInput(new Date(hoje.getTime() - 2 * 24 * 60 * 60 * 1000)), // 2 dias atrás
@@ -1089,7 +1271,7 @@
             coletasData = [
                 {
                     id: 'COL-001',
-                    Filial: 'JBO',
+                    filial: 'JBO',
                     cliente: 'Cliente A Ltda',
                     dataRecebimento: datas[0],
                     origem: 'São Paulo - SP',
@@ -1104,7 +1286,7 @@
                 },
                 {
                     id: 'COL-002',
-                    Filial: 'JBO',
+                    filial: 'JBO',
                     cliente: 'Empresa B S/A',
                     dataRecebimento: datas[1],
                     origem: 'Belo Horizonte - MG',
@@ -1119,7 +1301,7 @@
                 },
                 {
                     id: 'COL-003',
-                    Filial: 'JBO',
+                    filial: 'JBO',
                     cliente: 'Comércio C ME',
                     dataRecebimento: datas[2],
                     origem: 'Curitiba - PR',
@@ -1134,7 +1316,7 @@
                 },
                 {
                     id: 'COL-004',
-                    Filial: 'JBO',
+                    filial: 'JBO',
                     cliente: 'Indústria D EIRELI',
                     dataRecebimento: datas[3],
                     origem: 'Campinas - SP',
@@ -1148,11 +1330,9 @@
                     observacoes: 'Coleta local - prioridade média'
                 }
             ];
-
-            renderColetas();
         }
 
-        // Renderizar cards de coletas
+        // Renderizar cards de coletas - DESIGN MODERNIZADO
         function renderColetas(filteredData = null) {
             const grid = document.getElementById('coletasGrid');
             const dataToRender = filteredData || coletasData;
@@ -1178,7 +1358,7 @@
             updateStats(dataToRender);
         }
 
-        // Criar card de coleta
+        // Criar card de coleta - DESIGN MODERNIZADO
         function createColetaCard(coleta) {
             const card = document.createElement('div');
             card.className = `coleta-card ${coleta.status}`;
@@ -1188,37 +1368,61 @@
             
             card.innerHTML = `
                 <div class="card-header">
-                    <div>
+                    <div class="card-title-section">
                         <h3 class="card-title">${coleta.cliente}</h3>
                         <div class="card-id">${coleta.id}</div>
                     </div>
-                    <div class="status-badge status-${coleta.status}">
-                        ${getStatusText(coleta.status)}
+                    <div class="status-section">
+                        <div class="status-badge status-${coleta.status}">
+                            ${getStatusText(coleta.status)}
+                        </div>
+                        <div class="valor-badge">
+                            R$ ${coleta.valor?.toFixed(2) || '0,00'}
+                        </div>
                     </div>
                 </div>
 
                 <div class="card-content">
-                    <div class="info-row">
-                        <span class="info-label">Origem → Destino</span>
-                        <span class="info-value">${coleta.origem} → ${coleta.destino}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">KM / Veículo</span>
-                        <span class="info-value">${coleta.km}km • ${coleta.veiculo}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Data Recebimento</span>
-                        <span class="info-value">${formatarData(coleta.dataRecebimento)}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Valor</span>
-                        <span class="info-value">R$ ${coleta.valor?.toFixed(2) || '0,00'}</span>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Origem</div>
+                            <div class="info-value">
+                                <i class="fas fa-map-marker-alt"></i>
+                                ${coleta.origem}
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Destino</div>
+                            <div class="info-value">
+                                <i class="fas fa-flag-checkered"></i>
+                                ${coleta.destino}
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Veículo</div>
+                            <div class="info-value">
+                                <i class="fas fa-truck"></i>
+                                ${coleta.veiculo || '-'}
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">KM</div>
+                            <div class="info-value">
+                                <i class="fas fa-road"></i>
+                                ${coleta.km || '0'} km
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="etapas-container">
-                    <div class="etapas-title">
-                        <i class="fas fa-project-diagram"></i> Etapas do Processo
+                    <div class="etapas-header">
+                        <div class="etapas-title">
+                            <i class="fas fa-project-diagram"></i> Etapas do Processo
+                        </div>
+                        <div class="progress-text">
+                            ${progresso.concluidas}/${progresso.total} etapas
+                        </div>
                     </div>
                     <div class="etapas-progress">
                         ${ETAPAS.map(etapa => `
@@ -1233,7 +1437,13 @@
                             const isConcluida = coleta.etapasConcluidas.includes(etapa.id);
                             const isAtiva = coleta.etapaAtual === etapa.id;
                             const classe = isConcluida ? 'concluida' : (isAtiva ? 'ativa' : '');
-                            return `<span class="etapa-badge ${classe}">${etapa.nome}</span>`;
+                            const icon = isConcluida ? 'fa-check' : (isAtiva ? 'fa-play' : 'fa-clock');
+                            return `
+                                <span class="etapa-badge ${classe}">
+                                    <i class="fas ${icon}"></i>
+                                    ${etapa.nome}
+                                </span>
+                            `;
                         }).join('')}
                     </div>
                 </div>
@@ -1248,7 +1458,8 @@
                         </button>
                     </div>
                     <div class="card-date">
-                        Recebida em ${formatarData(coleta.dataRecebimento)}
+                        <i class="fas fa-calendar"></i>
+                        ${formatarData(coleta.dataRecebimento)}
                     </div>
                 </div>
             `;
@@ -1260,9 +1471,9 @@
                     if (coleta.etapasConcluidas.includes(etapa.id)) {
                         progressBar.style.opacity = '1';
                     } else if (coleta.etapaAtual === etapa.id) {
-                        progressBar.style.opacity = '0.7';
+                        progressBar.style.opacity = '0.8';
                     } else {
-                        progressBar.style.opacity = '0.3';
+                        progressBar.style.opacity = '0.2';
                     }
                 });
             }, 100);
@@ -1292,6 +1503,7 @@
             document.getElementById('dataRecebimento').valueAsDate = new Date();
             document.getElementById('status').value = 'pendente';
             document.getElementById('etapaAtual').value = 'cs';
+            document.getElementById('filial').value = 'JBO';
             
             document.getElementById('coletaModal').classList.add('active');
         }
@@ -1328,6 +1540,7 @@
             
             // Processar dados
             coletaData.km = parseFloat(coletaData.km) || 0;
+            coletaData.valor = parseFloat(coletaData.valor) || 0;
             coletaData.etapasConcluidas = coletaData.etapasConcluidas || ['cs'];
             
             if (currentEditingId) {
@@ -1340,13 +1553,14 @@
                 const novaColeta = {
                     id: 'COL-' + (coletasData.length + 1).toString().padStart(3, '0'),
                     ...coletaData,
-                    etapasConcluidas: ['cs'],
-                    valor: coletaData.valor ? parseFloat(coletaData.valor) : 0
+                    etapasConcluidas: ['cs']
                 };
                 coletasData.unshift(novaColeta);
                 showNotification('Nova coleta criada com sucesso!', 'success');
             }
             
+            // Salvar no localStorage
+            salvarColetasNoStorage();
             renderColetas();
             closeModal();
         });
@@ -1374,6 +1588,8 @@
                     coleta.status = 'andamento';
                 }
                 
+                // Salvar no localStorage
+                salvarColetasNoStorage();
                 renderColetas();
                 showNotification(`Etapa avançada para ${ETAPAS[etapaAtualIndex + 1].nome}`, 'success');
             }
