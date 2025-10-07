@@ -12,6 +12,7 @@
       --success-gradient: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
       --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       --danger-gradient: linear-gradient(135deg, #ff5858 0%, #f09819 100%);
+      --admin-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
     }
     
     body { 
@@ -108,6 +109,18 @@
     .btn-stop:hover { 
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+    
+    .btn-admin {
+      background: var(--admin-gradient);
+      border: none;
+      color: white;
+      transition: all 0.3s;
+    }
+    
+    .btn-admin:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(238, 90, 36, 0.4);
     }
     
     .status-card { 
@@ -301,6 +314,16 @@
       border-left: 4px solid #667eea;
     }
     
+    /* Admin badge */
+    .admin-badge {
+      background: var(--admin-gradient);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
     /* Responsive improvements */
     @media (max-width: 768px) {
       body {
@@ -339,7 +362,8 @@
       <div class="col">
         <h1 class="mb-2"><i class="fas fa-rocket me-2"></i>Disparador de Mensagens WhatsApp</h1>
         <div class="user-info">
-          <i class="fas fa-user me-1"></i> <span id="currentUser">Carregando...</span> | 
+          <i class="fas fa-user me-1"></i> <span id="currentUser">Carregando...</span>
+          <span id="adminBadge" class="admin-badge ms-2" style="display: none;">ADMIN</span> | 
           <i class="fas fa-plug me-1"></i> <span id="userInstance">Carregando instância...</span>
         </div>
       </div>
@@ -371,8 +395,11 @@
 
   <!-- Importar Contatos -->
   <div class="card status-card">
-    <div class="card-header bg-success text-white">
+    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
       <h5 class="mb-0"><i class="fas fa-download me-2"></i>Importar Contatos</h5>
+      <button id="btnResetContatos" class="btn btn-admin btn-sm" style="display: none;">
+        <i class="fas fa-trash-alt me-1"></i> Resetar Contatos
+      </button>
     </div>
     <div class="card-body">
       <div class="row">
@@ -620,6 +647,8 @@ let contacts = [];
 let currentPage = 1;
 let pageSize = 100;
 let selectedContacts = new Set();
+let currentUser = '';
+let isAdmin = false;
 
 // ========== INICIALIZAÇÃO ==========
 document.addEventListener('DOMContentLoaded', function() {
@@ -644,8 +673,18 @@ async function carregarInformacoesUsuario() {
       console.log('📊 Dados do usuário:', data);
       
       if (data.autenticado && data.usuario) {
-        console.log('✅ USUÁRIO AUTENTICADO:', data.usuario);
-        document.getElementById('currentUser').textContent = data.usuario;
+        currentUser = data.usuario;
+        console.log('✅ USUÁRIO AUTENTICADO:', currentUser);
+        document.getElementById('currentUser').textContent = currentUser;
+        
+        // ✅ VERIFICAR SE É ADMIN
+        isAdmin = currentUser.toLowerCase() === 'admin';
+        
+        if (isAdmin) {
+          console.log('🎯 USUÁRIO É ADMIN - Mostrando controles administrativos');
+          document.getElementById('adminBadge').style.display = 'inline-block';
+          document.getElementById('btnResetContatos').style.display = 'block';
+        }
         
         // ✅ MAPEAMENTO COMPLETO DE INSTÂNCIAS
         const userInstances = {
@@ -701,6 +740,112 @@ async function fazerLogout() {
       // Redireciona para login independente do resultado
       window.location.href = '/';
     }
+  }
+}
+
+// ========== FUNÇÕES ADMINISTRATIVAS ==========
+async function resetarContatos() {
+  if (!isAdmin) {
+    alert('❌ Apenas administradores podem executar esta ação');
+    return;
+  }
+  
+  if (!confirm(`🚨 RESET DE CONTATOS - ADMINISTRATIVO
+
+Esta ação irá:
+🗑️  APAGAR TODOS os contatos do sistema
+📊 Limpar completamente o banco de dados
+🔄 Requerer nova importação do CSV
+
+ATENÇÃO: Esta ação NÃO PODE ser desfeita!
+
+Deseja continuar?`)) {
+    return;
+  }
+
+  try {
+    console.log('🔄 Iniciando reset de contatos...');
+    
+    const statusDiv = document.getElementById('csvStatus');
+    statusDiv.innerHTML = `
+      <div class="alert alert-warning">
+        <strong><i class="fas fa-trash-alt fa-spin me-2"></i>Resetando contatos...</strong>
+        <div class="progress mt-2">
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style="width: 100%"></div>
+        </div>
+      </div>
+    `;
+    
+    // Buscar todos os contatos primeiro para deletar
+    const categorias = ['sider', 'grade_alta', 'grade_baixa', 'bitrem', 'rodotrem', 'prancha', 'bau', 'SIDER _ GRADE BAIXA', 'GRADE BAIXA _GRANELEIRO', 'TRUCK _ GRANELEIRA', 'GRANELEIRO'];
+    
+    let todosContatos = [];
+    let totalDeletados = 0;
+    
+    for (const cat of categorias) {
+      const response = await fetch(`/webhook/contatos?categoria=${cat}`);
+      if (response.ok) {
+        const contatos = await response.json();
+        if (contatos && contatos.length > 0) {
+          todosContatos = todosContatos.concat(contatos);
+        }
+      }
+    }
+    
+    console.log(`📊 Total de contatos para deletar: ${todosContatos.length}`);
+    
+    // Deletar todos os contatos
+    for (const contato of todosContatos) {
+      const deleteResponse = await fetch('/webhook/contatos', {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ number: contato.number })
+      });
+      
+      if (deleteResponse.ok) {
+        totalDeletados++;
+      }
+    }
+    
+    statusDiv.innerHTML = `
+      <div class="alert alert-success">
+        <strong><i class="fas fa-check-circle me-2"></i>Reset Concluído!</strong><br>
+        <i class="fas fa-trash-alt me-1"></i>Contatos removidos: ${totalDeletados}<br>
+        <i class="fas fa-database me-1"></i>Banco de dados limpo com sucesso
+      </div>
+    `;
+    
+    // Limpar lista de contatos na interface
+    contacts = [];
+    selectedContacts.clear();
+    document.getElementById('contactsList').innerHTML = `
+      <div class="text-center text-muted py-4">
+        <div><i class="fas fa-database fa-2x mb-3"></i></div>
+        <div>🗑️ Banco de dados resetado</div>
+        <small>Faça uma nova importação do CSV</small>
+      </div>
+    `;
+    
+    document.getElementById('contactsInfo').innerHTML = `
+      <div class="alert alert-warning">
+        <i class="fas fa-database me-2"></i>Banco de dados resetado - Importe o CSV novamente
+      </div>
+    `;
+    
+    // Ocultar elementos de paginação
+    document.getElementById('paginationContainer').style.display = 'none';
+    document.getElementById('selectAllSection').style.display = 'none';
+    document.getElementById('selectionInfo').style.display = 'none';
+    
+    console.log(`✅ Reset concluído: ${totalDeletados} contatos removidos`);
+    
+  } catch (error) {
+    console.error('❌ Erro no reset:', error);
+    document.getElementById('csvStatus').innerHTML = `
+      <div class="alert alert-danger">
+        <i class="fas fa-times-circle me-2"></i>Erro no reset: ${error.message}
+      </div>
+    `;
   }
 }
 
@@ -913,6 +1058,9 @@ function carregarEventos() {
 
   // ✅ Botão de logout
   document.getElementById('btnLogout').addEventListener('click', fazerLogout);
+
+  // ✅ Botão de reset (admin)
+  document.getElementById('btnResetContatos').addEventListener('click', resetarContatos);
 
   // Paginação - Tamanho da página
   document.getElementById('pageSize').addEventListener('change', function() {
@@ -1315,6 +1463,7 @@ document.getElementById('sendBtn').addEventListener('click', iniciarDisparo);
 console.log('✅ Sistema carregado com sucesso!');
 console.log('🔒 Modo seguro ativo: Delay aleatório de 30s a 60s entre mensagens');
 console.log('📄 Sistema de paginação ativo: Selecione contatos específicos para envio');
+console.log('👑 Controle administrativo: Botão de reset visível apenas para admin');
 </script>
 </body>
 </html>
