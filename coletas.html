@@ -21,6 +21,7 @@
             --gradient-danger: linear-gradient(135deg, #C60C30 0%, #E63946 100%);
             --gradient-success: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             --gradient-warning: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%);
+            --gradient-purple: linear-gradient(135deg, #6f42c1 0%, #8B5FBF 100%);
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -112,6 +113,44 @@
             display: flex;
             gap: 1rem;
             align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--branco);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--azul-escuro);
+            font-weight: bold;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            opacity: 0.8;
         }
 
         /* Botões Modernos */
@@ -276,20 +315,19 @@
         }
 
         .stat-card {
-            background: var(--gradient-primary);
             color: var(--branco);
             padding: 1.5rem;
             border-radius: var(--border-radius);
             text-align: center;
             min-width: 140px;
             flex: 1;
-            box-shadow: 0 4px 15px rgba(0, 39, 118, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: var(--transition);
         }
 
         .stat-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 39, 118, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         .stat-number {
@@ -742,6 +780,16 @@
             color: var(--branco);
         }
 
+        .action-btn.chat {
+            background: var(--gradient-purple);
+            color: var(--branco);
+        }
+
+        .action-btn.danger {
+            background: var(--gradient-danger);
+            color: var(--branco);
+        }
+
         .action-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -1158,6 +1206,179 @@
             color: #6c757d;
         }
 
+        /* Modal de Chat */
+        .modal-chat {
+            max-width: 800px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .chat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-coleta-id {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .chat-cliente {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .chat-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .chat-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 18px;
+            position: relative;
+            animation: messageAppear 0.3s ease;
+        }
+
+        @keyframes messageAppear {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: var(--gradient-primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: white;
+            color: var(--cinza-escuro);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .message-sender {
+            font-weight: 600;
+        }
+
+        .message-time {
+            opacity: 0.7;
+        }
+
+        .message-content {
+            line-height: 1.4;
+        }
+
+        .chat-input-container {
+            padding: 1.5rem;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 24px;
+            resize: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            max-height: 120px;
+            min-height: 50px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--azul-escuro);
+            box-shadow: 0 0 0 3px rgba(0, 39, 118, 0.1);
+        }
+
+        .chat-send {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .chat-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 39, 118, 0.3);
+        }
+
+        .chat-send:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         /* Botões Flutuantes */
         .floating-action-buttons {
             position: fixed;
@@ -1285,6 +1506,61 @@
             background: linear-gradient(135deg, rgba(0, 39, 118, 0.9) 0%, rgba(0, 29, 87, 0.9) 100%);
         }
 
+        /* Histórico */
+        .historico-container {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .historico-title {
+            font-size: 0.9rem;
+            color: var(--azul-escuro);
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .historico-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .historico-item {
+            padding: 0.7rem;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid var(--azul-escuro);
+            font-size: 0.8rem;
+        }
+
+        .historico-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.3rem;
+        }
+
+        .historico-usuario {
+            font-weight: 600;
+            color: var(--azul-escuro);
+        }
+
+        .historico-data {
+            color: #6c757d;
+            font-size: 0.7rem;
+        }
+
+        .historico-acao {
+            color: var(--cinza-escuro);
+        }
+
         /* Responsividade */
         @media (max-width: 768px) {
             .header-content {
@@ -1359,6 +1635,10 @@
                 justify-content: space-between;
                 margin-top: 0.5rem;
             }
+
+            .message {
+                max-width: 90%;
+            }
         }
     </style>
 </head>
@@ -1373,6 +1653,13 @@
                 <p class="header-subtitle">Gestão completa de operações logísticas</p>
             </div>
             <div class="header-actions">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">US</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Carregando...</div>
+                        <div class="user-role" id="userRole">Usuário</div>
+                    </div>
+                </div>
                 <a href="portal.html" class="btn-modern">
                     <i class="fas fa-home"></i> Voltar ao Portal
                 </a>
@@ -1472,7 +1759,7 @@
             </div>
             
             <div class="stats-container">
-                <div class="stat-card">
+                <div class="stat-card" style="background: var(--gradient-primary);">
                     <div class="stat-number" id="totalColetas">0</div>
                     <div class="stat-label">Total</div>
                 </div>
@@ -1487,6 +1774,10 @@
                 <div class="stat-card" style="background: var(--gradient-success);">
                     <div class="stat-number" id="concluidasCount">0</div>
                     <div class="stat-label">Concluídas</div>
+                </div>
+                <div class="stat-card" style="background: var(--gradient-purple);">
+                    <div class="stat-number" id="canceladasCount">0</div>
+                    <div class="stat-label">Canceladas</div>
                 </div>
             </div>
         </div>
@@ -1578,6 +1869,16 @@
                     <div class="form-group full-width">
                         <label for="observacoes">Observações</label>
                         <textarea id="observacoes" name="observacoes" rows="3" placeholder="Informações adicionais sobre a coleta..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- Histórico de Movimentações -->
+                <div class="historico-container" id="historicoContainer" style="display: none;">
+                    <div class="historico-title">
+                        <i class="fas fa-history"></i> Histórico de Movimentações
+                    </div>
+                    <div class="historico-list" id="historicoList">
+                        <!-- Histórico será preenchido aqui -->
                     </div>
                 </div>
                 
@@ -1699,6 +2000,36 @@
         </div>
     </div>
 
+    <!-- Modal de Chat -->
+    <div class="modal-overlay" id="chatModal">
+        <div class="modal-content modal-chat">
+            <div class="chat-header">
+                <div class="chat-info">
+                    <div class="chat-coleta-id" id="chatColetaId">COL-001</div>
+                    <div class="chat-cliente" id="chatCliente">Cliente A Ltda</div>
+                </div>
+                <button class="chat-close" onclick="closeChatModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Mensagens serão carregadas aqui -->
+                </div>
+                
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <textarea class="chat-input" id="chatInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
+                        <button class="chat-send" id="chatSend" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Botões Flutuantes -->
     <div class="floating-action-buttons">
         <button class="fab-secondary" onclick="window.location.href='relatorios.html'" title="Relatórios">
@@ -1724,6 +2055,11 @@
     <div id="notification" class="notification"></div>
 
     <script>
+        // ========== SISTEMA DE AUTENTICAÇÃO ==========
+        
+        // Dados do usuário logado - será carregado do localStorage
+        let currentUser = null;
+        
         // Dados das coletas
         let coletasData = [];
         let currentEditingId = null;
@@ -1731,6 +2067,10 @@
         let selectedFiles = [];
         let currentViewingFile = null;
         let currentViewingColeta = null;
+        let currentChatColetaId = null;
+
+        // Dados de chat
+        let chatMessages = {};
 
         // Etapas do processo
         const ETAPAS = [
@@ -1744,6 +2084,63 @@
             { id: 'contas-pagar', nome: 'Contas a Pagar', ordem: 8 },
             { id: 'contas-receber', nome: 'Contas a Receber', ordem: 9 }
         ];
+
+        // === FUNÇÕES DE AUTENTICAÇÃO ===
+
+        // Verificar autenticação do usuário
+        function verificarAutenticacao() {
+            try {
+                const userData = localStorage.getItem('loggedInUser');
+                
+                if (!userData) {
+                    console.log('❌ Usuário não autenticado, redirecionando para portal...');
+                    window.location.href = 'portal.html';
+                    return null;
+                }
+                
+                const user = JSON.parse(userData);
+                
+                // Verificar se sessão expirou (12 horas)
+                const now = Date.now();
+                const sessionAge = now - user.loginTimestamp;
+                const SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 horas
+                
+                if (sessionAge > SESSION_TIMEOUT) {
+                    console.log('🕒 Sessão expirada, redirecionando...');
+                    fazerLogoff();
+                    return null;
+                }
+                
+                console.log('✅ Usuário autenticado:', user);
+                return user;
+                
+            } catch (error) {
+                console.error('❌ Erro ao verificar autenticação:', error);
+                window.location.href = 'portal.html';
+                return null;
+            }
+        }
+
+        // Configurar informações do usuário no header
+        function setupUserInfo(user) {
+            document.getElementById('userName').textContent = user.nome;
+            document.getElementById('userAvatar').textContent = user.nome.substring(0, 2).toUpperCase();
+            
+            if (user.isAdmin) {
+                document.getElementById('userRole').textContent = 'Administrador';
+            } else {
+                document.getElementById('userRole').textContent = 'Usuário';
+            }
+        }
+
+        // Fazer logoff
+        function fazerLogoff() {
+            if (confirm('Deseja realmente sair do sistema?')) {
+                localStorage.removeItem('loggedInUser');
+                localStorage.removeItem('lastActivity');
+                window.location.href = 'portal.html';
+            }
+        }
 
         // === FUNÇÕES DE LOCALSTORAGE ===
 
@@ -1765,7 +2162,6 @@
                 if (coletasSalvas) {
                     coletasData = JSON.parse(coletasSalvas);
                     console.log('📦 Coletas carregadas do localStorage:', coletasData.length, 'itens');
-                    showNotification('Dados carregados com sucesso', 'success');
                 } else {
                     console.log('📝 Nenhum dado salvo encontrado, usando dados de exemplo');
                     carregarDadosExemplo();
@@ -1778,16 +2174,213 @@
             }
         }
 
+        // Salvar mensagens de chat no localStorage
+        function salvarChatNoStorage() {
+            try {
+                localStorage.setItem('chatMessages', JSON.stringify(chatMessages));
+            } catch (error) {
+                console.error('❌ Erro ao salvar chat no localStorage:', error);
+            }
+        }
+
+        // Carregar mensagens de chat do localStorage
+        function carregarChatDoStorage() {
+            try {
+                const chatSalvo = localStorage.getItem('chatMessages');
+                if (chatSalvo) {
+                    chatMessages = JSON.parse(chatSalvo);
+                    console.log('💬 Chat carregado do localStorage');
+                } else {
+                    console.log('💬 Nenhum chat salvo encontrado');
+                    chatMessages = {};
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar chat do localStorage:', error);
+                chatMessages = {};
+            }
+        }
+
+        // === SISTEMA DE EXCLUSÃO PARA ADMIN ===
+
+        // Verificar se usuário é admin
+        function isAdmin() {
+            return currentUser && currentUser.isAdmin;
+        }
+
+        // Excluir coleta
+        function excluirColeta(coletaId) {
+            if (!isAdmin()) {
+                showNotification('Apenas administradores podem excluir coletas', 'error');
+                return;
+            }
+            
+            if (!confirm('Tem certeza que deseja excluir esta coleta? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+            
+            const coletaIndex = coletasData.findIndex(c => c.id === coletaId);
+            if (coletaIndex === -1) return;
+            
+            const coletaExcluida = coletasData[coletaIndex];
+            
+            // Remover do array
+            coletasData.splice(coletaIndex, 1);
+            
+            // Remover mensagens de chat relacionadas
+            if (chatMessages[coletaId]) {
+                delete chatMessages[coletaId];
+                salvarChatNoStorage();
+            }
+            
+            // Salvar no localStorage
+            salvarColetasNoStorage();
+            
+            // Atualizar interface
+            renderColetas();
+            showNotification(`Coleta ${coletaId} excluída com sucesso`, 'success');
+            
+            // Fechar modais se estiverem abertos
+            closeModal();
+            closeAnexosModal();
+            closeChatModal();
+        }
+
+        // === SISTEMA DE HISTÓRICO DE MOVIMENTAÇÕES ===
+
+        // Adicionar entrada no histórico
+        function adicionarHistorico(coletaId, acao, etapaAnterior = null, novaEtapa = null) {
+            const coletaIndex = coletasData.findIndex(c => c.id === coletaId);
+            if (coletaIndex === -1) return;
+            
+            if (!coletasData[coletaIndex].historico) {
+                coletasData[coletaIndex].historico = [];
+            }
+            
+            const entradaHistorico = {
+                id: 'hist-' + Date.now(),
+                usuario: currentUser.nome,
+                usuarioId: currentUser.id,
+                acao: acao,
+                etapaAnterior: etapaAnterior,
+                novaEtapa: novaEtapa,
+                data: new Date().toISOString(),
+                timestamp: Date.now()
+            };
+            
+            coletasData[coletaIndex].historico.unshift(entradaHistorico);
+            
+            // Manter apenas as últimas 50 entradas para não ficar muito pesado
+            if (coletasData[coletaIndex].historico.length > 50) {
+                coletasData[coletaIndex].historico = coletasData[coletaIndex].historico.slice(0, 50);
+            }
+            
+            salvarColetasNoStorage();
+        }
+
+        // Obter texto descritivo da ação
+        function getTextoAcao(acao, etapaAnterior, novaEtapa) {
+            const etapasMap = {
+                'comercial': 'Comercial',
+                'price': 'Price',
+                'cs': 'CS',
+                'contratacao': 'Contratação',
+                'gr': 'GR',
+                'documentacao': 'Documentação',
+                'controladoria': 'Controladoria',
+                'contas-pagar': 'Contas a Pagar',
+                'contas-receber': 'Contas a Receber'
+            };
+            
+            switch(acao) {
+                case 'avancar_etapa':
+                    return `Avançou etapa de ${etapasMap[etapaAnterior]} para ${etapasMap[novaEtapa]}`;
+                case 'criar_coleta':
+                    return 'Criou a coleta';
+                case 'editar_coleta':
+                    return 'Editou informações da coleta';
+                case 'adicionar_anexo':
+                    return 'Adicionou anexo';
+                case 'excluir_anexo':
+                    return 'Excluiu anexo';
+                case 'enviar_mensagem':
+                    return 'Enviou mensagem no chat';
+                default:
+                    return acao;
+            }
+        }
+
+        // Carregar histórico no modal
+        function carregarHistorico(coletaId) {
+            const coleta = coletasData.find(c => c.id === coletaId);
+            const historicoList = document.getElementById('historicoList');
+            const historicoContainer = document.getElementById('historicoContainer');
+            
+            if (!coleta || !coleta.historico || coleta.historico.length === 0) {
+                historicoContainer.style.display = 'none';
+                return;
+            }
+            
+            historicoContainer.style.display = 'block';
+            
+            historicoList.innerHTML = coleta.historico.map(entrada => `
+                <div class="historico-item">
+                    <div class="historico-header">
+                        <span class="historico-usuario">${entrada.usuario}</span>
+                        <span class="historico-data">${formatarDataHora(entrada.data)}</span>
+                    </div>
+                    <div class="historico-acao">
+                        ${getTextoAcao(entrada.acao, entrada.etapaAnterior, entrada.novaEtapa)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
         // === FUNÇÕES PRINCIPAIS ===
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚚 Sistema de Coletas inicializado');
-            initializeDateFilters();
-            carregarColetasDoStorage();
-            updateStats();
-            setupDragAndDrop();
+            console.log('🚚 Sistema de Coletas inicializando...');
+            
+            // Verificar autenticação
+            currentUser = verificarAutenticacao();
+            if (currentUser) {
+                // Configurar informações do usuário
+                setupUserInfo(currentUser);
+                
+                // Inicializar sistema
+                initializeDateFilters();
+                carregarColetasDoStorage();
+                carregarChatDoStorage();
+                updateStats();
+                setupDragAndDrop();
+                setupChatInput();
+                
+                console.log('✅ Sistema de Coletas carregado para:', currentUser.nome);
+            }
         });
+
+        // Configurar chat input
+        function setupChatInput() {
+            const chatInput = document.getElementById('chatInput');
+            const chatSend = document.getElementById('chatSend');
+            
+            chatInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+                
+                // Habilitar/desabilitar botão de envio
+                chatSend.disabled = this.value.trim() === '';
+            });
+            
+            chatInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (!chatSend.disabled) {
+                        sendMessage();
+                    }
+                }
+            });
+        }
 
         // Configurar drag and drop
         function setupDragAndDrop() {
@@ -1864,6 +2457,16 @@
                     anexos: [
                         { id: '1', nome: 'nota_fiscal.pdf', tamanho: 2400000, tipo: 'pdf' },
                         { id: '2', nome: 'planilha_custos.xlsx', tamanho: 156000, tipo: 'excel' }
+                    ],
+                    historico: [
+                        {
+                            id: 'hist-1',
+                            usuario: currentUser ? currentUser.nome : 'Sistema',
+                            usuarioId: currentUser ? currentUser.id : 'system',
+                            acao: 'criar_coleta',
+                            data: new Date(hoje.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                            timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000
+                        }
                     ]
                 },
                 {
@@ -1880,7 +2483,17 @@
                     etapasConcluidas: ['cs'],
                     valor: 3200.00,
                     observacoes: 'Aguardando aprovação do cliente',
-                    anexos: []
+                    anexos: [],
+                    historico: [
+                        {
+                            id: 'hist-2',
+                            usuario: currentUser ? currentUser.nome : 'Sistema',
+                            usuarioId: currentUser ? currentUser.id : 'system',
+                            acao: 'criar_coleta',
+                            data: new Date(hoje.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+                            timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000
+                        }
+                    ]
                 },
                 {
                     id: 'COL-003',
@@ -1898,23 +2511,17 @@
                     observacoes: 'Entrega realizada com sucesso',
                     anexos: [
                         { id: '3', nome: 'foto_entrega.jpg', tamanho: 1800000, tipo: 'image' }
+                    ],
+                    historico: [
+                        {
+                            id: 'hist-3',
+                            usuario: currentUser ? currentUser.nome : 'Sistema',
+                            usuarioId: currentUser ? currentUser.id : 'system',
+                            acao: 'criar_coleta',
+                            data: new Date(hoje.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+                            timestamp: Date.now() - 10 * 24 * 60 * 60 * 1000
+                        }
                     ]
-                },
-                {
-                    id: 'COL-004',
-                    filial: 'JBO',
-                    cliente: 'Indústria D EIRELI',
-                    dataRecebimento: datas[3],
-                    origem: 'Campinas - SP',
-                    destino: 'Santos - SP',
-                    km: 150,
-                    veiculo: 'VUC',
-                    status: 'andamento',
-                    etapaAtual: 'documentacao',
-                    etapasConcluidas: ['cs', 'contratacao', 'gr'],
-                    valor: 1200.00,
-                    observacoes: 'Coleta local - prioridade média',
-                    anexos: []
                 }
             ];
         }
@@ -2081,12 +2688,20 @@
 
                 <div class="card-footer">
                     <div class="card-actions">
+                        <button class="action-btn chat" onclick="event.stopPropagation(); openChatModal('${coleta.id}')">
+                            <i class="fas fa-comment"></i> Chat
+                        </button>
                         <button class="action-btn primary" onclick="event.stopPropagation(); avancarEtapa('${coleta.id}')">
                             <i class="fas fa-arrow-right"></i> Avançar
                         </button>
                         <button class="action-btn warning" onclick="event.stopPropagation(); openEditColetaModal('${coleta.id}')">
                             <i class="fas fa-edit"></i> Editar
                         </button>
+                        ${isAdmin() ? `
+                        <button class="action-btn danger" onclick="event.stopPropagation(); excluirColeta('${coleta.id}')">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                        ` : ''}
                     </div>
                     <div class="card-date">
                         <i class="fas fa-calendar"></i>
@@ -2110,6 +2725,135 @@
             }, 100);
 
             return card;
+        }
+
+        // === SISTEMA DE CHAT ===
+
+        // Abrir modal de chat
+        function openChatModal(coletaId) {
+            currentChatColetaId = coletaId;
+            const coleta = coletasData.find(c => c.id === coletaId);
+            
+            if (!coleta) return;
+            
+            document.getElementById('chatColetaId').textContent = coleta.id;
+            document.getElementById('chatCliente').textContent = coleta.cliente;
+            
+            // Carregar mensagens
+            carregarMensagensChat(coletaId);
+            
+            // Focar no input
+            setTimeout(() => {
+                document.getElementById('chatInput').focus();
+            }, 300);
+            
+            document.getElementById('chatModal').classList.add('active');
+        }
+
+        // Fechar modal de chat
+        function closeChatModal() {
+            document.getElementById('chatModal').classList.remove('active');
+            currentChatColetaId = null;
+            
+            // Resetar input
+            const chatInput = document.getElementById('chatInput');
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            document.getElementById('chatSend').disabled = true;
+        }
+
+        // Carregar mensagens do chat
+        function carregarMensagensChat(coletaId) {
+            const chatMessagesContainer = document.getElementById('chatMessages');
+            chatMessagesContainer.innerHTML = '';
+            
+            // Inicializar array de mensagens se não existir
+            if (!chatMessages[coletaId]) {
+                chatMessages[coletaId] = [
+                    {
+                        id: 'msg-1',
+                        senderId: 'system',
+                        senderName: 'Sistema',
+                        content: 'Chat iniciado para esta coleta. Use este espaço para comunicação interna sobre a operação.',
+                        timestamp: new Date().toISOString(),
+                        type: 'system'
+                    }
+                ];
+                salvarChatNoStorage();
+            }
+            
+            // Ordenar mensagens por timestamp
+            const mensagens = chatMessages[coletaId].sort((a, b) => 
+                new Date(a.timestamp) - new Date(b.timestamp)
+            );
+            
+            // Renderizar mensagens
+            mensagens.forEach(msg => {
+                const messageElement = document.createElement('div');
+                
+                if (msg.type === 'system') {
+                    messageElement.className = 'message system';
+                    messageElement.innerHTML = `
+                        <div class="message-content" style="text-align: center; font-style: italic; color: #6c757d;">
+                            ${msg.content}
+                        </div>
+                    `;
+                } else {
+                    const isSent = msg.senderId === currentUser.id;
+                    messageElement.className = `message ${isSent ? 'sent' : 'received'}`;
+                    
+                    messageElement.innerHTML = `
+                        <div class="message-header">
+                            <span class="message-sender">${msg.senderName}</span>
+                            <span class="message-time">${formatarHora(msg.timestamp)}</span>
+                        </div>
+                        <div class="message-content">${msg.content}</div>
+                    `;
+                }
+                
+                chatMessagesContainer.appendChild(messageElement);
+            });
+            
+            // Scroll para baixo
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        }
+
+        // Enviar mensagem (corrigida - sempre como usuário logado)
+        function sendMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const messageContent = chatInput.value.trim();
+            
+            if (!messageContent || !currentChatColetaId) return;
+            
+            // Criar nova mensagem SEMPRE com o usuário logado
+            const newMessage = {
+                id: 'msg-' + Date.now(),
+                senderId: currentUser.id,
+                senderName: currentUser.nome,
+                content: messageContent,
+                timestamp: new Date().toISOString(),
+                type: 'user'
+            };
+            
+            // Adicionar ao array de mensagens
+            if (!chatMessages[currentChatColetaId]) {
+                chatMessages[currentChatColetaId] = [];
+            }
+            chatMessages[currentChatColetaId].push(newMessage);
+            
+            // Adicionar ao histórico
+            adicionarHistorico(currentChatColetaId, 'enviar_mensagem');
+            
+            // Salvar no localStorage
+            salvarChatNoStorage();
+            
+            // Recarregar mensagens
+            carregarMensagensChat(currentChatColetaId);
+            
+            // Limpar input
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            document.getElementById('chatSend').disabled = true;
         }
 
         // === SISTEMA DE ANEXOS ===
@@ -2335,6 +3079,9 @@
                 coletasData[coletaIndex].anexos.push(novoAnexo);
             });
             
+            // Adicionar ao histórico
+            adicionarHistorico(currentAnexosColetaId, 'adicionar_anexo');
+            
             // Salvar no localStorage
             salvarColetasNoStorage();
         }
@@ -2538,6 +3285,9 @@
             if (coletasData[coletaIndex].anexos) {
                 coletasData[coletaIndex].anexos = coletasData[coletaIndex].anexos.filter(a => a.id !== anexoId);
                 
+                // Adicionar ao histórico
+                adicionarHistorico(coletaId, 'excluir_anexo');
+                
                 // Salvar no localStorage
                 salvarColetasNoStorage();
                 
@@ -2577,6 +3327,7 @@
             document.getElementById('status').value = 'pendente';
             document.getElementById('etapaAtual').value = 'cs';
             document.getElementById('filial').value = 'JBO';
+            document.getElementById('historicoContainer').style.display = 'none';
             
             document.getElementById('coletaModal').classList.add('active');
         }
@@ -2595,6 +3346,9 @@
                 if (input) input.value = coleta[key];
             });
 
+            // Carregar histórico
+            carregarHistorico(coletaId);
+            
             document.getElementById('coletaModal').classList.add('active');
         }
 
@@ -2621,6 +3375,10 @@
                 // Editar coleta existente
                 const index = coletasData.findIndex(c => c.id === currentEditingId);
                 coletasData[index] = { ...coletasData[index], ...coletaData };
+                
+                // Adicionar ao histórico
+                adicionarHistorico(currentEditingId, 'editar_coleta');
+                
                 showNotification('Coleta atualizada com sucesso!', 'success');
             } else {
                 // Nova coleta
@@ -2628,9 +3386,14 @@
                     id: 'COL-' + (coletasData.length + 1).toString().padStart(3, '0'),
                     ...coletaData,
                     etapasConcluidas: ['cs'],
-                    anexos: []
+                    anexos: [],
+                    historico: []
                 };
                 coletasData.unshift(novaColeta);
+                
+                // Adicionar ao histórico
+                adicionarHistorico(novaColeta.id, 'criar_coleta');
+                
                 showNotification('Nova coleta criada com sucesso!', 'success');
             }
             
@@ -2640,13 +3403,15 @@
             closeModal();
         });
 
-        // Avançar etapa
+        // Avançar etapa com histórico
         function avancarEtapa(coletaId) {
             const coleta = coletasData.find(c => c.id === coletaId);
             if (!coleta) return;
 
             const etapaAtualIndex = ETAPAS.findIndex(e => e.id === coleta.etapaAtual);
             if (etapaAtualIndex < ETAPAS.length - 1) {
+                const etapaAnterior = coleta.etapaAtual;
+                
                 // Marcar etapa atual como concluída
                 if (!coleta.etapasConcluidas.includes(coleta.etapaAtual)) {
                     coleta.etapasConcluidas.push(coleta.etapaAtual);
@@ -2662,6 +3427,9 @@
                 } else {
                     coleta.status = 'andamento';
                 }
+                
+                // Adicionar ao histórico
+                adicionarHistorico(coletaId, 'avancar_etapa', etapaAnterior, coleta.etapaAtual);
                 
                 // Salvar no localStorage
                 salvarColetasNoStorage();
@@ -2754,6 +3522,7 @@
             document.getElementById('pendentesCount').textContent = data.filter(c => c.status === 'pendente').length;
             document.getElementById('andamentoCount').textContent = data.filter(c => c.status === 'andamento').length;
             document.getElementById('concluidasCount').textContent = data.filter(c => c.status === 'concluida').length;
+            document.getElementById('canceladasCount').textContent = data.filter(c => c.status === 'cancelada').length;
         }
 
         // Funções utilitárias
@@ -2770,6 +3539,16 @@
         function formatarData(dataString) {
             const data = new Date(dataString);
             return data.toLocaleDateString('pt-BR');
+        }
+
+        function formatarDataHora(dataString) {
+            const data = new Date(dataString);
+            return data.toLocaleString('pt-BR');
+        }
+
+        function formatarHora(dataString) {
+            const data = new Date(dataString);
+            return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
 
         function formatarDataParaInput(data) {
@@ -2802,6 +3581,12 @@
         document.getElementById('visualizadorModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeVisualizador();
+            }
+        });
+
+        document.getElementById('chatModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeChatModal();
             }
         });
     </script>

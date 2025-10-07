@@ -1385,6 +1385,10 @@
                         <i class="fas fa-edit"></i> Editar
                     </button>
                     ${!user.isAdmin ? `
+                        <button class="user-action-btn ${user.ativo ? 'warning' : 'success'}" onclick="toggleUserStatus(${user.id})">
+                            <i class="fas ${user.ativo ? 'fa-user-slash' : 'fa-user-check'}"></i> 
+                            ${user.ativo ? 'Desativar' : 'Ativar'}
+                        </button>
                         <button class="user-action-btn delete" onclick="deleteUser(${user.id})">
                             <i class="fas fa-trash"></i> Excluir
                         </button>
@@ -1521,6 +1525,29 @@
             const formData = new FormData(this);
             const userData = Object.fromEntries(formData);
             
+            // Validações
+            if (!userData.nome || !userData.email || !userData.departamento) {
+                showNotification('Preencha todos os campos obrigatórios!', 'error');
+                return;
+            }
+            
+            // Validar email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(userData.email)) {
+                showNotification('Digite um email válido!', 'error');
+                return;
+            }
+            
+            // Verificar se email já existe (em edição, ignorar o próprio usuário)
+            const emailExists = usersData.some(u => 
+                u.email === userData.email && u.id !== currentEditingUserId
+            );
+            
+            if (emailExists) {
+                showNotification('Este email já está em uso!', 'error');
+                return;
+            }
+            
             // Coletar permissões selecionadas
             const permissoes = [];
             document.querySelectorAll('#modalPermissionsContainer input[type="checkbox"]:checked').forEach(checkbox => {
@@ -1543,12 +1570,18 @@
 
                 showNotification('Usuário atualizado com sucesso!', 'success');
             } else {
+                // Validar senha para novo usuário
+                if (!userData.senha || userData.senha.length < 4) {
+                    showNotification('A senha deve ter pelo menos 4 caracteres!', 'error');
+                    return;
+                }
+                
                 // Novo usuário
                 const novoUsuario = {
-                    id: Math.max(...usersData.map(u => u.id)) + 1,
+                    id: usersData.length > 0 ? Math.max(...usersData.map(u => u.id)) + 1 : 1,
                     ...userData,
                     permissoes: permissoes,
-                    isAdmin: false,
+                    isAdmin: userData.departamento === 'admin',
                     ativo: true
                 };
                 usersData.push(novoUsuario);
@@ -1561,6 +1594,20 @@
             renderUsers();
             closeUserModal();
         });
+
+        // Alternar status do usuário
+        function toggleUserStatus(userId) {
+            const userIndex = usersData.findIndex(u => u.id === userId);
+            if (userIndex !== -1 && !usersData[userIndex].isAdmin) {
+                usersData[userIndex].ativo = !usersData[userIndex].ativo;
+                localStorage.setItem('modalUsers', JSON.stringify(usersData));
+                renderUsers();
+                showNotification(
+                    `Usuário ${usersData[userIndex].ativo ? 'ativado' : 'desativado'} com sucesso!`, 
+                    'success'
+                );
+            }
+        }
 
         // Excluir usuário
         function deleteUser(userId) {
@@ -1584,9 +1631,9 @@
             document.getElementById('emailNotifications').checked = settings.emailNotifications !== false;
             
             document.getElementById('companyName').value = settings.companyName || 'Multi Modal';
-            document.getElementById('companyEmail').value = settings.companyEmail || 'Allisson.silva@logmultimodal.com';
-            document.getElementById('companyPhone').value = settings.companyPhone || '(81) 997600051';
-            document.getElementById('companyAddress').value = settings.companyAddress || 'Av. Herculano Bandeira, 855 - Pina - Recife/PE';
+            document.getElementById('companyEmail').value = settings.companyEmail || 'Allisson.silva@logmultimodal.com.br';
+            document.getElementById('companyPhone').value = settings.companyPhone || '(81) 99760-0051';
+            document.getElementById('companyAddress').value = settings.companyAddress || 'Av. Herculado bandeira, 855 - Recife/PE';
         }
 
         // Salvar configurações da empresa
