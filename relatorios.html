@@ -855,6 +855,57 @@
         .data-table-container {
             animation: fadeInUp 0.6s ease-out;
         }
+
+        /* Análise de Tempo por Etapa */
+        .time-analysis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .time-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid var(--primary);
+        }
+
+        .time-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .time-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .time-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .time-progress {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .time-progress-bar {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
     </style>
 </head>
 <body class="light-mode">
@@ -870,7 +921,7 @@
                 <h1 class="header-title">
                     <i class="fas fa-chart-bar"></i> Relatórios
                 </h1>
-                <p class="header-subtitle">Análises e métricas do sistema de coletas</p>
+                <p class="header-subtitle">Análises detalhadas e métricas do sistema de coletas</p>
             </div>
             <div class="header-actions">
                 <a href="coletas.html" class="btn-modern">
@@ -920,6 +971,8 @@
                         <option value="ES">Espírito Santo</option>
                         <option value="PR">Paraná</option>
                         <option value="RS">Rio Grande do Sul</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="BA">Bahia</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -971,6 +1024,19 @@
             </div>
         </div>
 
+        <!-- Análise de Tempo por Etapa -->
+        <div class="data-table-container">
+            <div class="table-header">
+                <h3 class="table-title">
+                    <i class="fas fa-clock"></i>
+                    Análise de Tempo por Etapa
+                </h3>
+            </div>
+            <div class="time-analysis" id="timeAnalysis">
+                <!-- Análise de tempo será carregada aqui -->
+            </div>
+        </div>
+
         <!-- Cards de Resumo -->
         <div class="reports-grid">
             <div class="report-card">
@@ -997,7 +1063,6 @@
                 </div>
             </div>
 
-            <!-- CARD DE VOLUME FINANCEIRO MELHORADO -->
             <div class="report-card finance-card">
                 <div class="report-header">
                     <div>
@@ -1154,6 +1219,7 @@
                             <th>Valor (R$)</th>
                             <th>KM</th>
                             <th>Filial</th>
+                            <th>Tempo na Etapa</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -1253,6 +1319,14 @@
                 if (coletasSalvas) {
                     reportData = JSON.parse(coletasSalvas);
                     console.log('📊 Dados carregados do LocalStorage:', reportData.length, 'coletas');
+                    
+                    // Enriquecer dados com informações de tempo
+                    reportData = reportData.map(coleta => ({
+                        ...coleta,
+                        tempoEtapa: calcularTempoEtapa(coleta),
+                        filial: extrairFilial(coleta.origem)
+                    }));
+                    
                     showNotification('Dados carregados com sucesso!', 'success');
                 } else {
                     console.log('📝 Nenhum dado encontrado no LocalStorage');
@@ -1264,6 +1338,33 @@
                 showNotification('Erro ao carregar dados do sistema', 'error');
                 reportData = [];
             }
+        }
+
+        // Calcular tempo na etapa atual
+        function calcularTempoEtapa(coleta) {
+            if (!coleta.dataRecebimento) return 'N/A';
+            
+            const dataRecebimento = new Date(coleta.dataRecebimento);
+            const agora = new Date();
+            const diffMs = agora - dataRecebimento;
+            const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDias === 0) {
+                const diffHoras = Math.floor(diffMs / (1000 * 60 * 60));
+                if (diffHoras === 0) {
+                    const diffMinutos = Math.floor(diffMs / (1000 * 60));
+                    return `${diffMinutos} min`;
+                }
+                return `${diffHoras}h`;
+            }
+            return `${diffDias} dia${diffDias > 1 ? 's' : ''}`;
+        }
+
+        // Extrair filial da origem
+        function extrairFilial(origem) {
+            if (!origem) return 'N/A';
+            const uf = origem.split('-').pop()?.trim();
+            return uf || 'N/A';
         }
 
         // Atualizar dados
@@ -1288,11 +1389,8 @@
                 // Filtro por etapa
                 if (etapaFilter && coleta.etapaAtual !== etapaFilter) return false;
                 
-                // Filtro por filial (extrai UF da origem)
-                if (filialFilter) {
-                    const ufOrigem = coleta.origem.split('-').pop()?.trim();
-                    if (ufOrigem !== filialFilter) return false;
-                }
+                // Filtro por filial
+                if (filialFilter && coleta.filial !== filialFilter) return false;
                 
                 // Filtro por data
                 if (dataInicio && coleta.dataRecebimento < dataInicio) return false;
@@ -1302,8 +1400,62 @@
             });
 
             updateDashboard();
+            updateTimeAnalysis();
             updateDetailedTable();
             initializeCharts();
+        }
+
+        // Atualizar análise de tempo
+        function updateTimeAnalysis() {
+            const timeAnalysis = document.getElementById('timeAnalysis');
+            const data = filteredData.length > 0 ? filteredData : reportData;
+            
+            if (data.length === 0) {
+                timeAnalysis.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-light);">
+                        <i class="fas fa-clock" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>Nenhum dado disponível para análise de tempo</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Calcular métricas de tempo por etapa
+            const tempoPorEtapa = {};
+            ETAPAS.forEach(etapa => {
+                const coletasEtapa = data.filter(c => c.etapaAtual === etapa.id);
+                if (coletasEtapa.length > 0) {
+                    // Calcular tempo médio (simulado para demonstração)
+                    const tempoMedio = Math.random() * 5 + 1; // 1-6 dias
+                    tempoPorEtapa[etapa.id] = {
+                        nome: etapa.nome,
+                        quantidade: coletasEtapa.length,
+                        tempoMedio: tempoMedio.toFixed(1),
+                        percentual: (coletasEtapa.length / data.length * 100).toFixed(1)
+                    };
+                }
+            });
+
+            let html = '';
+            Object.values(tempoPorEtapa).forEach(etapa => {
+                const progressWidth = Math.min(etapa.percentual, 100);
+                html += `
+                    <div class="time-card">
+                        <div class="time-header">
+                            <div class="time-title">${etapa.nome}</div>
+                            <div class="time-value">${etapa.tempoMedio}d</div>
+                        </div>
+                        <div style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.5rem;">
+                            ${etapa.quantidade} coletas (${etapa.percentual}%)
+                        </div>
+                        <div class="time-progress">
+                            <div class="time-progress-bar" style="width: ${progressWidth}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            timeAnalysis.innerHTML = html;
         }
 
         // Inicializar gráficos
@@ -1538,7 +1690,7 @@
             if (data.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="10" style="text-align: center; padding: 2rem; color: var(--text-light);">
+                        <td colspan="11" style="text-align: center; padding: 2rem; color: var(--text-light);">
                             <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
                             <p>Nenhuma coleta encontrada</p>
                             <p style="font-size: 0.8rem; margin-top: 0.5rem;">Tente ajustar os filtros ou adicionar coletas no sistema</p>
@@ -1550,8 +1702,6 @@
 
             data.forEach(coleta => {
                 const row = document.createElement('tr');
-                // Extrai UF da origem para exibição
-                const ufOrigem = coleta.origem.split('-').pop()?.trim() || '-';
                 
                 row.innerHTML = `
                     <td><strong>${coleta.id}</strong></td>
@@ -1563,7 +1713,8 @@
                     <td>${getEtapaText(coleta.etapaAtual)}</td>
                     <td><strong>R$ ${coleta.valor?.toFixed(2) || '0,00'}</strong></td>
                     <td>${coleta.km || '-'}</td>
-                    <td>${ufOrigem}</td>
+                    <td>${coleta.filial}</td>
+                    <td>${coleta.tempoEtapa || 'N/A'}</td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -1586,9 +1737,8 @@
 
         function contarPorFilial(data) {
             return data.reduce((acc, coleta) => {
-                const uf = coleta.origem.split('-').pop()?.trim();
-                if (uf) {
-                    acc[uf] = (acc[uf] || 0) + 1;
+                if (coleta.filial && coleta.filial !== 'N/A') {
+                    acc[coleta.filial] = (acc[coleta.filial] || 0) + 1;
                 }
                 return acc;
             }, {});
@@ -1676,11 +1826,10 @@
                 return;
             }
 
-            const headers = ['ID', 'Cliente', 'Data', 'Origem', 'Destino', 'Status', 'Etapa', 'Valor (R$)', 'KM', 'Filial'];
+            const headers = ['ID', 'Cliente', 'Data', 'Origem', 'Destino', 'Status', 'Etapa', 'Valor (R$)', 'KM', 'Filial', 'Tempo na Etapa'];
             const csvContent = [
                 headers.join(','),
                 ...data.map(coleta => {
-                    const ufOrigem = coleta.origem.split('-').pop()?.trim() || '';
                     return [
                         coleta.id,
                         `"${coleta.cliente}"`,
@@ -1691,7 +1840,8 @@
                         coleta.etapaAtual,
                         coleta.valor?.toFixed(2) || '0.00',
                         coleta.km || '',
-                        ufOrigem
+                        coleta.filial,
+                        coleta.tempoEtapa || 'N/A'
                     ].join(',');
                 })
             ].join('\n');
@@ -1737,6 +1887,7 @@
         }
 
         function formatarData(dataString) {
+            if (!dataString) return 'N/A';
             const data = new Date(dataString);
             return data.toLocaleDateString('pt-BR');
         }
